@@ -1,0 +1,21 @@
+{
+  "appName": "CommuniTree",
+  "userManagement": {
+    "title": "Användarhantering",
+    "addUser": "Lägg till användare",
+    "username": "Användarnamn",
+    "email": "E-post",
+    "search": "Sök användare...",
+    "details": "Detaljer",
+    "edit": "Redigera",
+    "delete": "Radera",
+    "update": "Uppdatera användare",
+    "cancel": "Avbryt"
+  },
+  "userDetails": {
+    "createdAt": "Skapad"
+  },
+  "common": {
+    "loading": "Laddar..."
+  }
+}

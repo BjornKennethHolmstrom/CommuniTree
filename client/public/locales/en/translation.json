@@ -1,0 +1,21 @@
+{
+  "appName": "CommuniTree",
+  "userManagement": {
+    "title": "User Management",
+    "addUser": "Add User",
+    "username": "Username",
+    "email": "Email",
+    "search": "Search users...",
+    "details": "Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update User",
+    "cancel": "Cancel"
+  },
+  "userDetails": {
+    "createdAt": "Created at"
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}
