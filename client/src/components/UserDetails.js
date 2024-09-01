@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 function UserDetails({ userId, onClose }) {
   const [user, setUser] = useState(null);
+  const { user: authUser } = useAuth();
 
   useEffect(() => {
-    fetch(`/api/users/${userId}`)
+    fetch(`/api/users/${userId}`, {
+      headers: {
+        'x-auth-token': authUser.token
+      }
+    })
       .then(response => response.json())
       .then(data => setUser(data))
       .catch(error => console.error('Error fetching user details:', error));
-  }, [userId]);
+  }, [userId, authUser.token]);
 
   if (!user) return <div>Loading...</div>;
 

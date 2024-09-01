@@ -4,9 +4,13 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 
 ## Features
 
-- User management system
+- User management system with CRUD operations
 - Multi-language support (English and Swedish)
-- [List other key features as they are developed]
+- Project management system with CRUD operations
+- Search and filter functionality for projects
+- Pagination for project listing
+- User authentication system with JWT
+- Protected routes for authenticated users
 
 ## Getting Started
 
@@ -19,7 +23,7 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/communitree.git
+   git clone https://github.com/BjornKennethHolmstrom/CommuniTree.git
    cd communitree
    ```
 
@@ -51,9 +55,8 @@ We welcome contributions to CommuniTree! Please read our contributing guidelines
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under a custom license - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgments
 
 - Claude 3.5 Sonnet for invaluable assistance
-

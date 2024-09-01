@@ -67,4 +67,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.post('/login', userController.login);
+
 module.exports = router;

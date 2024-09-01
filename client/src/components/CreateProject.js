@@ -1,13 +1,17 @@
 import React from 'react';
 import ProjectForm from './ProjectForm';
+import { useAuth } from './AuthContext';
 
 const CreateProject = () => {
+  const { user } = useAuth();
+
   const handleSubmit = async (projectData) => {
     try {
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-auth-token': user.token
         },
         body: JSON.stringify(projectData),
       });

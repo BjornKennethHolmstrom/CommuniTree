@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useAuth } from './AuthContext';
 
 function AddUserForm({ onUserAdded }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const { user } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -10,6 +12,7 @@ function AddUserForm({ onUserAdded }) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-auth-token': user.token
       },
       body: JSON.stringify({ username, email }),
     })

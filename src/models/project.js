@@ -13,12 +13,30 @@ const Project = {
     return result.rows[0];
   },
 
-  async getAll(limit, offset) {
-    const countQuery = 'SELECT COUNT(*) FROM projects';
-    const projectsQuery = 'SELECT * FROM projects ORDER BY created_at DESC LIMIT $1 OFFSET $2';
+  async getAll(limit, offset, search, filter) {
+    let query = 'SELECT * FROM projects';
+    let countQuery = 'SELECT COUNT(*) FROM projects';
+    const queryParams = [];
+    let whereClause = '';
 
-    const countResult = await db.query(countQuery);
-    const projectsResult = await db.query(projectsQuery, [limit, offset]);
+    if (search) {
+      whereClause += ' WHERE (title ILIKE $1 OR description ILIKE $1)';
+      queryParams.push(`%${search}%`);
+    }
+
+    if (filter) {
+      whereClause += whereClause ? ' AND' : ' WHERE';
+      whereClause += ' status = $' + (queryParams.length + 1);
+      queryParams.push(filter);
+    }
+
+    query += whereClause + ' ORDER BY created_at DESC LIMIT $' + (queryParams.length + 1) + ' OFFSET $' + (queryParams.length + 2);
+    countQuery += whereClause;
+
+    queryParams.push(limit, offset);
+
+    const countResult = await db.query(countQuery, queryParams.slice(0, -2));
+    const projectsResult = await db.query(query, queryParams);
 
     return {
       projects: projectsResult.rows,

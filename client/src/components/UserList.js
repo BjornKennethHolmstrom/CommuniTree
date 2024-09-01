@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import AddUserForm from './AddUserForm';
 import UserDetails from './UserDetails';
 import EditUserForm from './EditUserForm';
+import { useAuth } from './AuthContext';
 
 function UserList() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
@@ -16,7 +18,11 @@ function UserList() {
   }, []);
 
   const fetchUsers = () => {
-    fetch('/api/users')
+    fetch('/api/users', {
+      headers: {
+        'x-auth-token': user.token
+      }
+    })
       .then(response => response.json())
       .then(data => setUsers(data))
       .catch(error => console.error('Error fetching users:', error));
@@ -32,7 +38,12 @@ function UserList() {
   };
 
   const handleDeleteUser = (userId) => {
-    fetch(`/api/users/${userId}`, { method: 'DELETE' })
+    fetch(`/api/users/${userId}`, { 
+      method: 'DELETE',
+      headers: {
+        'x-auth-token': user.token
+      }
+    })
       .then(() => {
         setUsers(users.filter(user => user.id !== userId));
       })

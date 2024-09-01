@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const ProjectDetails = () => {
+  const { user } = useAuth();
   const [project, setProject] = useState(null);
   const [volunteers, setVolunteers] = useState([]);
   const { id } = useParams();
@@ -13,7 +15,11 @@ const ProjectDetails = () => {
 
   const fetchProjectDetails = async () => {
     try {
-      const response = await fetch(`/api/projects/${id}`);
+      const response = await fetch(`/api/projects/${id}`, {
+        headers: {
+          'x-auth-token': user.token
+        }
+      });
       const data = await response.json();
       setProject(data);
     } catch (error) {
@@ -23,7 +29,11 @@ const ProjectDetails = () => {
 
   const fetchProjectVolunteers = async () => {
     try {
-      const response = await fetch(`/api/projects/${id}/volunteers`);
+      const response = await fetch(`/api/projects/${id}/volunteers`, {
+        headers: {
+          'x-auth-token': user.token
+        }
+      });
       const data = await response.json();
       setVolunteers(data);
     } catch (error) {
@@ -37,8 +47,11 @@ const ProjectDetails = () => {
       const userId = localStorage.getItem('userId');
       const response = await fetch('/api/projects/volunteer', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ project_id: id, user_id: userId }),
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth-token': user.token
+        },
+        body: JSON.stringify({ project_id: id }),
       });
       if (response.ok) {
         alert('You have successfully signed up as a volunteer!');

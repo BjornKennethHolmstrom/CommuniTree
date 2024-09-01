@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 function EditUserForm({ user, onUserUpdated, onCancel }) {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
+  const { user: authUser } = useAuth();
 
   useEffect(() => {
     setUsername(user.username);
@@ -15,6 +17,7 @@ function EditUserForm({ user, onUserUpdated, onCancel }) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'x-auth-token': authUser.token
       },
       body: JSON.stringify({ username, email }),
     })
