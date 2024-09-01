@@ -20,6 +20,9 @@ yarn-debug.log*
 yarn-error.log*
 *.log
 
+# Documents assisting individual developer
+/docs
+
 # Editor directories and files
 .idea
 .vscode
