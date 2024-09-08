@@ -9,6 +9,9 @@ const ProjectForm = ({ project, onSubmit }) => {
   const [location, setLocation] = useState(project?.location || '');
   const [errors, setErrors] = useState({});
 
+  const [categoryId, setCategoryId] = useState(project?.category_id || '');
+  const [categories, setCategories] = useState([]);
+
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -22,6 +25,15 @@ const ProjectForm = ({ project, onSubmit }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await fetch('/api/categories');
+      const data = await response.json();
+      setCategories(data);
+    };
+    fetchCategories();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -31,6 +43,7 @@ const ProjectForm = ({ project, onSubmit }) => {
         required_skills: requiredSkills.split(',').map(skill => skill.trim()),
         time_commitment: timeCommitment,
         location,
+        category_id: categoryId
       };
       await onSubmit(projectData);
       navigate('/projects');
@@ -92,6 +105,20 @@ const ProjectForm = ({ project, onSubmit }) => {
           className="w-full px-3 py-2 border rounded"
         />
         {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
+      </div>
+      <div className="mb-4">
+        <label htmlFor="category" className="block mb-2">Category</label>
+        <select
+          id="category"
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
+          className="w-full px-3 py-2 border rounded"
+        >
+          <option value="">Select a category</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
       </div>
       <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         {project ? 'Update Project' : 'Create Project'}

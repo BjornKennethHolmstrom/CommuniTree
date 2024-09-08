@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../config/database');
+const auth = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM users ORDER BY created_at DESC');
+    const result = await db.query('SELECT id, username, name FROM users WHERE id != $1 ORDER BY username', [req.user.id]);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });

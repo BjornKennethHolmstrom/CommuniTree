@@ -7,6 +7,8 @@ const ProjectDetails = () => {
   const [project, setProject] = useState(null);
   const [volunteers, setVolunteers] = useState([]);
   const { id } = useParams();
+  const [status, setStatus] = useState(project.status);
+
 
   useEffect(() => {
     fetchProjectDetails();
@@ -62,6 +64,25 @@ const ProjectDetails = () => {
     }
   };
 
+  const updateProjectStatus = async (newStatus) => {
+    try {
+      const response = await fetch(`/api/projects/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': user.token
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (response.ok) {
+        setStatus(newStatus);
+        alert('Project status updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating project status:', error);
+    }
+  };
+
   if (!project) return <div>Loading...</div>;
 
   return (
@@ -79,6 +100,14 @@ const ProjectDetails = () => {
           <li key={volunteer.id}>{volunteer.name}</li>
         ))}
       </ul>
+    </div>
+    <div>
+      <label>Update Status:</label>
+      <select value={status} onChange={(e) => updateProjectStatus(e.target.value)}>
+        <option value="open">Open</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Completed</option>
+      </select>
     </div>
   );
 };

@@ -11,6 +11,18 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Pagination for project listing
 - User authentication system with JWT
 - Protected routes for authenticated users
+- Messaging system for user communication
+- User profiles with edit capabilities
+- Notification system for user alerts
+
+## Technical Stack
+
+- Backend: Node.js with Express
+- Frontend: React (Create React App)
+- Database: PostgreSQL
+- State Management: React Hooks (useState, useEffect)
+- Internationalization: react-i18next
+- Authentication: JSON Web Tokens (JWT)
 
 ## Getting Started
 
@@ -48,6 +60,31 @@ CommuniTree is a community engagement platform designed to connect municipalitie
    ```
 
 6. Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
+
+## Project Structure
+
+The project follows a monorepo structure:
+
+```
+communitree/
+├── client/                 # React frontend
+│   ├── public/
+│   │   └── locales/        # Translation files
+│   └── src/
+│       ├── components/
+│       └── i18n.js         # i18next configuration
+├── src/                    # Express backend
+│   ├── routes/
+│   ├── models/
+│   └── controllers/
+├── config/
+│   └── database.js         # Database configuration
+├── .env                    # Environment variables
+├── server.js               # Main server file
+├── README.md
+├── CHANGELOG.md
+└── LICENSE.md              # Custom license
+```
 
 ## Contributing
 

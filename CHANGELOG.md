@@ -18,8 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pagination for project listing
 - User authentication system with JWT
 - Login component and protected routes
+- Messaging system with send and receive functionality
+- User profile component with edit capabilities
+- Notification system with create and fetch endpoints
 
 ### Changed
+- Updated user routes to include authentication middleware
+- Improved error handling and added loading states in components
 
 ### Deprecated
 
@@ -29,8 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - Implemented token-based authentication for API routes
+- Added authentication middleware to protect sensitive routes
 
-## [0.1.0] - YYYY-MM-DD
+## [0.1.0] - 2024-08-23
 - Initial release
 
 [Unreleased]: https://github.com/BjornKennentHolmstrom/CommuniTree/compare/v0.1.0...HEAD
