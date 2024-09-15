@@ -1,128 +1,105 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select } from '@/components/ui/select';
 
-const ProjectForm = ({ project, onSubmit }) => {
-  const [title, setTitle] = useState(project?.title || '');
-  const [description, setDescription] = useState(project?.description || '');
-  const [requiredSkills, setRequiredSkills] = useState(project?.required_skills?.join(', ') || '');
-  const [timeCommitment, setTimeCommitment] = useState(project?.time_commitment || '');
-  const [location, setLocation] = useState(project?.location || '');
-  const [errors, setErrors] = useState({});
-
-  const [categoryId, setCategoryId] = useState(project?.category_id || '');
-  const [categories, setCategories] = useState([]);
-
+const ProjectForm = ({ project, onSubmit, isLoading }) => {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      title: project?.title || '',
+      description: project?.description || '',
+      requiredSkills: project?.required_skills?.join(', ') || '',
+      timeCommitment: project?.time_commitment || '',
+      location: project?.location || '',
+      categoryId: project?.category_id || ''
+    }
+  });
   const navigate = useNavigate();
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!title.trim()) newErrors.title = 'Title is required';
-    if (!description.trim()) newErrors.description = 'Description is required';
-    if (!requiredSkills.trim()) newErrors.requiredSkills = 'At least one skill is required';
-    if (!timeCommitment.trim()) newErrors.timeCommitment = 'Time commitment is required';
-    if (!location.trim()) newErrors.location = 'Location is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const response = await fetch('/api/categories');
-      const data = await response.json();
-      setCategories(data);
+  const onSubmitForm = (data) => {
+    const projectData = {
+      ...data,
+      required_skills: data.requiredSkills.split(',').map(skill => skill.trim()),
     };
-    fetchCategories();
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      const projectData = {
-        title,
-        description,
-        required_skills: requiredSkills.split(',').map(skill => skill.trim()),
-        time_commitment: timeCommitment,
-        location,
-        category_id: categoryId
-      };
-      await onSubmit(projectData);
-      navigate('/projects');
-    }
+    onSubmit(projectData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-8">
-      <div className="mb-4">
-        <label htmlFor="title" className="block mb-2">Title</label>
-        <input
-          type="text"
+    <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
+      <div>
+        <label htmlFor="title" className="block mb-1">Title</label>
+        <Input
           id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
+          {...register('title', { required: 'Title is required' })}
+          className={errors.title ? 'border-red-500' : ''}
         />
-        {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
+        {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
       </div>
-      <div className="mb-4">
-        <label htmlFor="description" className="block mb-2">Description</label>
-        <textarea
+
+      <div>
+        <label htmlFor="description" className="block mb-1">Description</label>
+        <Textarea
           id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
-        ></textarea>
-        {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+          {...register('description', { required: 'Description is required' })}
+          className={errors.description ? 'border-red-500' : ''}
+        />
+        {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
       </div>
-      <div className="mb-4">
-        <label htmlFor="requiredSkills" className="block mb-2">Required Skills (comma-separated)</label>
-        <input
-          type="text"
+
+      <div>
+        <label htmlFor="requiredSkills" className="block mb-1">Required Skills (comma-separated)</label>
+        <Input
           id="requiredSkills"
-          value={requiredSkills}
-          onChange={(e) => setRequiredSkills(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
+          {...register('requiredSkills', { required: 'At least one skill is required' })}
+          className={errors.requiredSkills ? 'border-red-500' : ''}
         />
-        {errors.requiredSkills && <p className="text-red-500 text-sm mt-1">{errors.requiredSkills}</p>}
+        {errors.requiredSkills && <p className="text-red-500 text-sm mt-1">{errors.requiredSkills.message}</p>}
       </div>
-      <div className="mb-4">
-        <label htmlFor="timeCommitment" className="block mb-2">Time Commitment</label>
-        <input
-          type="text"
+
+      <div>
+        <label htmlFor="timeCommitment" className="block mb-1">Time Commitment</label>
+        <Input
           id="timeCommitment"
-          value={timeCommitment}
-          onChange={(e) => setTimeCommitment(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
+          {...register('timeCommitment', { required: 'Time commitment is required' })}
+          className={errors.timeCommitment ? 'border-red-500' : ''}
         />
-        {errors.timeCommitment && <p className="text-red-500 text-sm mt-1">{errors.timeCommitment}</p>}
+        {errors.timeCommitment && <p className="text-red-500 text-sm mt-1">{errors.timeCommitment.message}</p>}
       </div>
-      <div className="mb-4">
-        <label htmlFor="location" className="block mb-2">Location</label>
-        <input
-          type="text"
+
+      <div>
+        <label htmlFor="location" className="block mb-1">Location</label>
+        <Input
           id="location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
+          {...register('location', { required: 'Location is required' })}
+          className={errors.location ? 'border-red-500' : ''}
         />
-        {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
+        {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
       </div>
-      <div className="mb-4">
-        <label htmlFor="category" className="block mb-2">Category</label>
-        <select
-          id="category"
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
+
+      <div>
+        <label htmlFor="categoryId" className="block mb-1">Category</label>
+        <Select
+          id="categoryId"
+          {...register('categoryId', { required: 'Category is required' })}
+          className={errors.categoryId ? 'border-red-500' : ''}
         >
           <option value="">Select a category</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
-          ))}
-        </select>
+          {/* Add category options here */}
+        </Select>
+        {errors.categoryId && <p className="text-red-500 text-sm mt-1">{errors.categoryId.message}</p>}
       </div>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        {project ? 'Update Project' : 'Create Project'}
-      </button>
+
+      <div className="flex space-x-4">
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Submitting...' : (project ? 'Update Project' : 'Create Project')}
+        </Button>
+        <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './App.css';
 import UserList from './components/UserList';
@@ -8,28 +8,11 @@ import ProjectList from './components/ProjectList';
 import ProjectDetails from './components/ProjectDetails';
 import Login from './components/Login';
 import PrivateRoute from './components/PrivateRoute';
-import { AuthProvider, useAuth } from './components/AuthContext';
-import UserProfile from './components/UserProfile'; // Import the UserProfile component
-
-function Navigation() {
-  const { t } = useTranslation();
-  const { user, logout } = useAuth();
-
-  return (
-    <nav>
-      <Link to="/">{t('home')}</Link>
-      <Link to="/projects">{t('projects')}</Link>
-      {user ? (
-        <>
-          <Link to="/profile">{t('myProfile')}</Link>
-          <button onClick={logout}>{t('logout')}</button>
-        </>
-      ) : (
-        <Link to="/login">{t('login')}</Link>
-      )}
-    </nav>
-  );
-}
+import Dashboard from './components/Dashboard';
+import EventCalendar from './components/EventCalendar';
+import { AuthProvider } from './components/AuthContext';
+import UserProfile from './components/UserProfile';
+import Navigation from './components/Navigation'; // Import the new Navigation component
 
 function App() {
   const { t, ready } = useTranslation();
@@ -43,7 +26,7 @@ function App() {
           <header className="App-header">
             <h1>{t('appName')}</h1>
             <LanguageSwitcher />
-            <Navigation />
+            <Navigation /> {/* Use the new Navigation component here */}
           </header>
           <main>
             <Routes>
@@ -53,6 +36,8 @@ function App() {
                 <Route path="/projects" element={<ProjectList />} />
                 <Route path="/projects/:id" element={<ProjectDetails />} />
                 <Route path="/profile" element={<UserProfile />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/events" element={<EventCalendar />} />
               </Route>
             </Routes>
           </main>

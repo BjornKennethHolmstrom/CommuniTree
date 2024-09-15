@@ -23,6 +23,9 @@ yarn-error.log*
 # Documents assisting individual developer
 /docs
 
+# Users uploads
+uploads/*
+
 # Editor directories and files
 .idea
 .vscode

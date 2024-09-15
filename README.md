@@ -7,9 +7,12 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - User management system with CRUD operations
 - Multi-language support (English and Swedish)
 - Project management system with CRUD operations
-- Search and filter functionality for projects
-- Pagination for project listing
+- Event management system with CRUD operations
+- Community event calendar with RSVP functionality
+- Search and filter functionality for projects and events
+- Pagination for project and event listings
 - User authentication system with JWT
+- User roles and permissions (Admin, Regular User)
 - Protected routes for authenticated users
 - Messaging system for user communication
 - User profiles with edit capabilities
@@ -23,6 +26,7 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - State Management: React Hooks (useState, useEffect)
 - Internationalization: react-i18next
 - Authentication: JSON Web Tokens (JWT)
+- UI Components: Tailwind CSS and custom components
 
 ## Getting Started
 

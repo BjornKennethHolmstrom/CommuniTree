@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2024-09-15
 
 ### Added
 - Initial project setup
@@ -21,10 +21,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Messaging system with send and receive functionality
 - User profile component with edit capabilities
 - Notification system with create and fetch endpoints
+- Event management system with CRUD operations
+- Community event calendar functionality
+- RSVP feature for events
+- User roles and permissions system
+- Admin user creation script
+- Authentication routes and controller
 
 ### Changed
 - Updated user routes to include authentication middleware
 - Improved error handling and added loading states in components
+- Updated user table structure to include name, password, and updated_at columns
+- Modified ProjectDetails component to show edit/delete options only to admins or creators
+- Enhanced error handling and logging in admin user creation script
+
+### Security
+- Implemented role-based access control for projects and events
 
 ### Deprecated
 
