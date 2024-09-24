@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - 2024-09-24
 
 ### Added
-- Enhanced multi-language support with comprehensive translations for all components
+- Enhanced multi-language support with comprehensive translations for many components
 - Token refresh mechanism for improved authentication
 - Detailed project view component with volunteer management
 - Improved create project functionality
