@@ -56,8 +56,12 @@ const Project = {
 
   async getById(id) {
     try {
+      if (id === 'new') {
+        // Return an empty project object for new projects
+        return { id: 'new', title: '', description: '', required_skills: [], time_commitment: '', location: '' };
+      }
       const query = 'SELECT * FROM projects WHERE id = $1';
-      const result = await db.query(query, [id]);
+      const result = await db.query(query, [parseInt(id, 10)]);
       return result.rows[0];
     } catch (error) {
       console.error('Error getting by Id:', error);
@@ -120,17 +124,21 @@ const Project = {
 
   async getVolunteers(project_id) {
     try {
+      if (project_id === 'new') {
+        // Return an empty array for new projects
+        return [];
+      }
       const query = `
         SELECT u.id, u.name, u.email, pv.status, pv.joined_at
         FROM project_volunteers pv
         JOIN users u ON pv.user_id = u.id
         WHERE pv.project_id = $1
       `;
-      const result = await db.query(query, [project_id]);
+      const result = await db.query(query, [parseInt(project_id, 10)]);
       return result.rows;
     } catch (error) {
       console.error('Error getting volunteers', error);
-      throw new Error('Failed to get volunteeres');
+      throw new Error('Failed to get volunteers');
     }
   }
 };

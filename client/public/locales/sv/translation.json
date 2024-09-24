@@ -1,5 +1,12 @@
 {
   "appName": "CommuniTree",
+  "home": "Hem",
+  "projects": "Projekt",
+  "eventCalendar": "Evenemangskalender",
+  "dashboard": "Panel",
+  "myProfile": "Min profil",
+  "login": "Logga in",
+  "logout": "Logga ut",
   "userManagement": {
     "title": "Användarhantering",
     "addUser": "Lägg till användare",
@@ -16,6 +23,88 @@
     "createdAt": "Skapad"
   },
   "common": {
-    "loading": "Laddar..."
+    "loading": "Laddar...",
+    "error": "Ett fel inträffade",
+    "success": "Åtgärden lyckades",
+    "cancel": "Avbryt",
+    "save": "Spara",
+    "edit": "Redigera",
+    "delete": "Radera",
+    "confirm": "Bekräfta",
+    "status": "Status"
+  },
+  "dashboard": {
+    "title": "Din Panel",
+    "projectsCreated": "Skapade Projekt",
+    "volunteeringHours": "Volontärtimmar",
+    "communitiesImpacted": "Påverkade Samhällen",
+    "yourProjects": "Dina Projekt",
+    "noProjects": "Du har inte skapat några projekt än.",
+    "viewProject": "Visa Projekt",
+    "yourVolunteerActivities": "Dina Volontäraktiviteter",
+    "noVolunteerActivities": "Du har inte anmält dig som volontär för några projekt än.",
+    "role": "Roll",
+    "hours": "Timmar"
+  },
+  "eventCalendar": {
+    "title": "Evenemangskalender för samhället",
+    "addEvent": "Lägg till evenemang",
+    "editEvent": "Redigera evenemang",
+    "deleteEvent": "Radera evenemang",
+    "eventDetails": "Evenemangsdetaljer",
+    "location": "Plats",
+    "start": "Börjar",
+    "end": "Slutar",
+    "rsvp": "RSVP",
+    "selectRsvp": "Välj ditt RSVP",
+    "attending": "Deltar",
+    "notAttending": "Deltar inte",
+    "maybe": "Kanske",
+    "attendees": "Deltagare",
+    "confirmDelete": "Bekräfta radering",
+    "deleteConfirmation": "Är du säker på att du vill radera detta evenemang?",
+    "cancel": "Avbryt"
+  },
+  "createProject": {
+    "title": "Skapa nytt projekt",
+    "success": "Projekt skapat framgångsrikt!",
+    "error": "Fel vid skapande av projekt:"
+  },
+  "projectDetails": {
+    "loading": "Laddar projektdetaljer...",
+    "notFound": "Projekt hittades inte",
+    "requiredSkills": "Nödvändiga färdigheter",
+    "timeCommitment": "Tidsåtagande",
+    "location": "Plats",
+    "volunteerSignUp": "Anmäl dig som volontär",
+    "volunteerSuccess": "Du har framgångsrikt anmält dig som volontär!",
+    "editProject": "Redigera projekt",
+    "deleteProject": "Radera projekt",
+    "deleteConfirmation": "Är du säker på att du vill radera detta projekt?",
+    "currentVolunteers": "Nuvarande volontärer",
+    "noVolunteers": "Inga volontärer än",
+    "updateStatus": "Uppdatera status",
+    "statusOpen": "Öppen",
+    "statusInProgress": "Pågående",
+    "statusCompleted": "Avslutad"
+  },
+  "projectForm": {
+    "title": "Titel",
+    "titleRequired": "Titel krävs",
+    "description": "Beskrivning",
+    "descriptionRequired": "Beskrivning krävs",
+    "requiredSkills": "Nödvändiga färdigheter (kommaseparerade)",
+    "skillsRequired": "Minst en färdighet krävs",
+    "timeCommitment": "Tidsåtagande",
+    "timeCommitmentRequired": "Tidsåtagande krävs",
+    "location": "Plats",
+    "locationRequired": "Plats krävs",
+    "category": "Kategori",
+    "categoryRequired": "Kategori krävs",
+    "selectCategory": "Välj en kategori",
+    "submit": "Skicka in",
+    "submitting": "Skickar in...",
+    "update": "Uppdatera projekt",
+    "create": "Skapa projekt"
   }
 }

@@ -5,18 +5,19 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 ## Features
 
 - User management system with CRUD operations
-- Multi-language support (English and Swedish)
-- Project management system with CRUD operations
+- Enhanced multi-language support (English and Swedish) with comprehensive translations
+- Project management system with CRUD operations and detailed project views
 - Event management system with CRUD operations
 - Community event calendar with RSVP functionality
 - Search and filter functionality for projects and events
 - Pagination for project and event listings
-- User authentication system with JWT
+- User authentication system with JWT and token refresh mechanism
 - User roles and permissions (Admin, Regular User)
 - Protected routes for authenticated users
 - Messaging system for user communication
 - User profiles with edit capabilities
 - Notification system for user alerts
+- Improved error handling and user feedback
 
 ## Technical Stack
 
@@ -26,7 +27,7 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - State Management: React Hooks (useState, useEffect)
 - Internationalization: react-i18next
 - Authentication: JSON Web Tokens (JWT)
-- UI Components: Tailwind CSS and custom components
+- UI Components: Chakra UI and custom components
 
 ## Getting Started
 
@@ -70,24 +71,135 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 The project follows a monorepo structure:
 
 ```
-communitree/
-├── client/                 # React frontend
-│   ├── public/
-│   │   └── locales/        # Translation files
-│   └── src/
-│       ├── components/
-│       └── i18n.js         # i18next configuration
-├── src/                    # Express backend
-│   ├── routes/
-│   ├── models/
-│   └── controllers/
-├── config/
-│   └── database.js         # Database configuration
-├── .env                    # Environment variables
-├── server.js               # Main server file
-├── README.md
+CommuniTree
+├── babel.config.js
 ├── CHANGELOG.md
-└── LICENSE.md              # Custom license
+├── client
+│   ├── components
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── locales
+│   │   │   ├── en
+│   │   │   │   └── translation.json
+│   │   │   └── sv
+│   │   │       └── translation.json
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
+│   ├── README.md
+│   └── src
+│       ├── App.css
+│       ├── App.js
+│       ├── App.test.js
+│       ├── assets
+│       ├── components
+│       │   ├── AddUserForm.js
+│       │   ├── AuthContext.js
+│       │   ├── Comments.js
+│       │   ├── CreateProject.js
+│       │   ├── Dashboard.js
+│       │   ├── EditUserForm.js
+│       │   ├── EventCalendar.js
+│       │   ├── FileUpload.js
+│       │   ├── LanguageSwitcher.js
+│       │   ├── Login.js
+│       │   ├── Login.test.js
+│       │   ├── MessagingComponent.js
+│       │   ├── Navigation.js
+│       │   ├── NotificationComponent.js
+│       │   ├── PrivateRoute.js
+│       │   ├── ProjectDetails.js
+│       │   ├── ProjectForm.js
+│       │   ├── ProjectList.js
+│       │   ├── ui
+│       │   │   └── alert.js
+│       │   ├── UserDetails.js
+│       │   ├── UserList.js
+│       │   └── UserProfile.js
+│       ├── i18n.js
+│       ├── index.css
+│       ├── index.js
+│       ├── logo.svg
+│       ├── reportWebVitals.js
+│       └── setupTests.js
+├── config
+│   └── database.js
+├── cypress.config.js
+├── docs
+│   ├── communitree-project-summary.md
+│   ├── communitree-roadmap.md
+│   ├── features-ideas-and-considerations.md
+│   ├── message-for-next-session.md
+│   └── postgresql-management-guide.md
+├── jest.config.js
+├── LICENSE.md
+├── package.json
+├── package-lock.json
+├── README.md
+├── scripts
+│   └── createAdminUser.js
+├── server.js
+├── src
+│   ├── controllers
+│   │   ├── authController.js
+│   │   ├── commentController.js
+│   │   ├── dashboardController.js
+│   │   ├── eventController.js
+│   │   ├── fileController.js
+│   │   ├── projectController.js
+│   │   └── userController.js
+│   ├── middleware
+│   │   ├── auth.js
+│   │   └── checkPermission.js
+│   ├── __mocks__
+│   │   └── database.js
+│   ├── models
+│   │   ├── event.js
+│   │   ├── project.js
+│   │   └── user.js
+│   └── routes
+│       ├── authRoutes.js
+│       ├── commentRoutes.js
+│       ├── dashboardRoutes.js
+│       ├── eventRoutes.js
+│       ├── fileRoutes.js
+│       ├── messageRoutes.js
+│       ├── notificationRoutes.js
+│       ├── projectRoutes.js
+│       ├── users (copy).js
+│       └── users.js
+├── start.js
+├── tests
+│   ├── api
+│   │   ├── auth.test.js
+│   │   └── project.test.js
+│   ├── controllers
+│   │   ├── authController.test.js
+│   │   ├── commentController.test.js
+│   │   ├── dashboardController.test.js
+│   │   ├── eventController.test.js
+│   │   ├── fileController.test.js
+│   │   ├── projectController.test.js
+│   │   └── userController.test.js
+│   ├── integration
+│   │   └── projectFlow.test.js
+│   ├── routes
+│   │   ├── authRoutes.test.js
+│   │   ├── commentRoutes.test.js
+│   │   ├── dashboardRoutes.test.js
+│   │   ├── eventRoutes.test.js
+│   │   ├── fileRoutes.test.js
+│   │   ├── messageRoutes.test.js
+│   │   ├── notificationRoutes.test.js
+│   │   ├── projectRoutes.test.js
+│   │   └── users.test.js
+│   └── setup.js
+└── uploads
+
 ```
 
 ## Contributing

@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { debounce } from 'lodash';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Alert } from '@/components/ui/alert';
+import {
+  Button, Input, Select, Alert, AlertIcon,
+  Box, VStack, Heading, Text, Flex
+} from '@chakra-ui/react';
 
 const ProjectList = () => {
   const { user } = useAuth();
@@ -19,7 +19,7 @@ const ProjectList = () => {
 
   const fetchProjects = useCallback(async (page, searchTerm, filterTerm) => {
     if (!hasMore) return;
-    
+
     setLoading(true);
     setError(null);
     try {
@@ -68,18 +68,17 @@ const ProjectList = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Community Projects</h2>
+    <Box maxW="4xl" mx="auto" mt={8}>
+      <Heading as="h2" size="xl" mb={4}>Community Projects</Heading>
       <Link to="/projects/new">
-        <Button className="mb-4">Create New Project</Button>
+        <Button colorScheme="blue" mb={4}>Create New Project</Button>
       </Link>
-      <div className="mb-4 flex space-x-2">
+      <Flex mb={4}>
         <Input
-          type="text"
           placeholder="Search projects..."
           value={search}
           onChange={handleSearchChange}
-          className="flex-grow"
+          mr={2}
         />
         <Select value={filter} onChange={handleFilterChange}>
           <option value="">All Statuses</option>
@@ -87,31 +86,31 @@ const ProjectList = () => {
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
         </Select>
-      </div>
-      {error && <Alert variant="destructive" className="mb-4">{error}</Alert>}
+      </Flex>
+      {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
       {projects.length === 0 && !loading ? (
-        <p>No projects available.</p>
+        <Text>No projects available.</Text>
       ) : (
-        <ul className="space-y-4">
+        <VStack spacing={4} align="stretch">
           {projects.map((project) => (
-            <li key={project.id} className="border p-4 rounded">
-              <h3 className="text-xl font-semibold">{project.title}</h3>
-              <p className="mt-2">{project.description}</p>
-              <p className="mt-2">Status: {project.status}</p>
-              <Link to={`/projects/${project.id}`}>
-                <Button variant="link" className="mt-2">View Details</Button>
-              </Link>
-            </li>
+            <Box key={project.id} borderWidth={1} borderRadius="lg" p={4}>
+              <Heading as="h3" size="md">{project.title}</Heading>
+              <Text mt={2}>{project.description}</Text>
+              <Text mt={2}>Status: {project.status}</Text>
+              <Button as={Link} to={`/projects/${project.id}`} variant="link" mt={2}>
+                View Details
+              </Button>
+            </Box>
           ))}
-        </ul>
+        </VStack>
       )}
-      {loading && <p className="text-center mt-4">Loading projects...</p>}
+      {loading && <Text textAlign="center" mt={4}>Loading projects...</Text>}
       {hasMore && !loading && (
-        <Button onClick={loadMore} className="mt-4 mx-auto block">
+        <Button onClick={loadMore} mt={4} mx="auto" display="block">
           Load More
         </Button>
       )}
-    </div>
+    </Box>
   );
 };
 

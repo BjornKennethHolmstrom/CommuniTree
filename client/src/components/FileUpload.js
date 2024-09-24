@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/ui/alert';
+import { Button, Alert, AlertIcon, VStack, Text, Link, Input, Box } from '@chakra-ui/react';
 
 const FileUpload = ({ projectId }) => {
   const { user } = useAuth();
@@ -10,7 +9,9 @@ const FileUpload = ({ projectId }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchUploadedFiles();
+    if (projectId && projectId !== 'new') {
+      fetchUploadedFiles();
+    }
   }, [projectId]);
 
   const fetchUploadedFiles = async () => {
@@ -33,7 +34,7 @@ const FileUpload = ({ projectId }) => {
   const handleUpload = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    files.forEach(file => formData.append('file', file)); // Change 'files' to 'file'
+    files.forEach(file => formData.append('file', file));
 
     try {
       const response = await fetch(`/api/projects/${projectId}/upload`, {
@@ -50,35 +51,41 @@ const FileUpload = ({ projectId }) => {
   };
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-semibold mb-4">Project Files</h3>
-      {error && <Alert variant="destructive" className="mb-4">{error}</Alert>}
-      <ul className="mb-4">
-        {uploadedFiles.map((file) => (
-          <li key={file.id} className="mb-2">
-            <a href={`/api/projects/files/${file.id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-              {file.file_name}
-            </a>
-            <span className="text-gray-500 ml-2">({(file.file_size / 1024).toFixed(2)} KB)</span>
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={handleUpload} className="space-y-2">
-        <input
-          type="file"
-          onChange={handleFileChange}
-          multiple
-          className="block w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-full file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100"
-        />
-        <Button type="submit" disabled={files.length === 0}>
-          Upload Files
-        </Button>
-      </form>
-    </div>
+    <Box mt={8}>
+      <Text fontSize="xl" fontWeight="semibold" mb={4}>Project Files</Text>
+      {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
+      {projectId === 'new' ? (
+        <Text>File upload will be available after creating the project.</Text>
+      ) : (
+        <>
+          <VStack align="stretch" spacing={2} mb={4}>
+            {uploadedFiles.map((file) => (
+              <Box key={file.id}>
+                <Link href={`/api/projects/files/${file.id}`} isExternal color="blue.500" _hover={{ textDecoration: 'underline' }}>
+                  {file.file_name}
+                </Link>
+                <Text as="span" color="gray.500" ml={2}>({(file.file_size / 1024).toFixed(2)} KB)</Text>
+              </Box>
+            ))}
+          </VStack>
+          <form onSubmit={handleUpload}>
+            <VStack align="stretch" spacing={2}>
+              <Input
+                type="file"
+                onChange={handleFileChange}
+                multiple
+                accept="*/*"
+                py={1}
+              />
+              <Button type="submit" isDisabled={files.length === 0} colorScheme="blue">
+                Upload Files
+              </Button>
+            </VStack>
+          </form>
+        </>
+      )}
+    </Box>
   );
 };
+
+export default FileUpload;

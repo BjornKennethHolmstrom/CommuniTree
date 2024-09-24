@@ -28,6 +28,7 @@ const projectController = {
         totalProjects: total
       });
     } catch (error) {
+      console.error('Error fetching projects:', error);
       res.status(500).json({ error: 'Error fetching projects' });
     }
   },
@@ -41,6 +42,7 @@ const projectController = {
         res.status(404).json({ error: 'Project not found' });
       }
     } catch (error) {
+      console.error('Error fetching project:', error);
       res.status(500).json({ error: 'Error fetching project' });
     }
   },
@@ -82,6 +84,7 @@ const projectController = {
       const volunteers = await Project.getVolunteers(req.params.id);
       res.json(volunteers);
     } catch (error) {
+      console.error('Error fetching project volunteers:', error);
       res.status(500).json({ error: 'Error fetching project volunteers' });
     }
   }

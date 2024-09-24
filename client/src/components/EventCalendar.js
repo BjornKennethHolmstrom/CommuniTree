@@ -3,16 +3,32 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useAuth } from './AuthContext';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert } from "@/components/ui/alert";
-import { Select } from "@/components/ui/select";
+import { useTranslation } from 'react-i18next';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  Input,
+  Textarea,
+  Select,
+  VStack,
+  Text,
+  Heading,
+  Alert,
+  AlertIcon,
+  Box
+} from '@chakra-ui/react';
 
 const localizer = momentLocalizer(moment);
 
 const EventCalendar = () => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -20,19 +36,12 @@ const EventCalendar = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({ title: '', description: '', start: null, end: null, location: '' });
   const [error, setError] = useState('');
-  const { user } = useAuth();
   const [rsvpStatus, setRsvpStatus] = useState(null);
   const [attendees, setAttendees] = useState([]);
 
   useEffect(() => {
     fetchEvents();
   }, []);
-
-  const { user } = useAuth();
-
-  const canEditEvent = (event) => {
-    return user.role === 'admin' || event.organizer_id === user.id;
-  };
 
   const fetchEvents = async () => {
     try {
@@ -67,26 +76,34 @@ const EventCalendar = () => {
 
   const handleAddEvent = async () => {
     try {
+      const eventData = {
+        title: newEvent.title,
+        description: newEvent.description,
+        start_time: newEvent.start.toISOString(),
+        end_time: newEvent.end.toISOString(),
+        location: newEvent.location,
+        organizer_id: user.id // Make sure this is correct
+      };
+
       const response = await fetch('/api/events', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-auth-token': user.token
         },
-        body: JSON.stringify({
-          ...newEvent,
-          start_time: newEvent.start,
-          end_time: newEvent.end
-        })
+        body: JSON.stringify(eventData)
       });
-      if (!response.ok) throw new Error('Failed to add event');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.details || 'Failed to add event');
+      }
+
       const addedEvent = await response.json();
-      setEvents([...events, { ...addedEvent, start: new Date(addedEvent.start_time), end: new Date(addedEvent.end_time) }]);
-      setIsAddModalOpen(false);
-      setNewEvent({ title: '', description: '', start: null, end: null, location: '' });
+      // ... rest of the function
     } catch (error) {
       console.error('Error adding event:', error);
-      setError('Failed to add event. Please try again.');
+      setError('Failed to add event. ' + error.message);
     }
   };
 
@@ -177,159 +194,175 @@ const EventCalendar = () => {
     }
   };
 
-  return (
-    <div className="h-screen p-4">
-      <h2 className="text-2xl font-bold mb-4">Community Event Calendar</h2>
-      {error && <Alert variant="destructive" className="mb-4">{error}</Alert>}
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
-        selectable
-        style={{ height: 'calc(100% - 80px)' }}
-      />
+     const canEditEvent = (event) => {
+       if (!event || !user) return false;
+       return user.role === 'admin' || event.organizer_id === user.id;
+     };
 
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Event Details</DialogTitle>
-          </DialogHeader>
-          {selectedEvent && (
-            <>
-              <h3 className="text-lg font-semibold">{selectedEvent.title}</h3>
-              <p>{selectedEvent.description}</p>
-              <p>Location: {selectedEvent.location}</p>
-              <p>Start: {moment(selectedEvent.start).format('MMMM Do YYYY, h:mm a')}</p>
-              <p>End: {moment(selectedEvent.end).format('MMMM Do YYYY, h:mm a')}</p>
-              
-              <div className="mt-4">
-                <h4 className="font-semibold">RSVP</h4>
-                <Select
-                  value={rsvpStatus || ''}
-                  onValueChange={handleRSVP}
-                >
-                  <option value="">Select your RSVP</option>
-                  <option value="attending">Attending</option>
-                  <option value="not_attending">Not Attending</option>
-                  <option value="maybe">Maybe</option>
-                </Select>
-              </div>
+     return (
+       <Box h="100vh" p={4}>
+         <Heading as="h2" size="xl" mb={4}>{t('eventCalendar.title')}</Heading>
+         {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
+         <Calendar
+           localizer={localizer}
+           events={events}
+           startAccessor="start"
+           endAccessor="end"
+           onSelectSlot={handleSelectSlot}
+           onSelectEvent={handleSelectEvent}
+           selectable
+           style={{ height: 'calc(100% - 80px)' }}
+         />
 
-              <div className="mt-4">
-                <h4 className="font-semibold">Attendees</h4>
-                <ul>
-                  {attendees.map((attendee) => (
-                    <li key={attendee.id}>
-                      {attendee.name} - {attendee.status}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+         <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+           <ModalOverlay />
+           <ModalContent>
+             <ModalHeader>{t('eventCalendar.eventDetails')}</ModalHeader>
+             <ModalCloseButton />
+             <ModalBody>
+               {selectedEvent && (
+                 <VStack align="stretch" spacing={4}>
+                   <Heading size="md">{selectedEvent.title}</Heading>
+                   <Text>{selectedEvent.description}</Text>
+                   <Text>{t('eventCalendar.location')}: {selectedEvent.location}</Text>
+                   <Text>{t('eventCalendar.start')}: {moment(selectedEvent.start).format('MMMM Do YYYY, h:mm a')}</Text>
+                   <Text>{t('eventCalendar.end')}: {moment(selectedEvent.end).format('MMMM Do YYYY, h:mm a')}</Text>
 
-              {canEditEvent(selectedEvent) && (
-                <DialogFooter>
-                  <Button onClick={() => setIsEditModalOpen(false)}>Edit Event</Button>
-                  <Button variant="destructive" onClick={() => setIsDeleteModalOpen(true)}>Delete Event</Button>
-                </DialogFooter>
-              )}
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+                   <Box>
+                     <Heading size="sm">{t('eventCalendar.rsvp')}</Heading>
+                     <Select
+                       value={rsvpStatus || ''}
+                       onChange={(e) => handleRSVP(e.target.value)}
+                     >
+                       <option value="">{t('eventCalendar.selectRsvp')}</option>
+                       <option value="attending">{t('eventCalendar.attending')}</option>
+                       <option value="not_attending">{t('eventCalendar.notAttending')}</option>
+                       <option value="maybe">{t('eventCalendar.maybe')}</option>
+                     </Select>
+                   </Box>
 
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Event</DialogTitle>
-          </DialogHeader>
-          <Input
-            placeholder="Event Title"
-            value={newEvent.title}
-            onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-          />
-          <Textarea
-            placeholder="Event Description"
-            value={newEvent.description}
-            onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-          />
-          <Input
-            placeholder="Location"
-            value={newEvent.location}
-            onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-          />
-          <Input
-            type="datetime-local"
-            value={newEvent.start ? moment(newEvent.start).format('YYYY-MM-DDTHH:mm') : ''}
-            onChange={(e) => setNewEvent({ ...newEvent, start: new Date(e.target.value) })}
-          />
-          <Input
-            type="datetime-local"
-            value={newEvent.end ? moment(newEvent.end).format('YYYY-MM-DDTHH:mm') : ''}
-            onChange={(e) => setNewEvent({ ...newEvent, end: new Date(e.target.value) })}
-          />
-          <DialogFooter>
-            <Button onClick={handleAddEvent}>Add Event</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                   <Box>
+                     <Heading size="sm">{t('eventCalendar.attendees')}</Heading>
+                     <VStack align="stretch">
+                       {attendees.map((attendee) => (
+                         <Text key={attendee.id}>
+                           {attendee.name} - {attendee.status}
+                         </Text>
+                       ))}
+                     </VStack>
+                   </Box>
+                 </VStack>
+               )}
+             </ModalBody>
+             <ModalFooter>
+               {canEditEvent(selectedEvent) && (
+                 <>
+                   <Button onClick={() => setIsEditModalOpen(false)}>{t('eventCalendar.editEvent')}</Button>
+                   <Button colorScheme="red" ml={3} onClick={() => setIsDeleteModalOpen(true)}>{t('eventCalendar.deleteEvent')}</Button>
+                 </>
+               )}
+             </ModalFooter>
+           </ModalContent>
+         </Modal>
 
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Event</DialogTitle>
-          </DialogHeader>
-          {selectedEvent && (
-            <>
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add New Event</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
               <Input
                 placeholder="Event Title"
-                value={selectedEvent.title}
-                onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })}
+                value={newEvent.title}
+                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
               />
               <Textarea
                 placeholder="Event Description"
-                value={selectedEvent.description}
-                onChange={(e) => setSelectedEvent({ ...selectedEvent, description: e.target.value })}
+                value={newEvent.description}
+                onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
               />
               <Input
                 placeholder="Location"
-                value={selectedEvent.location}
-                onChange={(e) => setSelectedEvent({ ...selectedEvent, location: e.target.value })}
+                value={newEvent.location}
+                onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
               />
               <Input
                 type="datetime-local"
-                value={moment(selectedEvent.start).format('YYYY-MM-DDTHH:mm')}
-                onChange={(e) => setSelectedEvent({ ...selectedEvent, start: new Date(e.target.value) })}
+                value={newEvent.start ? moment(newEvent.start).format('YYYY-MM-DDTHH:mm') : ''}
+                onChange={(e) => setNewEvent({ ...newEvent, start: new Date(e.target.value) })}
               />
               <Input
                 type="datetime-local"
-                value={moment(selectedEvent.end).format('YYYY-MM-DDTHH:mm')}
-                onChange={(e) => setSelectedEvent({ ...selectedEvent, end: new Date(e.target.value) })}
+                value={newEvent.end ? moment(newEvent.end).format('YYYY-MM-DDTHH:mm') : ''}
+                onChange={(e) => setNewEvent({ ...newEvent, end: new Date(e.target.value) })}
               />
-              <DialogFooter>
-                <Button onClick={handleEditEvent}>Update Event</Button>
-                <Button variant="destructive" onClick={() => setIsDeleteModalOpen(true)}>Delete Event</Button>
-              </DialogFooter>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleAddEvent}>Add Event</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
-      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-          </DialogHeader>
-          <p>Are you sure you want to delete this event?</p>
-          <DialogFooter>
-            <Button variant="destructive" onClick={handleDeleteEvent}>Delete</Button>
-            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Event</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedEvent && (
+              <VStack spacing={4}>
+                <Input
+                  placeholder="Event Title"
+                  value={selectedEvent.title}
+                  onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })}
+                />
+                <Textarea
+                  placeholder="Event Description"
+                  value={selectedEvent.description}
+                  onChange={(e) => setSelectedEvent({ ...selectedEvent, description: e.target.value })}
+                />
+                <Input
+                  placeholder="Location"
+                  value={selectedEvent.location}
+                  onChange={(e) => setSelectedEvent({ ...selectedEvent, location: e.target.value })}
+                />
+                <Input
+                  type="datetime-local"
+                  value={moment(selectedEvent.start).format('YYYY-MM-DDTHH:mm')}
+                  onChange={(e) => setSelectedEvent({ ...selectedEvent, start: new Date(e.target.value) })}
+                />
+                <Input
+                  type="datetime-local"
+                  value={moment(selectedEvent.end).format('YYYY-MM-DDTHH:mm')}
+                  onChange={(e) => setSelectedEvent({ ...selectedEvent, end: new Date(e.target.value) })}
+                />
+              </VStack>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleEditEvent}>Update Event</Button>
+            <Button colorScheme="red" ml={3} onClick={() => setIsDeleteModalOpen(true)}>Delete Event</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Deletion</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Are you sure you want to delete this event?</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" onClick={handleDeleteEvent}>Delete</Button>
+            <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} ml={3}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Box>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { Box, VStack, Heading, Text, Button, Input, Textarea, Spinner, Alert, AlertIcon, FormControl, FormLabel } from '@chakra-ui/react';
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -8,23 +9,34 @@ const UserProfile = () => {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    if (user && user.id) {
+      fetchUserProfile();
+    }
+  }, [user]);
 
   const fetchUserProfile = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`/api/users/${user.id}`, {
         headers: { 'x-auth-token': user.token }
       });
+      if (!response.ok) {
+        throw new Error('Failed to fetch user profile');
+      }
       const data = await response.json();
       setProfile(data);
-      setName(data.name || data.username);
+      setName(data.name || data.username || '');
       setBio(data.bio || '');
       setSkills(data.skills || []);
     } catch (error) {
       console.error('Error fetching user profile:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,65 +54,54 @@ const UserProfile = () => {
       if (response.ok) {
         setEditing(false);
         fetchUserProfile();
+      } else {
+        throw new Error('Failed to update profile');
       }
     } catch (error) {
       console.error('Error updating user profile:', error);
+      setError(error.message);
     }
   };
 
-  if (!profile) return <div>Loading...</div>;
+  if (loading) return <Spinner size="xl" />;
+  if (error) return <Alert status="error"><AlertIcon />{error}</Alert>;
+  if (!profile) return <Alert status="info"><AlertIcon />No profile data available.</Alert>;
 
   return (
-    <div className="max-w-2xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">My Profile</h2>
+    <Box maxW="2xl" mx="auto" mt={8}>
+      <Heading as="h2" size="xl" mb={4}>My Profile</Heading>
       {editing ? (
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="name" className="block mb-2">Name</label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="bio" className="block mb-2">Bio</label>
-            <textarea
-              id="bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            ></textarea>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="skills" className="block mb-2">Skills (comma-separated)</label>
-            <input
-              type="text"
-              id="skills"
-              value={skills.join(', ')}
-              onChange={(e) => setSkills(e.target.value.split(',').map(skill => skill.trim()))}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            Save Changes
-          </button>
+          <VStack spacing={4} align="stretch">
+            <FormControl>
+              <FormLabel>Name</FormLabel>
+              <Input value={name} onChange={(e) => setName(e.target.value)} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Bio</FormLabel>
+              <Textarea value={bio} onChange={(e) => setBio(e.target.value)} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Skills (comma-separated)</FormLabel>
+              <Input
+                value={skills.join(', ')}
+                onChange={(e) => setSkills(e.target.value.split(',').map(skill => skill.trim()).filter(Boolean))}
+              />
+            </FormControl>
+            <Button type="submit" colorScheme="blue">Save Changes</Button>
+          </VStack>
         </form>
       ) : (
-        <div>
-          <p><strong>Name:</strong> {profile.name || profile.username}</p>
-          <p><strong>Email:</strong> {profile.email}</p>
-          <p><strong>Bio:</strong> {profile.bio || 'No bio provided'}</p>
-          <p><strong>Skills:</strong> {profile.skills?.join(', ') || 'No skills listed'}</p>
-          <p><strong>Member since:</strong> {new Date(profile.created_at).toLocaleDateString()}</p>
-          <button onClick={() => setEditing(true)} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4">
-            Edit Profile
-          </button>
-        </div>
+        <VStack align="stretch" spacing={4}>
+          <Text><strong>Name:</strong> {profile.name || profile.username}</Text>
+          <Text><strong>Email:</strong> {profile.email}</Text>
+          <Text><strong>Bio:</strong> {profile.bio || 'No bio provided'}</Text>
+          <Text><strong>Skills:</strong> {profile.skills?.join(', ') || 'No skills listed'}</Text>
+          <Text><strong>Member since:</strong> {new Date(profile.created_at).toLocaleDateString()}</Text>
+          <Button onClick={() => setEditing(true)} colorScheme="green">Edit Profile</Button>
+        </VStack>
       )}
-    </div>
+    </Box>
   );
 };
 

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // Adjust this path to your database connection file
-const auth = require('../middleware/auth'); // Adjust this path to your auth middleware
+const db = require('../../config/database');
+const auth = require('../middleware/auth');
 
 // Get all messages for the current user
 router.get('/', auth, async (req, res) => {

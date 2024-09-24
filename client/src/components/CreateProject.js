@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import ProjectForm from './ProjectForm';
 import { useAuth } from './AuthContext';
-import { Alert } from '@/components/ui/alert';
+import { Alert, AlertIcon, AlertTitle, AlertDescription, Box, Heading } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 const CreateProject = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -25,13 +27,10 @@ const CreateProject = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create project');
+        throw new Error(t('createProject.error'));
       }
 
       setSuccess(true);
-      // Optionally, redirect to the new project page
-      // const newProject = await response.json();
-      // history.push(`/projects/${newProject.id}`);
     } catch (error) {
       console.error('Error creating project:', error);
       setError(error.message);
@@ -41,20 +40,23 @@ const CreateProject = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Create New Project</h2>
+    <Box maxW="4xl" mx="auto" mt={8}>
+      <Heading as="h2" size="xl" mb={4}>{t('createProject.title')}</Heading>
       {error && (
-        <Alert variant="destructive" className="mb-4">
-          {error}
+        <Alert status="error" mb={4}>
+          <AlertIcon />
+          <AlertTitle mr={2}>{t('common.error')}</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       {success && (
-        <Alert className="mb-4">
-          Project created successfully!
+        <Alert status="success" mb={4}>
+          <AlertIcon />
+          <AlertDescription>{t('createProject.success')}</AlertDescription>
         </Alert>
       )}
       <ProjectForm onSubmit={handleSubmit} isLoading={loading} />
-    </div>
+    </Box>
   );
 };
 

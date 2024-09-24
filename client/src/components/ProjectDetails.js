@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
+import {
+  Box, VStack, HStack, Heading, Text, Button, Select,
+  Alert, AlertIcon, Container, Divider, Spinner
+} from '@chakra-ui/react';
 import Comments from './Comments';
 import FileUpload from './FileUpload';
-import ProjectForm from './ProjectForm';
 
 const ProjectDetails = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [project, setProject] = useState(null);
   const [volunteers, setVolunteers] = useState([]);
@@ -23,10 +26,8 @@ const ProjectDetails = () => {
     fetchProjectVolunteers();
   }, [id]);
 
-  const { user } = useAuth();
-
-  const canEditEvent = (event) => {
-    return user.role === 'admin' || event.organizer_id === user.id;
+  const canEditProject = (project) => {
+    return user.role === 'admin' || project.creator_id === user.id;
   };
 
   const fetchProjectDetails = async () => {
@@ -73,7 +74,7 @@ const ProjectDetails = () => {
     try {
       const response = await fetch('/api/projects/volunteer', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'x-auth-token': user.token
         },
@@ -153,55 +154,73 @@ const ProjectDetails = () => {
     }
   };
 
-  if (loading) return <div>Loading project details...</div>;
-  if (error) return <Alert variant="destructive">{error}</Alert>;
-  if (!project) return <div>Project not found</div>;
+  if (loading) return <Spinner />;
+  if (error) return <Alert status="error"><AlertIcon />{error}</Alert>;
+  if (!project) return <Alert status="warning"><AlertIcon />{t('projectDetails.notFound')}</Alert>;
 
   return (
-    <div className="project-details max-w-4xl mx-auto mt-8">
-      {isEditing ? (
-        <ProjectForm project={project} onSubmit={handleEditProject} isLoading={loading} />
-      ) : (
-        <>
-          <h2 className="text-2xl font-bold mb-4">{project.title}</h2>
-          <p className="mb-2">{project.description}</p>
-          <p className="mb-2">Required Skills: {project.required_skills.join(', ')}</p>
-          <p className="mb-2">Time Commitment: {project.time_commitment}</p>
-          <p className="mb-2">Location: {project.location}</p>
-          <Button onClick={handleVolunteerSignUp} className="mb-4">Sign Up as Volunteer</Button>
-          
-          {canEditProject(project) && (
-            <div className="mb-4">
-              <Button onClick={() => setIsEditing(true)} className="mr-2">Edit Project</Button>
-              <Button onClick={handleDeleteProject} variant="destructive">Delete Project</Button>
-            </div>
+    <Container maxW="container.xl" py={8}>
+      <VStack spacing={6} align="stretch">
+        <Heading as="h2" size="xl">{project.title}</Heading>
+        <Text>{project.description}</Text>
+
+        <Box>
+          <Text fontWeight="bold">{t('projectDetails.requiredSkills')}:</Text>
+          <Text>{project.required_skills?.join(', ') || t('common.none')}</Text>
+        </Box>
+
+        <Box>
+          <Text fontWeight="bold">{t('projectDetails.timeCommitment')}:</Text>
+          <Text>{project.time_commitment || t('common.notSpecified')}</Text>
+        </Box>
+
+        <Box>
+          <Text fontWeight="bold">{t('projectDetails.location')}:</Text>
+          <Text>{project.location || t('common.notSpecified')}</Text>
+        </Box>
+
+        <Button colorScheme="blue" onClick={handleVolunteerSignUp}>
+          {t('projectDetails.volunteerSignUp')}
+        </Button>
+
+        {canEditProject(project) && (
+          <HStack spacing={4}>
+            <Button onClick={() => setIsEditing(true)}>{t('common.edit')}</Button>
+            <Button colorScheme="red" onClick={handleDeleteProject}>{t('common.delete')}</Button>
+          </HStack>
+        )}
+
+        <Box>
+          <Heading as="h3" size="md" mb={2}>{t('projectDetails.currentVolunteers')}</Heading>
+          {volunteers.length > 0 ? (
+            <VStack align="stretch">
+              {volunteers.map((volunteer) => (
+                <Text key={volunteer.id}>{volunteer.name}</Text>
+              ))}
+            </VStack>
+          ) : (
+            <Text>{t('projectDetails.noVolunteers')}</Text>
           )}
-          
-          <h3 className="text-xl font-semibold mb-2">Current Volunteers</h3>
-          <ul className="mb-4">
-            {volunteers.map((volunteer) => (
-              <li key={volunteer.id}>{volunteer.name}</li>
-            ))}
-          </ul>
+        </Box>
 
-          <div className="mb-4">
-            <label className="block mb-2">Update Status:</label>
-            <select 
-              value={status} 
-              onChange={(e) => updateProjectStatus(e.target.value)}
-              className="border p-2 rounded"
-            >
-              <option value="open">Open</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
+        <Box>
+          <Heading as="h3" size="md" mb={2}>{t('projectDetails.updateStatus')}</Heading>
+          <Select value={status} onChange={(e) => updateProjectStatus(e.target.value)}>
+            <option value="open">{t('projectDetails.statusOpen')}</option>
+            <option value="in_progress">{t('projectDetails.statusInProgress')}</option>
+            <option value="completed">{t('projectDetails.statusCompleted')}</option>
+          </Select>
+        </Box>
 
-          <FileUpload projectId={id} />
-          <Comments projectId={id} />
-        </>
-      )}
-    </div>
+        <Divider />
+
+        <FileUpload projectId={id} />
+
+        <Divider />
+
+        <Comments projectId={id} />
+      </VStack>
+    </Container>
   );
 };
 

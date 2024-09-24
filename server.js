@@ -10,6 +10,8 @@ const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const eventRoutes = require('./src/routes/eventRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const auth = require('./src/middleware/auth');
+const userController = require('./src/controllers/userController');
+const checkPermission = require('./src/middleware/checkPermission');
 require('dotenv').config();
 
 const app = express();
@@ -31,7 +33,16 @@ app.use('/api/messages', auth, messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', dashboardRoutes);
 app.use('/api/events', eventRoutes);
-app.use('/api/auth', authRoutes); 
+app.use('/api/auth', authRoutes);
+
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack
+  });
+});
 
 // Test database connection
 app.get('/api/test-db', async (req, res) => {
@@ -43,9 +54,5 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
+// Export the app
 module.exports = app;

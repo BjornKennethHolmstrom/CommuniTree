@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2024-09-24
+
+### Added
+- Enhanced multi-language support with comprehensive translations for all components
+- Token refresh mechanism for improved authentication
+- Detailed project view component with volunteer management
+- Improved create project functionality
+- File upload capability for projects
+
+### Changed
+- Updated user interface components to use Chakra UI
+- Improved error handling and user feedback across components
+- Enhanced event calendar with RSVP functionality
+- Updated authentication context to handle token refresh
+
+### Fixed
+- Resolved issues with expired JWT tokens
+- Fixed database schema to properly store project and volunteer information
+
+
 ## [0.2.0] - 2024-09-15
 
 ### Added

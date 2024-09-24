@@ -2,72 +2,30 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/database');
 const auth = require('../middleware/auth');
+const userController = require('../controllers/userController');
+const dashboardController = require('../controllers/dashboardController');
 
-router.get('/', auth, async (req, res) => {
-  try {
-    const result = await db.query('SELECT id, username, name FROM users WHERE id != $1 ORDER BY username', [req.user.id]);
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// Logging middleware
+router.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
+  next();
 });
 
-router.get('/:id', async (req, res) => {
-  try {
-    const result = await db.query('SELECT * FROM users WHERE id = $1', [req.params.id]);
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: 'User not found' });
-    } else {
-      res.json(result.rows[0]);
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// Dashboard routes (these should come before the /:id route)
+router.get('/projects', auth, dashboardController.getUserProjects);
+router.get('/volunteer-activities', auth, dashboardController.getVolunteerActivities);
+router.get('/impact-stats', auth, dashboardController.getImpactStats);
 
-router.post('/', async (req, res) => {
-  const { username, email } = req.body;
-  try {
-    const result = await db.query(
-      'INSERT INTO users (username, email) VALUES ($1, $2) RETURNING *',
-      [username, email]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// Existing routes
+router.get('/', auth, userController.getAllUsers);
+router.post('/', userController.createUser);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
 
-router.put('/:id', async (req, res) => {
-  const { username, email } = req.body;
-  try {
-    const result = await db.query(
-      'UPDATE users SET username = $1, email = $2 WHERE id = $3 RETURNING *',
-      [username, email, req.params.id]
-    );
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: 'User not found' });
-    } else {
-      res.json(result.rows[0]);
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// This should come after the more specific routes
+router.get('/:id', userController.getUserById);
 
-router.delete('/:id', async (req, res) => {
-  try {
-    const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING *', [req.params.id]);
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: 'User not found' });
-    } else {
-      res.json({ message: 'User deleted successfully' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
+// Login route
 router.post('/login', userController.login);
 
 module.exports = router;

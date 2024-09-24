@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import {
+  Box, Button, FormControl, FormLabel, Input,
+  VStack, Heading, Alert, AlertIcon,
+} from '@chakra-ui/react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,58 +15,52 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      const response = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        login(data.token);
-        navigate('/projects');
-      } else {
-        setError(data.msg);
-      }
+      await login(email, password);
+      navigate('/projects');
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('Login error:', err);
+      console.error('Error response:', err.response);
+      setError(err.response?.data?.msg || err.message || 'An error occurred. Please try again.');
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+    <Box maxWidth="md" margin="auto" mt={8}>
+      <Heading as="h2" size="xl" textAlign="center" mb={6}>
+        Login
+      </Heading>
+      {error && (
+        <Alert status="error" mb={4}>
+          <AlertIcon />
+          {error}
+        </Alert>
+      )}
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="email" className="block mb-2">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="block mb-2">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-        </div>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Login
-        </button>
+        <VStack spacing={4}>
+          <FormControl id="email" isRequired>
+            <FormLabel>Email</FormLabel>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </FormControl>
+          <FormControl id="password" isRequired>
+            <FormLabel>Password</FormLabel>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </FormControl>
+          <Button type="submit" colorScheme="blue" width="full">
+            Login
+          </Button>
+        </VStack>
       </form>
-    </div>
+    </Box>
   );
 };
 

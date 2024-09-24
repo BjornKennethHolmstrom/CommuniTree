@@ -1,10 +1,10 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
+import { Button } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
+import { Textarea } from '@chakra-ui/react';
+import { Select } from '@chakra-ui/react';
 
 const ProjectForm = ({ project, onSubmit, isLoading }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({

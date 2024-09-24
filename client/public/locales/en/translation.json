@@ -1,5 +1,12 @@
 {
   "appName": "CommuniTree",
+  "home": "Home",
+  "projects": "Projects",
+  "eventCalendar": "Event Calendar",
+  "dashboard": "Dashboard",
+  "myProfile": "My Profile",
+  "login": "Log In",
+  "logout": "Log Out",
   "userManagement": {
     "title": "User Management",
     "addUser": "Add User",
@@ -16,6 +23,63 @@
     "createdAt": "Created at"
   },
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "status": "Status",
+    "none": "None",
+    "notSpecified": "Not specified"
+  },
+  "createProject": {
+    "title": "Create New Project",
+    "success": "Project created successfully!",
+    "error": "Error creating project:"
+  },
+  "projectDetails": {
+    "loading": "Loading project details...",
+    "notFound": "Project not found",
+    "requiredSkills": "Required Skills",
+    "timeCommitment": "Time Commitment",
+    "location": "Location",
+    "volunteerSignUp": "Sign Up as Volunteer",
+    "currentVolunteers": "Current Volunteers",
+    "noVolunteers": "No volunteers yet",
+    "updateStatus": "Update Status",
+    "statusOpen": "Open",
+    "statusInProgress": "In Progress",
+    "statusCompleted": "Completed"
+  },
+  "projectForm": {
+    "title": "Title",
+    "description": "Description",
+    "requiredSkills": "Required Skills",
+    "timeCommitment": "Time Commitment",
+    "location": "Location",
+    "category": "Category",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "eventCalendar": {
+    "title": "Community Event Calendar",
+    "addEvent": "Add Event",
+    "editEvent": "Edit Event",
+    "deleteEvent": "Delete Event",
+    "eventDetails": "Event Details",
+    "location": "Location",
+    "start": "Start",
+    "end": "End",
+    "rsvp": "RSVP",
+    "selectRsvp": "Select your RSVP",
+    "attending": "Attending",
+    "notAttending": "Not Attending",
+    "maybe": "Maybe",
+    "attendees": "Attendees",
+    "confirmDelete": "Confirm Delete",
+    "deleteConfirmation": "Are you sure you want to delete this event?"
   }
 }

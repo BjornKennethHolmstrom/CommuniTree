@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert } from '@/components/ui/alert';
+import { Button, Heading, Textarea, Alert, AlertIcon, VStack, Text, Box } from '@chakra-ui/react';
 
 const Comments = ({ projectId }) => {
   const { user } = useAuth();
@@ -11,7 +9,9 @@ const Comments = ({ projectId }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchComments();
+    if (projectId && projectId !== 'new') {
+      fetchComments();
+    }
   }, [projectId]);
 
   const fetchComments = async () => {
@@ -47,31 +47,38 @@ const Comments = ({ projectId }) => {
   };
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-semibold mb-4">Comments</h3>
-      {error && <Alert variant="destructive" className="mb-4">{error}</Alert>}
-      <ul className="space-y-4 mb-4">
-        {comments.map((comment) => (
-          <li key={comment.id} className="border p-3 rounded">
-            <p>{comment.content}</p>
-            <small className="text-gray-500">
-              By {comment.user_name} on {new Date(comment.created_at).toLocaleString()}
-            </small>
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={addComment} className="space-y-2">
-        <Textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Add a comment..."
-          className="w-full"
-        />
-        <Button type="submit" disabled={!newComment.trim()}>
-          Add Comment
-        </Button>
-      </form>
-    </div>
+    <Box mt={8}>
+      <Heading as="h3" size="lg" mb={4}>Comments</Heading>
+      {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
+      {projectId === 'new' ? (
+        <Text>Comments will be available after creating the project.</Text>
+      ) : (
+        <>
+          <VStack align="stretch" spacing={4} mb={4}>
+            {comments.map((comment) => (
+              <Box key={comment.id} p={3} borderWidth="1px" borderRadius="md">
+                <Text>{comment.content}</Text>
+                <Text fontSize="sm" color="gray.500">
+                  By {comment.user_name} on {new Date(comment.created_at).toLocaleString()}
+                </Text>
+              </Box>
+            ))}
+          </VStack>
+          <form onSubmit={addComment}>
+            <VStack align="stretch" spacing={2}>
+              <Textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add a comment..."
+              />
+              <Button type="submit" isDisabled={!newComment.trim()} colorScheme="blue">
+                Add Comment
+              </Button>
+            </VStack>
+          </form>
+        </>
+      )}
+    </Box>
   );
 };
 

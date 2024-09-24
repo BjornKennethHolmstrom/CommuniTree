@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Box, Heading, Text, VStack, HStack, Button, Alert, AlertIcon, Spinner } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { t } = useTranslation();
+  const { user, api } = useAuth();
   const [userProjects, setUserProjects] = useState([]);
   const [volunteerActivities, setVolunteerActivities] = useState([]);
   const [impactStats, setImpactStats] = useState(null);
@@ -14,110 +14,93 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (user && user.token) {
+      fetchDashboardData();
+    }
+  }, [user]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
     setError(null);
     try {
       const [projectsRes, activitiesRes, statsRes] = await Promise.all([
-        fetch('/api/users/projects', { headers: { 'x-auth-token': user.token } }),
-        fetch('/api/users/volunteer-activities', { headers: { 'x-auth-token': user.token } }),
-        fetch('/api/users/impact-stats', { headers: { 'x-auth-token': user.token } })
+        api.get('/users/projects'),
+        api.get('/users/volunteer-activities'),
+        api.get('/users/impact-stats')
       ]);
 
-      if (!projectsRes.ok || !activitiesRes.ok || !statsRes.ok) {
-        throw new Error('Failed to fetch dashboard data');
-      }
-
-      const projects = await projectsRes.json();
-      const activities = await activitiesRes.json();
-      const stats = await statsRes.json();
-
-      setUserProjects(projects);
-      setVolunteerActivities(activities);
-      setImpactStats(stats);
+      setUserProjects(projectsRes.data);
+      setVolunteerActivities(activitiesRes.data);
+      setImpactStats(statsRes.data);
     } catch (err) {
-      setError('Error fetching dashboard data: ' + err.message);
+      console.error('Error fetching dashboard data:', err);
+      console.error('Error response:', err.response);
+      setError(`Error fetching dashboard data: ${err.message}. ${err.response?.data?.details || ''}`);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div>Loading dashboard...</div>;
-  if (error) return <Alert variant="destructive">{error}</Alert>;
+  if (loading) return <Spinner />;
+  if (error) return <Alert status="error"><AlertIcon />{error}</Alert>;
+
 
   return (
-    <div className="max-w-4xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-6">Your Dashboard</h2>
+    <Box maxW="4xl" mx="auto" mt={8}>
+      <Heading as="h2" size="xl" mb={6}>{t('dashboard.title')}</Heading>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Projects Created</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{impactStats?.projectsCreated || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Volunteering Hours</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{impactStats?.volunteeringHours || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Communities Impacted</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{impactStats?.communitiesImpacted || 0}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <HStack spacing={4} mb={8}>
+        <Box p={5} shadow="md" borderWidth="1px" flex="1" borderRadius="md">
+          <Heading fontSize="xl">{t('dashboard.projectsCreated')}</Heading>
+          <Text fontSize="3xl" fontWeight="bold">{impactStats?.projectsCreated || 0}</Text>
+        </Box>
+        <Box p={5} shadow="md" borderWidth="1px" flex="1" borderRadius="md">
+          <Heading fontSize="xl">{t('dashboard.volunteeringHours')}</Heading>
+          <Text fontSize="3xl" fontWeight="bold">{impactStats?.volunteeringHours || 0}</Text>
+        </Box>
+        <Box p={5} shadow="md" borderWidth="1px" flex="1" borderRadius="md">
+          <Heading fontSize="xl">{t('dashboard.communitiesImpacted')}</Heading>
+          <Text fontSize="3xl" fontWeight="bold">{impactStats?.communitiesImpacted || 0}</Text>
+        </Box>
+      </HStack>
 
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4">Your Projects</h3>
-        {userProjects.length === 0 ? (
-          <p>You haven't created any projects yet.</p>
-        ) : (
-          <ul className="space-y-4">
-            {userProjects.map(project => (
-              <li key={project.id} className="border p-4 rounded">
-                <h4 className="font-semibold">{project.title}</h4>
-                <p className="text-sm text-gray-600 mb-2">Status: {project.status}</p>
-                <Link to={`/projects/${project.id}`}>
-                  <Button variant="link">View Project</Button>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <VStack align="stretch" spacing={8}>
+        <Box>
+          <Heading as="h3" size="lg" mb={4}>{t('dashboard.yourProjects')}</Heading>
+          {userProjects.length === 0 ? (
+            <Text>{t('dashboard.noProjects')}</Text>
+          ) : (
+            <VStack align="stretch" spacing={4}>
+              {userProjects.map(project => (
+                <Box key={project.id} p={4} borderWidth="1px" borderRadius="md">
+                  <Heading size="md">{project.title}</Heading>
+                  <Text fontSize="sm" color="gray.600" mb={2}>{t('common.status')}: {project.status}</Text>
+                  <Button as={Link} to={`/projects/${project.id}`} variant="link">{t('dashboard.viewProject')}</Button>
+                </Box>
+              ))}
+            </VStack>
+          )}
+        </Box>
 
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Your Volunteer Activities</h3>
-        {volunteerActivities.length === 0 ? (
-          <p>You haven't volunteered for any projects yet.</p>
-        ) : (
-          <ul className="space-y-4">
-            {volunteerActivities.map(activity => (
-              <li key={activity.id} className="border p-4 rounded">
-                <h4 className="font-semibold">{activity.project_title}</h4>
-                <p className="text-sm text-gray-600 mb-2">Role: {activity.role}</p>
-                <p className="text-sm text-gray-600 mb-2">Hours: {activity.hours}</p>
-                <Link to={`/projects/${activity.project_id}`}>
-                  <Button variant="link">View Project</Button>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
+        <Box>
+          <Heading as="h3" size="lg" mb={4}>{t('dashboard.yourVolunteerActivities')}</Heading>
+          {volunteerActivities.length === 0 ? (
+            <Text>{t('dashboard.noVolunteerActivities')}</Text>
+          ) : (
+            <VStack align="stretch" spacing={4}>
+              {volunteerActivities.map(activity => (
+                <Box key={activity.id} p={4} borderWidth="1px" borderRadius="md">
+                  <Heading size="md">{activity.project_title}</Heading>
+                  <Text fontSize="sm" color="gray.600" mb={2}>{t('dashboard.role')}: {activity.role}</Text>
+                  <Text fontSize="sm" color="gray.600" mb={2}>{t('dashboard.hours')}: {activity.hours}</Text>
+                  <Button as={Link} to={`/projects/${activity.project_id}`} variant="link">{t('dashboard.viewProject')}</Button>
+                </Box>
+              ))}
+            </VStack>
+          )}
+        </Box>
+      </VStack>
+    </Box>
   );
 };
 

@@ -6,6 +6,25 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
+
 module.exports = {
-  query: (text, params) => pool.query(text, params),
+  query: async (text, params) => {
+    const client = await pool.connect();
+    try {
+      const start = Date.now();
+      const res = await client.query(text, params);
+      const duration = Date.now() - start;
+      console.log('Executed query', { text, duration, rows: res.rowCount });
+      return res;
+    } catch (err) {
+      console.error('Error executing query', { text, err });
+      throw err;
+    } finally {
+      client.release();
+    }
+  },
 };
