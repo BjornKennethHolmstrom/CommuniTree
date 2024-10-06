@@ -64,6 +64,31 @@ const Community = {
     const query = 'SELECT * FROM community_memberships WHERE community_id = $1 AND user_id = $2';
     const result = await db.query(query, [communityId, userId]);
     return result.rows.length > 0;
+  },
+
+  async updateWeather(id, weatherData) {
+    const query = `
+      UPDATE communities
+      SET last_weather_update = CURRENT_TIMESTAMP,
+          current_weather = $1,
+          temperature = $2
+      WHERE id = $3
+      RETURNING *
+    `;
+    const values = [weatherData.weather, weatherData.temperature, id];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  },
+
+  async getCommunitiesForWeatherUpdate() {
+    const query = `
+      SELECT id, latitude, longitude, timezone
+      FROM communities
+      WHERE last_weather_update IS NULL
+         OR last_weather_update < CURRENT_TIMESTAMP - INTERVAL '1 hour'
+    `;
+    const result = await db.query(query);
+    return result.rows;
   }
 };
 

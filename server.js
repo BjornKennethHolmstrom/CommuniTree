@@ -14,6 +14,7 @@ const auth = require('./src/middleware/auth');
 const userController = require('./src/controllers/userController');
 const checkPermission = require('./src/middleware/checkPermission');
 require('dotenv').config();
+const scheduleWeatherUpdates = require('./src/schedulers/weatherScheduler');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,6 +22,8 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+scheduleWeatherUpdates();
 
 // Import database configuration
 const db = require('./config/database');

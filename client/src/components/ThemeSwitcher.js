@@ -1,40 +1,58 @@
-import React from 'react';
-import { Select, Button, HStack, useColorMode } from '@chakra-ui/react';
-import { useTheme } from '../contexts/ThemeContext';
-import { themes } from '../theme/locationThemes';
+import React, { useEffect, useState } from 'react';
+import { Select } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import api from '../api';
 
-const ThemeSwitcher = () => {
-  const { themeName, setThemeName, theme } = useTheme();
-  const { colorMode, toggleColorMode } = useColorMode();
+const weatherThemes = {
+  Clear: 'sunny',
+  Clouds: 'cloudy',
+  Rain: 'rainy',
+  Snow: 'snowy',
+  Thunderstorm: 'stormy'
+};
+
+const ThemeSwitcher = ({ onThemeChange }) => {
   const { t } = useTranslation();
+  const [selectedTheme, setSelectedTheme] = useState('default');
+  const [weatherTheme, setWeatherTheme] = useState(null);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const response = await api.get(`/api/communities/${currentCommunityId}/weather`);
+        const weatherData = response.data;
+        const theme = weatherThemes[weatherData.weather] || 'default';
+        setWeatherTheme(theme);
+        onThemeChange(theme);
+      } catch (error) {
+        console.error('Error fetching weather:', error);
+      }
+    };
+
+    fetchWeather();
+    // Set up an interval to fetch weather every 30 minutes
+    const intervalId = setInterval(fetchWeather, 30 * 60 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const handleThemeChange = (event) => {
+    const newTheme = event.target.value;
+    setSelectedTheme(newTheme);
+    onThemeChange(newTheme);
+  };
 
   return (
-    <HStack spacing={2}>
-      <Select
-        value={themeName}
-        onChange={(e) => setThemeName(e.target.value)}
-        width="auto"
-        color={theme.colors.brand[700]}
-        bg={theme.colors.brand[50]}
-        _hover={{ bg: theme.colors.brand[100] }}
-        borderColor={theme.colors.brand[500]}
-      >
-        {Object.keys(themes).filter(theme => theme !== 'darkMode').map((theme) => (
-          <option key={theme} value={theme}>
-            {t(`themes.${theme}`)}
-          </option>
-        ))}
-      </Select>
-      <Button
-        onClick={toggleColorMode}
-        bg={theme.colors.brand[500]}
-        color={theme.colors.brand[50]}
-        _hover={{ bg: theme.colors.brand[600] }}
-      >
-        {colorMode === 'light' ? t('themes.darkMode') : t('themes.lightMode')}
-      </Button>
-    </HStack>
+    <Select value={selectedTheme} onChange={handleThemeChange}>
+      <option value="default">{t('themes.default')}</option>
+      <option value="dark">{t('themes.darkMode')}</option>
+      <option value="light">{t('themes.lightMode')}</option>
+      {weatherTheme && (
+        <option value={weatherTheme}>
+          {t(`themes.${weatherTheme}`)}
+        </option>
+      )}
+    </Select>
   );
 };
 

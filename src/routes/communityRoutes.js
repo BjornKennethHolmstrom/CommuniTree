@@ -36,4 +36,7 @@ router.get('/:id/membership', auth, communityController.checkMembership);
 // Update member role (admin only)
 router.put('/:communityId/members/:userId', auth, checkPermission('admin'), communityController.updateMemberRole);
 
+// Get weather for a community
+router.get('/:id/weather', auth, communityController.getWeather);
+
 module.exports = router;

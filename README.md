@@ -21,6 +21,7 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Improved error handling and user feedback
 - Location-based theming system
 - User-selectable themes with dark mode support
+- Weather-based theming system with periodic updates
 
 ## Technical Stack
 
@@ -33,6 +34,8 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - UI Components: Chakra UI and custom components
 - Theming: Chakra UI theming system with custom hooks
 - Testing: Jest and Supertest
+- Weather Data: OpenWeatherMap API
+- Scheduling: node-schedule
 
 ## Getting Started
 
@@ -170,20 +173,26 @@ CommuniTree
 │   │   ├── community.js
 │   │   ├── communityMembership.js
 │   │   ├── event.js
+│   │   ├── index.js
 │   │   ├── project.js
 │   │   └── user.js
+│   │   ├── weather.js
 │   └── routes
-│       ├── authRoutes.js
-│       ├── commentRoutes.js
-│       ├── communityRoutes.js
-│       ├── dashboardRoutes.js
-│       ├── eventRoutes.js
-│       ├── fileRoutes.js
-│       ├── messageRoutes.js
-│       ├── notificationRoutes.js
-│       ├── projectRoutes.js
-│       ├── users (copy).js
-│       └── users.js
+│   │   ├── authRoutes.js
+│   │   ├── commentRoutes.js
+│   │   ├── communityRoutes.js
+│   │   ├── dashboardRoutes.js
+│   │   ├── eventRoutes.js
+│   │   ├── fileRoutes.js
+│   │   ├── messageRoutes.js
+│   │   ├── notificationRoutes.js
+│   │   ├── projectRoutes.js
+│   │   ├── users (copy).js
+│   │   └── users.js
+│   └── schedulers
+│       └── weatherScheduler.js
+│   └── services
+│       └── weatherService.js
 ├── start.js
 ├── tests
 │   ├── api
@@ -211,6 +220,10 @@ CommuniTree
 │   │   ├── notificationRoutes.test.js
 │   │   ├── projectRoutes.test.js
 │   │   └── users.test.js
+│   ├── schedulers
+│   │   └── weatherScheduler.test.js
+│   ├── services
+│   │   └── weatherService.test.js
 │   └── setup.js
 └── uploads
 

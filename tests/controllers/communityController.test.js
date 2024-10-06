@@ -1,10 +1,12 @@
 const communityController = require('../../src/controllers/communityController');
 const Community = require('../../src/models/community');
 const User = require('../../src/models/user');
+const Weather = require('../../src/models/weather');
 
 // Mock the Community and User models
 jest.mock('../../src/models/community');
 jest.mock('../../src/models/user');
+jest.mock('../../models/weather');
 
 describe('Community Controller', () => {
   let mockRequest;
@@ -122,5 +124,32 @@ describe('Community Controller', () => {
     expect(Community.checkMembership).toHaveBeenCalledWith(1, 1);
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     expect(mockResponse.json).toHaveBeenCalledWith({ isMember: true });
+  });
+
+  test('getWeather should return weather data for a community', async () => {
+    const mockWeatherData = { 
+      id: 1,
+      community_id: 1,
+      weather: 'Clear',
+      temperature: 20,
+      timestamp: new Date()
+    };
+    Weather.getLatestForCommunity.mockResolvedValue(mockWeatherData);
+
+    await communityController.getWeather(mockRequest, mockResponse);
+
+    expect(Weather.getLatestForCommunity).toHaveBeenCalledWith('1');
+    expect(mockResponse.status).toHaveBeenCalledWith(200);
+    expect(mockResponse.json).toHaveBeenCalledWith(mockWeatherData);
+  });
+
+  test('getWeather should return 404 if no weather data is found', async () => {
+    Weather.getLatestForCommunity.mockResolvedValue(null);
+
+    await communityController.getWeather(mockRequest, mockResponse);
+
+    expect(Weather.getLatestForCommunity).toHaveBeenCalledWith('1');
+    expect(mockResponse.status).toHaveBeenCalledWith(404);
+    expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Weather data not found' });
   });
 });

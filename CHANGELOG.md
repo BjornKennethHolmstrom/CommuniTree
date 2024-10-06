@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2024-10-07
+
+### Added
+- Implemented weather-based theming system
+- Created Weather model and weather history table
+- Added weather service for fetching and updating weather data
+- Implemented scheduler for periodic weather updates
+- Added tests for weather service, community controller, and API endpoints
+- Created integration tests for weather API
+
+### Changed
+- Updated Community model to include weather-related data
+- Modified ThemeSwitcher component to support weather-based themes
+- Enhanced API to serve weather data for communities
+
+### Fixed
+- Optimized API calls to prevent unnecessary weather data fetches
+
 ## [0.4.0] - 2024-09-30
 
 ### Added

@@ -124,6 +124,21 @@ const communityController = {
       console.error('Error checking membership:', error);
       res.status(500).json({ message: 'Failed to check membership' });
     }
+  },
+
+  async getWeather(req, res) {
+    try {
+      const { id } = req.params;
+      const weather = await Weather.getLatestForCommunity(id);
+      if (weather) {
+        res.status(200).json(weather);
+      } else {
+        res.status(404).json({ message: 'Weather data not found' });
+      }
+    } catch (error) {
+      console.error('Error getting weather:', error);
+      res.status(500).json({ message: 'Failed to get weather data' });
+    }
   }
 };
 
