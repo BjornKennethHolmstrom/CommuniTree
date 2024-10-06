@@ -43,7 +43,7 @@ const EventCalendar = () => {
 
   useEffect(() => {
     fetchEvents();
-    fetchCommunities
+    fetchCommunities();
   }, [selectedCommunity]);
 
   const fetchCommunities = async () => {

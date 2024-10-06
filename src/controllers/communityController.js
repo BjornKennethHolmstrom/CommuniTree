@@ -4,14 +4,14 @@ const Community = require('../models/community');
 const User = require('../models/user');
 
 const communityController = {
+
   async createCommunity(req, res) {
     try {
-      const communityData = req.body;
-      const newCommunity = await Community.create(communityData);
+      const newCommunity = await Community.create(req.body);
       res.status(201).json(newCommunity);
     } catch (error) {
       console.error('Error creating community:', error);
-      res.status(500).json({ message: 'Failed to create community' });
+      res.status(500).json({ error: 'Error creating community' });
     }
   },
 

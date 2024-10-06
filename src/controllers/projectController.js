@@ -14,8 +14,6 @@ const projectController = {
     try {
       const { page = 1, limit = 10, search, filter, communityId } = req.query;
       const offset = (page - 1) * limit;
-      const search = req.query.search || '';
-      const filter = req.query.filter || '';
 
       const { projects, total } = await Project.getAll(limit, offset, search, filter);
       const totalPages = Math.ceil(total / limit);

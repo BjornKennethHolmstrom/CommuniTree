@@ -1,6 +1,6 @@
 const schedule = require('node-schedule');
-const weatherService = require('../../services/weatherService');
-const scheduleWeatherUpdates = require('../weatherScheduler');
+const weatherService = require('../../src/services/weatherService');
+const scheduleWeatherUpdates = require('../../src/schedulers/weatherScheduler');
 
 jest.mock('node-schedule');
 jest.mock('../../services/weatherService');

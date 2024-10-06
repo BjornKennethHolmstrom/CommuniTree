@@ -35,6 +35,16 @@ const eventController = {
     }
   },
 
+  async getEvents(req, res) {
+    try {
+      const events = await Event.getAll();
+      res.json(events);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      res.status(500).json({ error: 'Error fetching events' });
+    }
+  },
+
   async updateEvent(req, res) {
     try {
       const event = await Event.update(req.params.id, req.body);

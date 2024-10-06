@@ -9,10 +9,19 @@ describe('Event Controller', () => {
   let mockResponse;
 
   beforeEach(() => {
-    mockRequest = {};
+    mockRequest = {
+      body: {
+        title: 'Test Event',
+        description: 'Test Description',
+        start_time: '2023-01-01T00:00:00Z',
+        end_time: '2023-01-02T00:00:00Z',
+        location: 'Test Location'
+      },
+      user: { id: 1 } // Add this line to mock the authenticated user
+    };
     mockResponse = {
-      json: jest.fn(),
       status: jest.fn().mockReturnThis(),
+      json: jest.fn()
     };
   });
 

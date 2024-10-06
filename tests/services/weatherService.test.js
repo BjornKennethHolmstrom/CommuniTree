@@ -4,8 +4,8 @@ const Weather = require('../../src/models/weather');
 const axios = require('axios');
 
 jest.mock('axios');
-jest.mock('../../models/community');
-jest.mock('../../models/weather');
+jest.mock('../../src/models/community');
+jest.mock('../../src/models/weather');
 
 describe('Weather Service', () => {
   beforeEach(() => {

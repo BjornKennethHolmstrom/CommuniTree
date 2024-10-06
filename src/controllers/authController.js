@@ -74,23 +74,17 @@ exports.refreshToken = async (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const user = await db.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
+    const userResult = await db.query('SELECT * FROM users WHERE id = $1', [decoded.user.id]);
 
-    if (!user) {
+    if (userResult.rows.length === 0) {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    const accessToken = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '15m' }
-    );
+    const user = userResult.rows[0];
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
 
-    const newRefreshToken = jwt.sign(
-      { userId: user.id },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: '7d' }
-    );
+    // Update refresh token in database
+    await db.query('UPDATE users SET refresh_token = $1 WHERE id = $2', [newRefreshToken, user.id]);
 
     res.json({ accessToken, refreshToken: newRefreshToken });
   } catch (error) {

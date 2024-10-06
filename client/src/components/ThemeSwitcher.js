@@ -11,13 +11,15 @@ const weatherThemes = {
   Thunderstorm: 'stormy'
 };
 
-const ThemeSwitcher = ({ onThemeChange }) => {
+const ThemeSwitcher = ({ onThemeChange, currentCommunityId }) => {
   const { t } = useTranslation();
   const [selectedTheme, setSelectedTheme] = useState('default');
   const [weatherTheme, setWeatherTheme] = useState(null);
 
   useEffect(() => {
     const fetchWeather = async () => {
+      if (!currentCommunityId) return;
+
       try {
         const response = await api.get(`/api/communities/${currentCommunityId}/weather`);
         const weatherData = response.data;
@@ -34,7 +36,7 @@ const ThemeSwitcher = ({ onThemeChange }) => {
     const intervalId = setInterval(fetchWeather, 30 * 60 * 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [currentCommunityId, onThemeChange]);
 
   const handleThemeChange = (event) => {
     const newTheme = event.target.value;

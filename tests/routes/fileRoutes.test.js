@@ -11,15 +11,10 @@ jest.mock('../../src/middleware/auth', () => (req, res, next) => {
   next();
 });
 jest.mock('multer', () => {
-  return () => ({
-    single: () => (req, res, next) => {
-      req.file = {
-        filename: 'test.txt',
-        mimetype: 'text/plain',
-        size: 1024
-      };
-      next();
-    }
+  return jest.fn().mockImplementation(() => {
+    return {
+      single: jest.fn()
+    };
   });
 });
 jest.mock('multer', () => {

@@ -39,10 +39,6 @@ describe('Project Flow', () => {
     }
   });
     
-    authToken = loginResponse.body.token;
-    userId = loginResponse.body.user.id;
-  });
-
   afterAll(async () => {
     // Clean up
     await db.query('DELETE FROM projects WHERE creator_id = $1', [userId]);
