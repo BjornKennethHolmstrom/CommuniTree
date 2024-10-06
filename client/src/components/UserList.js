@@ -27,7 +27,7 @@ function UserList() {
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
-      setError(error.response?.data?.msg || 'Failed to fetch users');
+      setError(error.response?.data?.msg || t('userManagement.fetchError'));
     }
   }, [api]);
 
@@ -50,7 +50,7 @@ function UserList() {
       setUsers(users.filter(user => user.id !== userId));
     } catch (error) {
       console.error('Error deleting user:', error);
-      setError(error.response?.data?.msg || 'Failed to delete user');
+      setError(error.response?.data?.msg || t('userManagement.deleteError'));
     }
   };
 

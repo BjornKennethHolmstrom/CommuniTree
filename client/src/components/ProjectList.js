@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { debounce } from 'lodash';
@@ -8,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 
 const ProjectList = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -69,45 +71,45 @@ const ProjectList = () => {
 
   return (
     <Box maxW="4xl" mx="auto" mt={8}>
-      <Heading as="h2" size="xl" mb={4}>Community Projects</Heading>
+      <Heading as="h2" size="xl" mb={4}>{t('projects.title')}</Heading>
       <Link to="/projects/new">
-        <Button colorScheme="blue" mb={4}>Create New Project</Button>
+        <Button colorScheme="blue" mb={4}>{t('projects.createNew')}</Button>
       </Link>
       <Flex mb={4}>
         <Input
-          placeholder="Search projects..."
+          placeholder={t('projects.searchPlaceholder')}
           value={search}
           onChange={handleSearchChange}
           mr={2}
         />
         <Select value={filter} onChange={handleFilterChange}>
-          <option value="">All Statuses</option>
-          <option value="open">Open</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
+          <option value="">{t('projects.filterAll')}</option>
+          <option value="open">{t('projects.filterOpen')}</option>
+          <option value="in_progress">{t('projects.filterInProgress')}</option>
+          <option value="completed">{t('projects.filterCompleted')}</option>
         </Select>
       </Flex>
       {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
       {projects.length === 0 && !loading ? (
-        <Text>No projects available.</Text>
+        <Text>{t('projects.noProjects')}</Text>
       ) : (
         <VStack spacing={4} align="stretch">
           {projects.map((project) => (
             <Box key={project.id} borderWidth={1} borderRadius="lg" p={4}>
               <Heading as="h3" size="md">{project.title}</Heading>
               <Text mt={2}>{project.description}</Text>
-              <Text mt={2}>Status: {project.status}</Text>
+              <Text mt={2}>{t('projects.status')}: {project.status}</Text>
               <Button as={Link} to={`/projects/${project.id}`} variant="link" mt={2}>
-                View Details
+                {t('projects.viewDetails')}
               </Button>
             </Box>
           ))}
         </VStack>
       )}
-      {loading && <Text textAlign="center" mt={4}>Loading projects...</Text>}
+      {loading && <Text textAlign="center" mt={4}>{t('projects.loading')}</Text>}
       {hasMore && !loading && (
         <Button onClick={loadMore} mt={4} mx="auto" display="block">
-          Load More
+          {t('projects.loadMore')}
         </Button>
       )}
     </Box>

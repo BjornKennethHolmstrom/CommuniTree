@@ -35,7 +35,7 @@ const Dashboard = () => {
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
       console.error('Error response:', err.response);
-      setError(`Error fetching dashboard data: ${err.message}. ${err.response?.data?.details || ''}`);
+      setError(t('dashboard.errorFetchingData', { message: err.message, details: err.response?.data?.details || '' }));
     } finally {
       setLoading(false);
     }
@@ -47,7 +47,7 @@ const Dashboard = () => {
 
   return (
     <Box maxW="4xl" mx="auto" mt={8}>
-      <Heading as="h2" size="xl" mb={6}>{t('dashboard.title')}</Heading>
+      <Heading as="h2" size="xl" mb={6}>{t('pages.dashboard')}</Heading>
 
       <HStack spacing={4} mb={8}>
         <Box p={5} shadow="md" borderWidth="1px" flex="1" borderRadius="md">

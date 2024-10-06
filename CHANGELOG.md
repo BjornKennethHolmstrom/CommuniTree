@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2024-09-30
+
+### Added
+- Implemented location-based theming system
+- Added user-selectable themes with a new ThemeSwitcher component
+- Integrated dark mode toggle using Chakra UI's color mode
+
+### Changed
+- Refactored App.js to use the new theming system
+- Updated LanguageSwitcher and ThemeSwitcher components for consistent styling
+- Improved overall UI consistency and readability
+
+### Fixed
+- Resolved issues with theme application and color mode
+- Fixed styling inconsistencies in dropdown menus
+
 ## [0.3.0] - 2024-09-24
 
 ### Added
@@ -23,7 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Resolved issues with expired JWT tokens
 - Fixed database schema to properly store project and volunteer information
-
 
 ## [0.2.0] - 2024-09-15
 

@@ -1,26 +1,12 @@
 {
   "appName": "CommuniTree",
-  "home": "Hem",
-  "projects": "Projekt",
-  "eventCalendar": "Evenemangskalender",
-  "dashboard": "Panel",
-  "myProfile": "Min profil",
-  "login": "Logga in",
-  "logout": "Logga ut",
-  "userManagement": {
-    "title": "Användarhantering",
-    "addUser": "Lägg till användare",
-    "username": "Användarnamn",
-    "email": "E-post",
-    "search": "Sök användare...",
-    "details": "Detaljer",
-    "edit": "Redigera",
-    "delete": "Radera",
-    "update": "Uppdatera användare",
-    "cancel": "Avbryt"
-  },
-  "userDetails": {
-    "createdAt": "Skapad"
+  "themes": {
+    "default": "Default",
+    "darkMode": "Mörkt läge",
+    "lightMode": "Ljust läge",
+    "tropical": "Tropisk",
+    "continental": "Kontinental",
+    "polar": "Polar"
   },
   "common": {
     "loading": "Laddar...",
@@ -33,42 +19,106 @@
     "confirm": "Bekräfta",
     "status": "Status"
   },
-  "dashboard": {
-    "title": "Din Panel",
-    "projectsCreated": "Skapade Projekt",
-    "volunteeringHours": "Volontärtimmar",
-    "communitiesImpacted": "Påverkade Samhällen",
-    "yourProjects": "Dina Projekt",
-    "noProjects": "Du har inte skapat några projekt än.",
-    "viewProject": "Visa Projekt",
-    "yourVolunteerActivities": "Dina Volontäraktiviteter",
-    "noVolunteerActivities": "Du har inte anmält dig som volontär för några projekt än.",
-    "role": "Roll",
-    "hours": "Timmar"
+  "login": {
+    "title": "Logga in",
+    "email": "E-post",
+    "password": "Lösenord",
+    "submit": "Logga in",
+    "error": "Ett fel uppstod. Försök igen."
   },
-  "eventCalendar": {
-    "title": "Evenemangskalender för samhället",
-    "addEvent": "Lägg till evenemang",
-    "editEvent": "Redigera evenemang",
-    "deleteEvent": "Radera evenemang",
-    "eventDetails": "Evenemangsdetaljer",
+  "authContext": {
+    "loginError": "Inloggningsfel:",
+    "tokenRefreshError": "Fel vid uppdatering av token:",
+    "sessionExpired": "Din session har löpt ut. Vänligen logga in igen."
+  },
+  "userManagement": {
+    "title": "Användarhantering",
+    "addUser": "Lägg till användare",
+    "username": "Användarnamn",
+    "email": "E-post",
+    "search": "Sök användare...",
+    "details": "Detaljer",
+    "edit": "Redigera",
+    "delete": "Radera",
+    "update": "Uppdatera användare",
+    "cancel": "Avbryt",
+    "fetchError": "Det gick inte att hämta användare",
+    "deleteError": "Det gick inte att ta bort användaren"
+  },
+  "menu": {
+    "home": "Hem",
+    "projects": "Projekt",
+    "eventCalendar": "Kalender",
+    "dashboard": "Panel",
+    "myProfile": "Min profil",
+    "login": "Logga in",
+    "logout": "Logga ut"
+  },
+  "pages": {
+    "home": "Hem",
+    "projects": "Projekt",
+    "eventCalendar": "Kalender",
+    "dashboard": "Panel",
+    "myProfile": "Min profil"
+  },
+  "communities": {
+    "title": "Gemenskaper",
+    "createNew": "Skapa ny gemenskap",
+    "searchPlaceholder": "Sök gemenskaper...",
+    "noCommunities": "Inga gemenskaper tillgängliga.",
+    "viewDetails": "Visa detaljer",
+    "loading": "Laddar gemenskaper...",
+    "join": "Gå med i gemenskap",
+    "leave": "Lämna gemenskap",
+    "members": "Medlemmar"
+  },
+  "communityDetails": {
+    "loading": "Laddar gemenskapsdetaljer...",
+    "notFound": "Gemenskap hittades inte",
+    "description": "Beskrivning",
     "location": "Plats",
-    "start": "Börjar",
-    "end": "Slutar",
-    "rsvp": "RSVP",
-    "selectRsvp": "Välj ditt RSVP",
-    "attending": "Deltar",
-    "notAttending": "Deltar inte",
-    "maybe": "Kanske",
-    "attendees": "Deltagare",
-    "confirmDelete": "Bekräfta radering",
-    "deleteConfirmation": "Är du säker på att du vill radera detta evenemang?",
+    "timezone": "Tidszon",
+    "editCommunity": "Redigera gemenskap",
+    "deleteCommunity": "Radera gemenskap",
+    "deleteConfirmation": "Är du säker på att du vill radera denna gemenskap?",
+    "joinSuccess": "Du har framgångsrikt gått med i gemenskapen!",
+    "leaveSuccess": "Du har framgångsrikt lämnat gemenskapen!",
+    "fetchError": "Det gick inte att hämta gemenskapsdetaljer",
+    "membersFetchError": "Det gick inte att hämta gemenskapsmedlemmar",
+    "joinError": "Det gick inte att gå med i gemenskapen",
+    "leaveError": "Det gick inte att lämna gemenskapen",
+    "updateError": "Det gick inte att uppdatera gemenskapen",
+    "deleteError": "Det gick inte att ta bort gemenskapen"
+  },
+  "communityForm": {
+    "name": "Namn",
+    "nameRequired": "Namn krävs",
+    "description": "Beskrivning",
+    "descriptionRequired": "Beskrivning krävs",
+    "latitude": "Latitud",
+    "latitudeRequired": "Latitud krävs",
+    "longitude": "Longitud",
+    "longitudeRequired": "Longitud krävs",
+    "timezone": "Tidszon",
+    "timezoneRequired": "Tidszon krävs",
+    "submitting": "Skickar...",
+    "updateCommunity": "Uppdatera gemenskap",
+    "createCommunity": "Skapa gemenskap",
     "cancel": "Avbryt"
   },
-  "createProject": {
-    "title": "Skapa nytt projekt",
-    "success": "Projekt skapat framgångsrikt!",
-    "error": "Fel vid skapande av projekt:"
+  "projects": {
+    "title": "Projekt",
+    "createNew": "Skapa nytt projekt",
+    "searchPlaceholder": "Sök projekt...",
+    "filterAll": "Alla statusar",
+    "filterOpen": "Öppna",
+    "filterInProgress": "Pågående",
+    "filterCompleted": "Avslutade",
+    "noProjects": "Inga projekt tillgängliga.",
+    "viewDetails": "Visa detaljer",
+    "loading": "Laddar projekt...",
+    "loadMore": "Ladda fler",
+    "status": "Status"
   },
   "projectDetails": {
     "loading": "Laddar projektdetaljer...",
@@ -86,7 +136,13 @@
     "updateStatus": "Uppdatera status",
     "statusOpen": "Öppen",
     "statusInProgress": "Pågående",
-    "statusCompleted": "Avslutad"
+    "statusCompleted": "Avslutad",
+    "fetchError": "Det gick inte att hämta projektdetaljer",
+    "volunteersFetchError": "Det gick inte att hämta projektvolontärer",
+    "volunteerSignUpError": "Det gick inte att anmäla sig som volontär",
+    "statusUpdateError": "Det gick inte att uppdatera projektstatusen",
+    "projectUpdateError": "Det gick inte att uppdatera projektet",
+    "projectDeleteError": "Det gick inte att ta bort projektet"
   },
   "projectForm": {
     "title": "Titel",
@@ -102,9 +158,136 @@
     "category": "Kategori",
     "categoryRequired": "Kategori krävs",
     "selectCategory": "Välj en kategori",
-    "submit": "Skicka in",
-    "submitting": "Skickar in...",
-    "update": "Uppdatera projekt",
-    "create": "Skapa projekt"
+    "submitting": "Skickar...",
+    "updateProject": "Uppdatera projekt",
+    "createProject": "Skapa projekt",
+    "cancel": "Avbryt"
+  },
+  "createProject": {
+    "title": "Skapa nytt projekt",
+    "success": "Projekt skapat framgångsrikt!",
+    "error": "Fel vid skapande av projekt:",
+    "errorCreating": "Fel vid skapande av projekt: "
+  },
+  "eventCalendar": {
+    "title": "Kalender",
+    "allCommunities": "Alla gemenskaper",
+    "selectCommunity": "Välj gemenskap",
+    "addNewEvent": "Lägg till ny händelse",
+    "addEvent": "Lägg till händelse",
+    "editEvent": "Redigera händelse",
+    "updateEvent": "Uppdatera händelse",
+    "deleteEvent": "Ta bort händelse",
+    "eventDetails": "Händelsedetaljer",
+    "location": "Plats",
+    "start": "Start",
+    "end": "Slut",
+    "rsvp": "Anmälan",
+    "selectRsvp": "Välj din anmälan",
+    "attending": "Deltar",
+    "notAttending": "Deltar inte",
+    "maybe": "Kanske",
+    "attendees": "Deltagare",
+    "confirmDelete": "Bekräfta radering",
+    "confirmDeletion": "Bekräfta borttagning",
+    "deleteConfirmation": "Är du säker på att du vill ta bort den här händelsen?",
+    "cancel": "Avbryt",
+    "eventTitle": "Händelsetitel",
+    "eventDescription": "Händelsebeskrivning",
+    "failedToFetchEvents": "Det gick inte att hämta händelser. Försök igen senare.",
+    "failedToAddEvent": "Det gick inte att lägga till händelsen. ",
+    "failedToUpdateEvent": "Det gick inte att uppdatera händelsen. Försök igen.",
+    "failedToDeleteEvent": "Det gick inte att ta bort händelsen. Försök igen.",
+    "failedToFetchRSVP": "Det gick inte att hämta RSVP-status. Försök igen.",
+    "failedToUpdateRSVP": "Det gick inte att uppdatera RSVP. Försök igen.",
+    "failedToFetchAttendees": "Det gick inte att hämta deltagare. Försök igen."
+  },
+  "userProfile": {
+    "loading": "Laddar...",
+    "noProfile": "Ingen profildata tillgänglig.",
+    "name": "Namn",
+    "bio": "Biografi",
+    "skills": "Färdigheter (kommaseparerade)",
+    "saveChanges": "Spara ändringar",
+    "email": "E-post",
+    "noBio": "Ingen biografi tillgänglig",
+    "noSkills": "Inga färdigheter listade",
+    "memberSince": "Medlem sedan",
+    "editProfile": "Redigera profil",
+    "updateError": "Det gick inte att uppdatera profilen"
+  },
+  "userDetails": {
+    "loading": "Laddar...",
+    "email": "E-post",
+    "createdAt": "Skapad",
+    "close": "Stäng"
+  },
+  "addUserForm": {
+    "username": "Användarnamn",
+    "email": "E-post",
+    "addUser": "Lägg till användare",
+    "errorAdding": "Fel vid tillägg av användare:"
+  },
+  "editUserForm": {
+    "username": "Användarnamn",
+    "email": "E-post",
+    "updateUser": "Uppdatera användare",
+    "cancel": "Avbryt",
+    "errorUpdating": "Fel vid uppdatering av användare:"
+  },
+  "dashboard": {
+    "title": "Din Panel",
+    "projectsCreated": "Skapade Projekt",
+    "volunteeringHours": "Volontärtimmar",
+    "communitiesImpacted": "Påverkade Samhällen",
+    "yourProjects": "Dina Projekt",
+    "noProjects": "Du har inte skapat några projekt än.",
+    "viewProject": "Visa Projekt",
+    "yourVolunteerActivities": "Dina Volontäraktiviteter",
+    "noVolunteerActivities": "Du har inte anmält dig som volontär för några projekt än.",
+    "role": "Roll",
+    "hours": "Timmar"
+  },
+  "fileUpload": {
+    "title": "Projektfiler",
+    "unavailable": "Filuppladdning kommer att vara tillgänglig efter att projektet har skapats.",
+    "uploadFiles": "Ladda upp filer",
+    "fetchError": "Fel vid hämtning av filer: ",
+    "uploadError": "Fel vid uppladdning av filer: "
+  },
+  "comments": {
+    "title": "Kommentarer",
+    "unavailable": "Kommentarer kommer att vara tillgängliga efter att projektet har skapats.",
+    "addComment": "Lägg till kommentar",
+    "commentPlaceholder": "Lägg till en kommentar...",
+    "by": "Av",
+    "on": "den",
+    "fetchError": "Fel vid hämtning av kommentarer: ",
+    "addError": "Fel vid tillägg av kommentar: "
+  },
+  "notifications": {
+    "title": "Aviseringar",
+    "noNewNotifications": "Inga nya aviseringar",
+    "markAsRead": "Markera som läst"
+  },
+  "messaging": {
+    "title": "Meddelanden",
+    "noMessages": "Inga meddelanden ännu.",
+    "loading": "Laddar meddelanden...",
+    "recipient": "Mottagare",
+    "selectRecipient": "Välj en mottagare",
+    "newMessage": "Nytt meddelande",
+    "sendMessage": "Skicka meddelande",
+    "fetchError": "Fel vid hämtning av meddelanden: ",
+    "usersFetchError": "Fel vid hämtning av användare: ",
+    "sendError": "Fel vid sändning av meddelande: "
+  },
+  "errorBoundary": {
+    "title": "Hoppsan! Något gick fel.",
+    "message": "Vi ber om ursäkt, men ett fel inträffade. Försök att uppdatera sidan eller kontakta support om problemet kvarstår."
+  },
+  "errorContext": {
+    "errorOccurred": "Ett fel inträffade",
+    "dismiss": "Avfärda"
   }
 }

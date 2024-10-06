@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { useTranslation } from 'react-i18next';
 
 function EditUserForm({ user, onUserUpdated, onCancel }) {
+  const { t } = useTranslation();
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const { user: authUser } = useAuth();
@@ -25,7 +27,7 @@ function EditUserForm({ user, onUserUpdated, onCancel }) {
       .then(data => {
         onUserUpdated(data);
       })
-      .catch(error => console.error('Error updating user:', error));
+      .catch(error => console.error(t('editUserForm.errorUpdating'), error));
   };
 
   return (
@@ -34,18 +36,18 @@ function EditUserForm({ user, onUserUpdated, onCancel }) {
         type="text"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
+        placeholder={t('editUserForm.username')}
         required
       />
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
+        placeholder={t('editUserForm.email')}
         required
       />
-      <button type="submit">Update User</button>
-      <button type="button" onClick={onCancel}>Cancel</button>
+      <button type="submit">{t('editUserForm.updateUser')}</button>
+      <button type="button" onClick={onCancel}>{t('editUserForm.cancel')}</button>
     </form>
   );
 }

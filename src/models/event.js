@@ -5,26 +5,25 @@ const db = require('../../config/database');
 const Event = {
   async create(eventData) {
     try {
-      const { title, description, start_time, end_time, location, creator_id } = eventData;
+      const { title, description, start_time, end_time, location, creator_id, community_id } = eventData;
       const query = `
-        INSERT INTO events (title, description, start_time, end_time, location, creator_id)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO events (title, description, start_time, end_time, location, creator_id, community_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *
       `;
-      const values = [title, description, start_time, end_time, location, creator_id];
+      const values = [title, description, start_time, end_time, location, creator_id, community_id];
       const result = await db.query(query, values);
       return result.rows[0];
     } catch (error) {
       console.error('Error creating event:', error);
-      console.error('SQL Error:', error.message);
       throw error;
     }
   },
 
-  async getAll() {
+  async getAll(communityId) {
     try {
-      const query = 'SELECT * FROM events ORDER BY start_time ASC';
-      const result = await db.query(query);
+      const query = 'SELECT * FROM events WHERE community_id = $1 ORDER BY start_time ASC';
+      const result = await db.query(query, [communityId]);
       return result.rows;
     } catch (error) {
       console.error('Error getting all events:', error);

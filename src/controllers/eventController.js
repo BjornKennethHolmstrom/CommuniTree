@@ -24,13 +24,14 @@ const eventController = {
     }
   },
 
-  async getEvents(req, res) {
+  async getAllEvents(req, res) {
     try {
-      const events = await Event.getAll();
-      res.json(events);
+      const { communityId } = req.query;
+      const events = await Event.getAll(communityId);
+      res.status(200).json(events);
     } catch (error) {
-      console.error('Error fetching events:', error);
-      res.status(500).json({ error: 'Error fetching events', details: error.message });
+      console.error('Error getting all events:', error);
+      res.status(500).json({ message: 'Failed to get events' });
     }
   },
 

@@ -38,14 +38,34 @@ const EventCalendar = () => {
   const [error, setError] = useState('');
   const [rsvpStatus, setRsvpStatus] = useState(null);
   const [attendees, setAttendees] = useState([]);
+  const [communities, setCommunities] = useState([]);
+  const [selectedCommunity, setSelectedCommunity] = useState('');
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+    fetchCommunities
+  }, [selectedCommunity]);
+
+  const fetchCommunities = async () => {
+    try {
+      const response = await fetch('/api/communities', {
+        headers: { 'x-auth-token': user.token }
+      });
+      if (!response.ok) throw new Error('Failed to fetch communities');
+      const data = await response.json();
+      setCommunities(data);
+    } catch (error) {
+      console.error('Error fetching communities:', error);
+      setError(t('eventCalendar.failedToFetchCommunities'));
+    }
+  };
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('/api/events', {
+      const url = selectedCommunity
+        ? `/api/events?communityId=${selectedCommunity}`
+        : '/api/events';
+      const response = await fetch(url, {
         headers: { 'x-auth-token': user.token }
       });
       if (!response.ok) throw new Error('Failed to fetch events');
@@ -58,7 +78,7 @@ const EventCalendar = () => {
       setEvents(formattedEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
-      setError('Failed to fetch events. Please try again later.');
+      setError(t('eventCalendar.failedToFetchEvents'));
     }
   };
 
@@ -82,7 +102,8 @@ const EventCalendar = () => {
         start_time: newEvent.start.toISOString(),
         end_time: newEvent.end.toISOString(),
         location: newEvent.location,
-        organizer_id: user.id // Make sure this is correct
+        organizer_id: user.id,
+        community_id: selectedCommunity || null
       };
 
       const response = await fetch('/api/events', {
@@ -103,7 +124,7 @@ const EventCalendar = () => {
       // ... rest of the function
     } catch (error) {
       console.error('Error adding event:', error);
-      setError('Failed to add event. ' + error.message);
+      setError(t('eventCalendar.failedToAddEvent') + error.message);
     }
   };
 
@@ -127,7 +148,7 @@ const EventCalendar = () => {
       setIsEditModalOpen(false);
     } catch (error) {
       console.error('Error updating event:', error);
-      setError('Failed to update event. Please try again.');
+      setError(t('eventCalendar.failedToUpdateEvent'));
     }
   };
 
@@ -143,7 +164,7 @@ const EventCalendar = () => {
       setIsEditModalOpen(false);
     } catch (error) {
       console.error('Error deleting event:', error);
-      setError('Failed to delete event. Please try again.');
+      setError(t('eventCalendar.failedToDeleteEvent'));
     }
   };
 
@@ -157,7 +178,7 @@ const EventCalendar = () => {
       setRsvpStatus(data.status);
     } catch (error) {
       console.error('Error fetching RSVP status:', error);
-      setError('Failed to fetch RSVP status. Please try again.');
+      setError(t('eventCalendar.failedToFetchRSVP'));
     }
   };
 
@@ -176,7 +197,7 @@ const EventCalendar = () => {
       setRsvpStatus(data.status);
     } catch (error) {
       console.error('Error updating RSVP:', error);
-      setError('Failed to update RSVP. Please try again.');
+      setError(t('eventCalendar.failedToUpdateRSVP'));
     }
   };
 
@@ -190,7 +211,7 @@ const EventCalendar = () => {
       setAttendees(data);
     } catch (error) {
       console.error('Error fetching attendees:', error);
-      setError('Failed to fetch attendees. Please try again.');
+      setError(t('eventCalendar.failedToFetchAttendees'));
     }
   };
 
@@ -199,91 +220,52 @@ const EventCalendar = () => {
        return user.role === 'admin' || event.organizer_id === user.id;
      };
 
-     return (
-       <Box h="100vh" p={4}>
-         <Heading as="h2" size="xl" mb={4}>{t('eventCalendar.title')}</Heading>
-         {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
-         <Calendar
-           localizer={localizer}
-           events={events}
-           startAccessor="start"
-           endAccessor="end"
-           onSelectSlot={handleSelectSlot}
-           onSelectEvent={handleSelectEvent}
-           selectable
-           style={{ height: 'calc(100% - 80px)' }}
-         />
-
-         <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
-           <ModalOverlay />
-           <ModalContent>
-             <ModalHeader>{t('eventCalendar.eventDetails')}</ModalHeader>
-             <ModalCloseButton />
-             <ModalBody>
-               {selectedEvent && (
-                 <VStack align="stretch" spacing={4}>
-                   <Heading size="md">{selectedEvent.title}</Heading>
-                   <Text>{selectedEvent.description}</Text>
-                   <Text>{t('eventCalendar.location')}: {selectedEvent.location}</Text>
-                   <Text>{t('eventCalendar.start')}: {moment(selectedEvent.start).format('MMMM Do YYYY, h:mm a')}</Text>
-                   <Text>{t('eventCalendar.end')}: {moment(selectedEvent.end).format('MMMM Do YYYY, h:mm a')}</Text>
-
-                   <Box>
-                     <Heading size="sm">{t('eventCalendar.rsvp')}</Heading>
-                     <Select
-                       value={rsvpStatus || ''}
-                       onChange={(e) => handleRSVP(e.target.value)}
-                     >
-                       <option value="">{t('eventCalendar.selectRsvp')}</option>
-                       <option value="attending">{t('eventCalendar.attending')}</option>
-                       <option value="not_attending">{t('eventCalendar.notAttending')}</option>
-                       <option value="maybe">{t('eventCalendar.maybe')}</option>
-                     </Select>
-                   </Box>
-
-                   <Box>
-                     <Heading size="sm">{t('eventCalendar.attendees')}</Heading>
-                     <VStack align="stretch">
-                       {attendees.map((attendee) => (
-                         <Text key={attendee.id}>
-                           {attendee.name} - {attendee.status}
-                         </Text>
-                       ))}
-                     </VStack>
-                   </Box>
-                 </VStack>
-               )}
-             </ModalBody>
-             <ModalFooter>
-               {canEditEvent(selectedEvent) && (
-                 <>
-                   <Button onClick={() => setIsEditModalOpen(false)}>{t('eventCalendar.editEvent')}</Button>
-                   <Button colorScheme="red" ml={3} onClick={() => setIsDeleteModalOpen(true)}>{t('eventCalendar.deleteEvent')}</Button>
-                 </>
-               )}
-             </ModalFooter>
-           </ModalContent>
-         </Modal>
+  return (
+    <Box h="100vh" p={4}>
+      <Heading as="h2" size="xl" mb={4}>{t('pages.eventCalendar')}</Heading>
+      {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
+      <Select
+        value={selectedCommunity}
+        onChange={(e) => setSelectedCommunity(e.target.value)}
+        mb={4}
+      >
+        <option value="">{t('eventCalendar.allCommunities')}</option>
+        {communities.map(community => (
+          <option key={community.id} value={community.id}>
+            {community.name}
+          </option>
+        ))}
+      </Select>
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
+        selectable
+        style={{ height: 'calc(100% - 80px)' }}
+      />
 
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add New Event</ModalHeader>
+          <ModalHeader>{t('eventCalendar.addNewEvent')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
               <Input
-                placeholder="Event Title"
+                placeholder={t('eventCalendar.eventTitle')}
                 value={newEvent.title}
                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
               />
               <Textarea
-                placeholder="Event Description"
+                placeholder={t('eventCalendar.eventDescription')}
                 value={newEvent.description}
                 onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
               />
               <Input
-                placeholder="Location"
+                placeholder={t('eventCalendar.location')}
                 value={newEvent.location}
                 onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
               />
@@ -300,7 +282,7 @@ const EventCalendar = () => {
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleAddEvent}>Add Event</Button>
+            <Button colorScheme="blue" onClick={handleAddEvent}>{t('eventCalendar.addEvent')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -308,23 +290,23 @@ const EventCalendar = () => {
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Edit Event</ModalHeader>
+          <ModalHeader>{t('eventCalendar.editEvent')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedEvent && (
               <VStack spacing={4}>
                 <Input
-                  placeholder="Event Title"
+                  placeholder={t('eventCalendar.eventTitle')}
                   value={selectedEvent.title}
                   onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })}
                 />
                 <Textarea
-                  placeholder="Event Description"
+                  placeholder={t('eventCalendar.eventDescription')}
                   value={selectedEvent.description}
                   onChange={(e) => setSelectedEvent({ ...selectedEvent, description: e.target.value })}
                 />
                 <Input
-                  placeholder="Location"
+                  placeholder={t('eventCalendar.location')}
                   value={selectedEvent.location}
                   onChange={(e) => setSelectedEvent({ ...selectedEvent, location: e.target.value })}
                 />
@@ -342,8 +324,8 @@ const EventCalendar = () => {
             )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleEditEvent}>Update Event</Button>
-            <Button colorScheme="red" ml={3} onClick={() => setIsDeleteModalOpen(true)}>Delete Event</Button>
+            <Button colorScheme="blue" onClick={handleEditEvent}>{t('eventCalendar.updateEvent')}</Button>
+            <Button colorScheme="red" ml={3} onClick={() => setIsDeleteModalOpen(true)}>{t('eventCalendar.deleteEvent')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -351,14 +333,14 @@ const EventCalendar = () => {
       <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm Deletion</ModalHeader>
+          <ModalHeader>{t('eventCalendar.confirmDeletion')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Are you sure you want to delete this event?</Text>
+            <Text>{t('eventCalendar.deleteConfirmation')}</Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="red" onClick={handleDeleteEvent}>Delete</Button>
-            <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} ml={3}>Cancel</Button>
+            <Button colorScheme="red" onClick={handleDeleteEvent}>{t('eventCalendar.deleteEvent')}</Button>
+            <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} ml={3}>{t('eventCalendar.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

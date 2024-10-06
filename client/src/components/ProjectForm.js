@@ -1,12 +1,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@chakra-ui/react';
-import { Input } from '@chakra-ui/react';
-import { Textarea } from '@chakra-ui/react';
-import { Select } from '@chakra-ui/react';
+import { Button, Input, Textarea, Select } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 const ProjectForm = ({ project, onSubmit, isLoading }) => {
+  const { t } = useTranslation();
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       title: project?.title || '',
@@ -30,63 +29,63 @@ const ProjectForm = ({ project, onSubmit, isLoading }) => {
   return (
     <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
       <div>
-        <label htmlFor="title" className="block mb-1">Title</label>
+        <label htmlFor="title" className="block mb-1">{t('projectForm.title')}</label>
         <Input
           id="title"
-          {...register('title', { required: 'Title is required' })}
+          {...register('title', { required: t('projectForm.titleRequired') })}
           className={errors.title ? 'border-red-500' : ''}
         />
         {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
       </div>
 
       <div>
-        <label htmlFor="description" className="block mb-1">Description</label>
+        <label htmlFor="description" className="block mb-1">{t('projectForm.description')}</label>
         <Textarea
           id="description"
-          {...register('description', { required: 'Description is required' })}
+          {...register('description', { required: t('projectForm.descriptionRequired') })}
           className={errors.description ? 'border-red-500' : ''}
         />
         {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
       </div>
 
       <div>
-        <label htmlFor="requiredSkills" className="block mb-1">Required Skills (comma-separated)</label>
+        <label htmlFor="requiredSkills" className="block mb-1">{t('projectForm.requiredSkills')}</label>
         <Input
           id="requiredSkills"
-          {...register('requiredSkills', { required: 'At least one skill is required' })}
+          {...register('requiredSkills', { required: t('projectForm.skillsRequired') })}
           className={errors.requiredSkills ? 'border-red-500' : ''}
         />
         {errors.requiredSkills && <p className="text-red-500 text-sm mt-1">{errors.requiredSkills.message}</p>}
       </div>
 
       <div>
-        <label htmlFor="timeCommitment" className="block mb-1">Time Commitment</label>
+        <label htmlFor="timeCommitment" className="block mb-1">{t('projectForm.timeCommitment')}</label>
         <Input
           id="timeCommitment"
-          {...register('timeCommitment', { required: 'Time commitment is required' })}
+          {...register('timeCommitment', { required: t('projectForm.timeCommitmentRequired') })}
           className={errors.timeCommitment ? 'border-red-500' : ''}
         />
         {errors.timeCommitment && <p className="text-red-500 text-sm mt-1">{errors.timeCommitment.message}</p>}
       </div>
 
       <div>
-        <label htmlFor="location" className="block mb-1">Location</label>
+        <label htmlFor="location" className="block mb-1">{t('projectForm.location')}</label>
         <Input
           id="location"
-          {...register('location', { required: 'Location is required' })}
+          {...register('location', { required: t('projectForm.locationRequired') })}
           className={errors.location ? 'border-red-500' : ''}
         />
         {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
       </div>
 
       <div>
-        <label htmlFor="categoryId" className="block mb-1">Category</label>
+        <label htmlFor="categoryId" className="block mb-1">{t('projectForm.category')}</label>
         <Select
           id="categoryId"
-          {...register('categoryId', { required: 'Category is required' })}
+          {...register('categoryId', { required: t('projectForm.categoryRequired') })}
           className={errors.categoryId ? 'border-red-500' : ''}
         >
-          <option value="">Select a category</option>
+          <option value="">{t('projectForm.selectCategory')}</option>
           {/* Add category options here */}
         </Select>
         {errors.categoryId && <p className="text-red-500 text-sm mt-1">{errors.categoryId.message}</p>}
@@ -94,10 +93,10 @@ const ProjectForm = ({ project, onSubmit, isLoading }) => {
 
       <div className="flex space-x-4">
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Submitting...' : (project ? 'Update Project' : 'Create Project')}
+          {isLoading ? t('projectForm.submitting') : (project ? t('projectForm.updateProject') : t('projectForm.createProject'))}
         </Button>
         <Button type="button" variant="outline" onClick={() => navigate(-1)}>
-          Cancel
+          {t('projectForm.cancel')}
         </Button>
       </div>
     </form>

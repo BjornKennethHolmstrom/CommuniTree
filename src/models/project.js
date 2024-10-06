@@ -3,13 +3,13 @@ const db = require('../../config/database');
 const Project = {
   async create(projectData) {
     try {
-      const { title, description, creator_id, required_skills, time_commitment, location } = projectData;
+      const { title, description, creator_id, required_skills, time_commitment, location, community_id } = projectData;
       const query = `
-        INSERT INTO projects (title, description, creator_id, required_skills, time_commitment, location)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO projects (title, description, creator_id, required_skills, time_commitment, location, community_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *
       `;
-      const values = [title, description, creator_id, required_skills, time_commitment, location];
+      const values = [title, description, creator_id, required_skills, time_commitment, location, community_id];
       const result = await db.query(query, values);
       return result.rows[0];
     } catch (error) {
@@ -18,12 +18,17 @@ const Project = {
     }
   },
 
-  async getAll(limit, offset, search, filter) {
+  async getAll(limit, offset, search, filter, communityId) {
     try {
       let query = 'SELECT * FROM projects WHERE deleted_at IS NULL';
-      let countQuery = 'SELECT COUNT(*) FROM projects';
+      let countQuery = 'SELECT COUNT(*) FROM projects WHERE deleted_at IS NULL';
       const queryParams = [];
       let whereClause = '';
+
+      if (communityId) {
+        whereClause += ' AND community_id = $' + (queryParams.length + 1);
+        queryParams.push(communityId);
+      }
 
       if (search) {
         whereClause += ' WHERE (title ILIKE $1 OR description ILIKE $1)';
@@ -49,8 +54,8 @@ const Project = {
         total: parseInt(countResult.rows[0].count)
       };
     } catch (error) {
-      console.error('Error getting all:', error);
-      throw new Error('Failed to get all:');
+      console.error('Error getting all projects:', error);
+      throw new Error('Failed to get all projects');
     }
   },
 

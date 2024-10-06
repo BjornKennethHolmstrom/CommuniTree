@@ -32,7 +32,7 @@ const CreateProject = () => {
 
       setSuccess(true);
     } catch (error) {
-      console.error('Error creating project:', error);
+      console.error(t('createProject.errorCreating'), error);
       setError(error.message);
     } finally {
       setLoading(false);

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Button, FormControl, FormLabel, Input,
   VStack, Heading, Alert, AlertIcon,
 } from '@chakra-ui/react';
 
 const Login = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,14 +24,14 @@ const Login = () => {
     } catch (err) {
       console.error('Login error:', err);
       console.error('Error response:', err.response);
-      setError(err.response?.data?.msg || err.message || 'An error occurred. Please try again.');
+      setError(err.response?.data?.msg || err.message || t('login.error'));
     }
   };
 
   return (
     <Box maxWidth="md" margin="auto" mt={8}>
       <Heading as="h2" size="xl" textAlign="center" mb={6}>
-        Login
+        {t('login.title')}
       </Heading>
       {error && (
         <Alert status="error" mb={4}>
@@ -40,7 +42,7 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>
           <FormControl id="email" isRequired>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>{t('login.email')}</FormLabel>
             <Input
               type="email"
               value={email}
@@ -48,7 +50,7 @@ const Login = () => {
             />
           </FormControl>
           <FormControl id="password" isRequired>
-            <FormLabel>Password</FormLabel>
+            <FormLabel>{t('login.password')}</FormLabel>
             <Input
               type="password"
               value={password}
@@ -56,7 +58,7 @@ const Login = () => {
             />
           </FormControl>
           <Button type="submit" colorScheme="blue" width="full">
-            Login
+            {t('login.submit')}
           </Button>
         </VStack>
       </form>

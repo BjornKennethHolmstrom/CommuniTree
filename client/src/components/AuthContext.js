@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const AuthContext = createContext();
 
@@ -11,6 +12,7 @@ const api = axios.create({
 });
 
 export const AuthProvider = ({ children }) => {
+  const { t } = useTranslation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       api.defaults.headers.common['x-auth-token'] = accessToken;
       setUser({ ...userData, token: accessToken, refreshToken });
     } catch (error) {
-      console.error('Login error:', error);
+      console.error(t('authContext.loginError'), error);
       throw error;
     }
   };
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }) => {
       setUser(prevUser => ({ ...prevUser, token: newAccessToken, refreshToken: newRefreshToken }));
       return newAccessToken;
     } catch (error) {
-      console.error('Token refresh error:', error);
+      console.error(t('authContext.tokenRefreshError'), error);
       logout();
       throw error;
     }
@@ -76,11 +78,11 @@ export const AuthProvider = ({ children }) => {
           return api(originalRequest);
         } catch (refreshError) {
           logout();
+          alert(t('authContext.sessionExpired'));
           window.location.href = '/login';
           return Promise.reject(refreshError);
         }
       }
-
       return Promise.reject(error);
     }
   );

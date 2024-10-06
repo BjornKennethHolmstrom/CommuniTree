@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import { Box, VStack, Heading, Text, Button, Input, Textarea, Spinner, Alert, AlertIcon, FormControl, FormLabel } from '@chakra-ui/react';
 
 const UserProfile = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -65,40 +67,40 @@ const UserProfile = () => {
 
   if (loading) return <Spinner size="xl" />;
   if (error) return <Alert status="error"><AlertIcon />{error}</Alert>;
-  if (!profile) return <Alert status="info"><AlertIcon />No profile data available.</Alert>;
+  if (!profile) return <Alert status="info"><AlertIcon />{t('userProfile.noProfile')}</Alert>;
 
   return (
     <Box maxW="2xl" mx="auto" mt={8}>
-      <Heading as="h2" size="xl" mb={4}>My Profile</Heading>
+      <Heading as="h2" size="xl" mb={4}>{t('pages.myProfile')}</Heading>
       {editing ? (
         <form onSubmit={handleSubmit}>
           <VStack spacing={4} align="stretch">
             <FormControl>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t('userProfile.name')}</FormLabel>
               <Input value={name} onChange={(e) => setName(e.target.value)} />
             </FormControl>
             <FormControl>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel>{t('userProfile.bio')}</FormLabel>
               <Textarea value={bio} onChange={(e) => setBio(e.target.value)} />
             </FormControl>
             <FormControl>
-              <FormLabel>Skills (comma-separated)</FormLabel>
+              <FormLabel>{t('userProfile.skills')}</FormLabel>
               <Input
                 value={skills.join(', ')}
                 onChange={(e) => setSkills(e.target.value.split(',').map(skill => skill.trim()).filter(Boolean))}
               />
             </FormControl>
-            <Button type="submit" colorScheme="blue">Save Changes</Button>
+            <Button type="submit" colorScheme="blue">{t('userProfile.saveChanges')}</Button>
           </VStack>
         </form>
       ) : (
         <VStack align="stretch" spacing={4}>
-          <Text><strong>Name:</strong> {profile.name || profile.username}</Text>
-          <Text><strong>Email:</strong> {profile.email}</Text>
-          <Text><strong>Bio:</strong> {profile.bio || 'No bio provided'}</Text>
-          <Text><strong>Skills:</strong> {profile.skills?.join(', ') || 'No skills listed'}</Text>
-          <Text><strong>Member since:</strong> {new Date(profile.created_at).toLocaleDateString()}</Text>
-          <Button onClick={() => setEditing(true)} colorScheme="green">Edit Profile</Button>
+          <Text><strong>{t('userProfile.name')}:</strong> {profile.name || profile.username}</Text>
+          <Text><strong>{t('userProfile.email')}:</strong> {profile.email}</Text>
+          <Text><strong>{t('userProfile.bio')}:</strong> {profile.bio || t('userProfile.noBio')}</Text>
+          <Text><strong>{t('userProfile.skills')}:</strong> {profile.skills?.join(', ') || t('userProfile.noSkills')}</Text>
+          <Text><strong>{t('userProfile.memberSince')}:</strong> {new Date(profile.created_at).toLocaleDateString()}</Text>
+          <Button onClick={() => setEditing(true)} colorScheme="green">{t('userProfile.editProfile')}</Button>
         </VStack>
       )}
     </Box>

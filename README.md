@@ -8,8 +8,9 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Enhanced multi-language support (English and Swedish) with comprehensive translations
 - Project management system with CRUD operations and detailed project views
 - Event management system with CRUD operations
-- Community event calendar with RSVP functionality
-- Search and filter functionality for projects and events
+- Community management system with CRUD operations
+- Community event calendar with RSVP functionality and community filtering
+- Search and filter functionality for projects, events, and communities
 - Pagination for project and event listings
 - User authentication system with JWT and token refresh mechanism
 - User roles and permissions (Admin, Regular User)
@@ -18,6 +19,8 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - User profiles with edit capabilities
 - Notification system for user alerts
 - Improved error handling and user feedback
+- Location-based theming system
+- User-selectable themes with dark mode support
 
 ## Technical Stack
 
@@ -28,6 +31,8 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Internationalization: react-i18next
 - Authentication: JSON Web Tokens (JWT)
 - UI Components: Chakra UI and custom components
+- Theming: Chakra UI theming system with custom hooks
+- Testing: Jest and Supertest
 
 ## Getting Started
 
@@ -100,6 +105,9 @@ CommuniTree
 │       │   ├── AddUserForm.js
 │       │   ├── AuthContext.js
 │       │   ├── Comments.js
+│       │   ├── CommunityDetails.js
+│       │   ├── CommunityForm.js
+│       │   ├── CommunityList.js
 │       │   ├── CreateProject.js
 │       │   ├── Dashboard.js
 │       │   ├── EditUserForm.js
@@ -147,6 +155,7 @@ CommuniTree
 │   ├── controllers
 │   │   ├── authController.js
 │   │   ├── commentController.js
+│   │   ├── communityController.js
 │   │   ├── dashboardController.js
 │   │   ├── eventController.js
 │   │   ├── fileController.js
@@ -158,12 +167,15 @@ CommuniTree
 │   ├── __mocks__
 │   │   └── database.js
 │   ├── models
+│   │   ├── community.js
+│   │   ├── communityMembership.js
 │   │   ├── event.js
 │   │   ├── project.js
 │   │   └── user.js
 │   └── routes
 │       ├── authRoutes.js
 │       ├── commentRoutes.js
+│       ├── communityRoutes.js
 │       ├── dashboardRoutes.js
 │       ├── eventRoutes.js
 │       ├── fileRoutes.js
@@ -180,6 +192,7 @@ CommuniTree
 │   ├── controllers
 │   │   ├── authController.test.js
 │   │   ├── commentController.test.js
+│   │   ├── communityController.test.js
 │   │   ├── dashboardController.test.js
 │   │   ├── eventController.test.js
 │   │   ├── fileController.test.js
@@ -190,6 +203,7 @@ CommuniTree
 │   ├── routes
 │   │   ├── authRoutes.test.js
 │   │   ├── commentRoutes.test.js
+│   │   ├── communityRoutes.test.js
 │   │   ├── dashboardRoutes.test.js
 │   │   ├── eventRoutes.test.js
 │   │   ├── fileRoutes.test.js

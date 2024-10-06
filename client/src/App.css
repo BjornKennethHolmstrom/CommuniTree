@@ -1,12 +1,55 @@
-.App {
-  text-align: center;
-  font-family: Arial, sans-serif;
+:root {
+  --color-primary: #2ECC71;
+  --color-secondary: #3498DB;
+  --color-accent: #F39C12;
+  --color-background: #ECF0F1;
+  --color-text: #34495E;
+}
+
+body, .App {
+  background-color: transparent;
+  color: var(--color-text);
+  min-height: 100vh;
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--color-primary);
   padding: 20px;
   color: white;
+}
+
+.chakra-button {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.chakra-button:hover {
+  background-color: var(--color-accent);
+}
+
+.tree-background {
+  background-image: url('../public/communitree-logo.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+.content-wrapper {
+  background-color: rgba(255, 255, 255, 0.8);
+  min-height: 100vh;
+}
+
+/* Keeping some of the old CSS */
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
 }
 
 main {
@@ -33,7 +76,6 @@ input {
 
 button {
   padding: 5px 10px;
-  background-color: #61dafb;
   border: none;
   cursor: pointer;
 }

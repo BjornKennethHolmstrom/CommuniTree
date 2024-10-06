@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const NotificationComponent = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
 
@@ -39,9 +41,9 @@ const NotificationComponent = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Notifications</h2>
+      <h2 className="text-2xl font-bold mb-4">{t('notifications.title')}</h2>
       {notifications.length === 0 ? (
-        <p>No new notifications</p>
+        <p>{t('notifications.noNewNotifications')}</p>
       ) : (
         <ul>
           {notifications.map((notification) => (
@@ -50,7 +52,7 @@ const NotificationComponent = () => {
               <small>{new Date(notification.created_at).toLocaleString()}</small>
               {!notification.read && (
                 <button onClick={() => markAsRead(notification.id)} className="ml-2 text-blue-500 hover:underline">
-                  Mark as read
+                  {t('notifications.markAsRead')}
                 </button>
               )}
             </li>

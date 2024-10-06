@@ -39,7 +39,7 @@ const ProjectDetails = () => {
         }
       });
       if (!response.ok) {
-        throw new Error('Failed to fetch project details');
+        throw new Error(t('projectDetails.fetchError'));
       }
       const data = await response.json();
       setProject(data);
@@ -60,7 +60,7 @@ const ProjectDetails = () => {
         }
       });
       if (!response.ok) {
-        throw new Error('Failed to fetch project volunteers');
+        throw new Error(t('projectDetails.volunteersFetchError'));
       }
       const data = await response.json();
       setVolunteers(data);
@@ -81,9 +81,9 @@ const ProjectDetails = () => {
         body: JSON.stringify({ project_id: id }),
       });
       if (!response.ok) {
-        throw new Error('Failed to sign up as volunteer');
+        throw new Error(t('projectDetails.volunteerSignUpError'));
       }
-      alert('You have successfully signed up as a volunteer!');
+      alert(t('projectDetails.volunteerSuccess'));
       fetchProjectVolunteers();
     } catch (error) {
       console.error('Error signing up as volunteer:', error);
@@ -102,7 +102,7 @@ const ProjectDetails = () => {
         body: JSON.stringify({ status: newStatus })
       });
       if (!response.ok) {
-        throw new Error('Failed to update project status');
+        throw new Error(t('projectDetails.statusUpdateError'));
       }
       setStatus(newStatus);
       alert('Project status updated successfully');
@@ -123,7 +123,7 @@ const ProjectDetails = () => {
         body: JSON.stringify(updatedProjectData)
       });
       if (!response.ok) {
-        throw new Error('Failed to update project');
+        throw new Error(t('projectDetails.projectUpdateError'));
       }
       const updatedProject = await response.json();
       setProject(updatedProject);
@@ -135,7 +135,7 @@ const ProjectDetails = () => {
   };
 
   const handleDeleteProject = async () => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
+    if (window.confirm(t('projectDetails.deleteConfirmation'))) {
       try {
         const response = await fetch(`/api/projects/${id}`, {
           method: 'DELETE',
@@ -144,7 +144,7 @@ const ProjectDetails = () => {
           }
         });
         if (!response.ok) {
-          throw new Error('Failed to delete project');
+          throw new Error(t('projectDetails.projectDeleteError'));
         }
         navigate('/projects');
       } catch (error) {

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Button, Alert, AlertIcon, VStack, Text, Link, Input, Box } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 const FileUpload = ({ projectId }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [files, setFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -23,7 +25,7 @@ const FileUpload = ({ projectId }) => {
       const data = await response.json();
       setUploadedFiles(data);
     } catch (err) {
-      setError('Error fetching files: ' + err.message);
+      setError(t('fileUpload.fetchError') + err.message);
     }
   };
 
@@ -46,16 +48,16 @@ const FileUpload = ({ projectId }) => {
       setFiles([]);
       fetchUploadedFiles();
     } catch (err) {
-      setError('Error uploading files: ' + err.message);
+      setError(t('fileUpload.uploadError') + err.message);
     }
   };
 
   return (
     <Box mt={8}>
-      <Text fontSize="xl" fontWeight="semibold" mb={4}>Project Files</Text>
+      <Text fontSize="xl" fontWeight="semibold" mb={4}>{t('fileUpload.title')}</Text>
       {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
       {projectId === 'new' ? (
-        <Text>File upload will be available after creating the project.</Text>
+        <Text>{t('fileUpload.unavailable')}</Text>
       ) : (
         <>
           <VStack align="stretch" spacing={2} mb={4}>
@@ -78,7 +80,7 @@ const FileUpload = ({ projectId }) => {
                 py={1}
               />
               <Button type="submit" isDisabled={files.length === 0} colorScheme="blue">
-                Upload Files
+                {t('fileUpload.uploadFiles')}
               </Button>
             </VStack>
           </form>

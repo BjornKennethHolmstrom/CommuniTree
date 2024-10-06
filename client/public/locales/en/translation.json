@@ -1,26 +1,12 @@
 {
   "appName": "CommuniTree",
-  "home": "Home",
-  "projects": "Projects",
-  "eventCalendar": "Event Calendar",
-  "dashboard": "Dashboard",
-  "myProfile": "My Profile",
-  "login": "Log In",
-  "logout": "Log Out",
-  "userManagement": {
-    "title": "User Management",
-    "addUser": "Add User",
-    "username": "Username",
-    "email": "Email",
-    "search": "Search users...",
-    "details": "Details",
-    "edit": "Edit",
-    "delete": "Delete",
-    "update": "Update User",
-    "cancel": "Cancel"
-  },
-  "userDetails": {
-    "createdAt": "Created at"
+  "themes": {
+    "default": "Default",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "tropical": "Tropical",
+    "continental": "Continental",
+    "polar": "Polar"
   },
   "common": {
     "loading": "Loading...",
@@ -35,10 +21,106 @@
     "none": "None",
     "notSpecified": "Not specified"
   },
-  "createProject": {
-    "title": "Create New Project",
-    "success": "Project created successfully!",
-    "error": "Error creating project:"
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "error": "An error occurred. Please try again."
+  },
+  "authContext": {
+    "loginError": "Login error:",
+    "tokenRefreshError": "Token refresh error:",
+    "sessionExpired": "Your session has expired. Please log in again."
+  },
+  "userManagement": {
+    "title": "User Management",
+    "addUser": "Add User",
+    "username": "Username",
+    "email": "Email",
+    "search": "Search users...",
+    "details": "Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update User",
+    "cancel": "Cancel",
+    "fetchError": "Failed to fetch users",
+    "deleteError": "Failed to delete user"
+  },
+  "menu": {
+    "home": "Home",
+    "projects": "Projects",
+    "eventCalendar": "Event Calendar",
+    "dashboard": "Dashboard",
+    "myProfile": "My Profile",
+    "login": "Log In",
+    "logout": "Log Out"
+  },
+  "pages": {
+    "home": "Home",
+    "projects": "Projects",
+    "eventCalendar": "Community Event Calendar",
+    "dashboard": "Dashboard",
+    "myProfile": "My Profile"
+  },
+  "communities": {
+    "title": "Communities",
+    "createNew": "Create New Community",
+    "searchPlaceholder": "Search communities...",
+    "noCommunities": "No communities available.",
+    "viewDetails": "View Details",
+    "loading": "Loading communities...",
+    "join": "Join Community",
+    "leave": "Leave Community",
+    "members": "Members"
+  },
+  "communityDetails": {
+    "loading": "Loading community details...",
+    "notFound": "Community not found",
+    "description": "Description",
+    "location": "Location",
+    "timezone": "Timezone",
+    "editCommunity": "Edit Community",
+    "deleteCommunity": "Delete Community",
+    "deleteConfirmation": "Are you sure you want to delete this community?",
+    "joinSuccess": "You have successfully joined the community!",
+    "leaveSuccess": "You have successfully left the community!",
+    "fetchError": "Failed to fetch community details",
+    "membersFetchError": "Failed to fetch community members",
+    "joinError": "Failed to join community",
+    "leaveError": "Failed to leave community",
+    "updateError": "Failed to update community",
+    "deleteError": "Failed to delete community"
+  },
+  "communityForm": {
+    "name": "Name",
+    "nameRequired": "Name is required",
+    "description": "Description",
+    "descriptionRequired": "Description is required",
+    "latitude": "Latitude",
+    "latitudeRequired": "Latitude is required",
+    "longitude": "Longitude",
+    "longitudeRequired": "Longitude is required",
+    "timezone": "Timezone",
+    "timezoneRequired": "Timezone is required",
+    "submitting": "Submitting...",
+    "updateCommunity": "Update Community",
+    "createCommunity": "Create Community",
+    "cancel": "Cancel"
+  },
+  "projects": {
+    "title": "Community Projects",
+    "createNew": "Create New Project",
+    "searchPlaceholder": "Search projects...",
+    "filterAll": "All Statuses",
+    "filterOpen": "Open",
+    "filterInProgress": "In Progress",
+    "filterCompleted": "Completed",
+    "noProjects": "No projects available.",
+    "viewDetails": "View Details",
+    "loading": "Loading projects...",
+    "loadMore": "Load More",
+    "status": "Status"
   },
   "projectDetails": {
     "loading": "Loading project details...",
@@ -52,23 +134,54 @@
     "updateStatus": "Update Status",
     "statusOpen": "Open",
     "statusInProgress": "In Progress",
-    "statusCompleted": "Completed"
+    "statusCompleted": "Completed",
+    "editProject": "Edit Project",
+    "deleteProject": "Delete Project",
+    "deleteConfirmation": "Are you sure you want to delete this project?",
+    "volunteerSuccess": "You have successfully signed up as a volunteer!",
+    "fetchError": "Failed to fetch project details",
+    "volunteersFetchError": "Failed to fetch project volunteers",
+    "volunteerSignUpError": "Failed to sign up as volunteer",
+    "statusUpdateError": "Failed to update project status",
+    "projectUpdateError": "Failed to update project",
+    "projectDeleteError": "Failed to delete project"
   },
   "projectForm": {
     "title": "Title",
+    "titleRequired": "Title is required",
     "description": "Description",
-    "requiredSkills": "Required Skills",
+    "descriptionRequired": "Description is required",
+    "requiredSkills": "Required Skills (comma-separated)",
+    "skillsRequired": "At least one skill is required",
     "timeCommitment": "Time Commitment",
+    "timeCommitmentRequired": "Time commitment is required",
     "location": "Location",
+    "locationRequired": "Location is required",
     "category": "Category",
-    "submit": "Submit",
+    "categoryRequired": "Category is required",
+    "selectCategory": "Select a category",
+    "submitting": "Submitting...",
+    "updateProject": "Update Project",
+    "createProject": "Create Project",
     "cancel": "Cancel"
+  },
+  "createProject": {
+    "title": "Create New Project",
+    "success": "Project created successfully!",
+    "error": "Error creating project:",
+    "errorCreating": "Error creating project: "
   },
   "eventCalendar": {
     "title": "Community Event Calendar",
+    "allCommunities": "All Communities",
+    "selectCommunity": "Select Community",
     "addEvent": "Add Event",
+    "addNewEvent": "Add New Event",
     "editEvent": "Edit Event",
+    "updateEvent": "Update Event",
     "deleteEvent": "Delete Event",
+    "eventTitle": "Event Title",
+    "eventDescription": "Event Description",
     "eventDetails": "Event Details",
     "location": "Location",
     "start": "Start",
@@ -79,7 +192,104 @@
     "notAttending": "Not Attending",
     "maybe": "Maybe",
     "attendees": "Attendees",
-    "confirmDelete": "Confirm Delete",
-    "deleteConfirmation": "Are you sure you want to delete this event?"
+    "confirmDeletion": "Confirm Deletion",
+    "deleteConfirmation": "Are you sure you want to delete this event?",
+    "cancel": "Cancel",
+    "failedToFetchEvents": "Failed to fetch events. Please try again later.",
+    "failedToAddEvent": "Failed to add event. ",
+    "failedToUpdateEvent": "Failed to update event. Please try again.",
+    "failedToDeleteEvent": "Failed to delete event. Please try again.",
+    "failedToFetchRSVP": "Failed to fetch RSVP status. Please try again.",
+    "failedToUpdateRSVP": "Failed to update RSVP. Please try again.",
+    "failedToFetchAttendees": "Failed to fetch attendees. Please try again."
+  },
+  "userProfile": {
+    "loading": "Loading...",
+    "noProfile": "No profile data available.",
+    "name": "Name",
+    "bio": "Bio",
+    "skills": "Skills (comma-separated)",
+    "saveChanges": "Save Changes",
+    "email": "Email",
+    "noBio": "No bio provided",
+    "noSkills": "No skills listed",
+    "memberSince": "Member since",
+    "editProfile": "Edit Profile",
+    "updateError": "Failed to update profile"
+  },
+  "userDetails": {
+    "loading": "Loading...",
+    "email": "Email",
+    "createdAt": "Created at",
+    "close": "Close"
+  },
+  "addUserForm": {
+    "username": "Username",
+    "email": "Email",
+    "addUser": "Add User",
+    "errorAdding": "Error adding user:"
+  },
+  "editUserForm": {
+    "username": "Username",
+    "email": "Email",
+    "updateUser": "Update User",
+    "cancel": "Cancel",
+    "errorUpdating": "Error updating user:"
+  },
+  "dashboard": {
+    "title": "Your Dashboard",
+    "projectsCreated": "Projects Created",
+    "volunteeringHours": "Volunteering Hours",
+    "communitiesImpacted": "Communities Impacted",
+    "yourProjects": "Your Projects",
+    "noProjects": "You have not created any projects yet.",
+    "viewProject": "View Project",
+    "yourVolunteerActivities": "Your Volunteer Activities",
+    "noVolunteerActivities": "You have not registered as volunteer for any projects yet.",
+    "role": "Role",
+    "hours": "Hours"
+  },
+  "fileUpload": {
+    "title": "Project Files",
+    "unavailable": "File upload will be available after creating the project.",
+    "uploadFiles": "Upload Files",
+    "fetchError": "Error fetching files: ",
+    "uploadError": "Error uploading files: "
+  },
+  "comments": {
+    "title": "Comments",
+    "unavailable": "Comments will be available after creating the project.",
+    "addComment": "Add Comment",
+    "commentPlaceholder": "Add a comment...",
+    "by": "By",
+    "on": "on",
+    "fetchError": "Error fetching comments: ",
+    "addError": "Error adding comment: "
+  },
+  "notifications": {
+    "title": "Notifications",
+    "noNewNotifications": "No new notifications",
+    "markAsRead": "Mark as read"
+  },
+  "messaging": {
+    "title": "Messages",
+    "noMessages": "No messages yet.",
+    "loading": "Loading messages...",
+    "recipient": "Recipient",
+    "selectRecipient": "Select a recipient",
+    "newMessage": "New Message",
+    "sendMessage": "Send Message",
+    "fetchError": "Error fetching messages: ",
+    "usersFetchError": "Error fetching users: ",
+    "sendError": "Error sending message: "
+  },
+  "errorBoundary": {
+    "title": "Oops! Something went wrong.",
+    "message": "We're sorry, but an error occurred. Please try refreshing the page or contact support if the problem persists."
+  },
+  "errorContext": {
+    "errorOccurred": "An error occurred",
+    "dismiss": "Dismiss"
   }
 }
+

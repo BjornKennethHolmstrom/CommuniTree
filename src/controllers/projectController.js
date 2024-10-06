@@ -12,8 +12,7 @@ const projectController = {
 
   async getAllProjects(req, res) {
     try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
+      const { page = 1, limit = 10, search, filter, communityId } = req.query;
       const offset = (page - 1) * limit;
       const search = req.query.search || '';
       const filter = req.query.filter || '';
@@ -21,7 +20,7 @@ const projectController = {
       const { projects, total } = await Project.getAll(limit, offset, search, filter);
       const totalPages = Math.ceil(total / limit);
 
-      res.json({
+      res.status(200).json({
         projects,
         currentPage: page,
         totalPages,

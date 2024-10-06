@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
+import { useTranslation } from 'react-i18next';
 
 function AddUserForm({ onUserAdded }) {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const { user } = useAuth();
@@ -22,7 +24,7 @@ function AddUserForm({ onUserAdded }) {
         setUsername('');
         setEmail('');
       })
-      .catch(error => console.error('Error adding user:', error));
+      .catch(error => console.error(t('addUserForm.errorAdding'), error));
   };
 
   return (
@@ -31,17 +33,17 @@ function AddUserForm({ onUserAdded }) {
         type="text"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
+        placeholder={t('addUserForm.username')}
         required
       />
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
+        placeholder={t('addUserForm.email')}
         required
       />
-      <button type="submit">Add User</button>
+      <button type="submit">{t('addUserForm.addUser')}</button>
     </form>
   );
 }
