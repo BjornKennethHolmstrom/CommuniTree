@@ -10,18 +10,12 @@ jest.mock('../../src/middleware/auth', () => (req, res, next) => {
   req.user = { id: 1 };
   next();
 });
+
 jest.mock('multer', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      single: jest.fn()
-    };
-  });
-});
-jest.mock('multer', () => {
-  return () => ({
-    diskStorage: jest.fn(),
+  return jest.fn().mockImplementation(() => ({
+    diskStorage: jest.fn().mockReturnValue({}),
     single: jest.fn().mockReturnValue((req, res, next) => next())
-  });
+  }));
 });
 
 const app = express();

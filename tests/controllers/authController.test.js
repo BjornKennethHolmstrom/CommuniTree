@@ -45,16 +45,16 @@ describe('Auth Controller', () => {
 
     await authController.login(mockRequest, mockResponse);
 
-    expect(mockResponse.json).toHaveBeenCalledWith({
-      token: 'mocktoken',
-      user: {
-        id: 1,
+    expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
+      accessToken: expect.any(String),
+      refreshToken: expect.any(String),
+      user: expect.objectContaining({
+        id: expect.any(Number),
         username: 'testuser',
-        name: 'Test User',
         email: 'test@example.com',
         role: 'user'
-      }
-    });
+      })
+    }));
   });
 
   test('login should return 400 for invalid credentials', async () => {

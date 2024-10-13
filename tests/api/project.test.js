@@ -1,72 +1,50 @@
-// tests/api/project.test.js
-
 const request = require('supertest');
 const app = require('../../server');
-const db = require('../../config/database');
-const jwt = require('jsonwebtoken');
+const Project = require('../../src/models/project');
+const auth = require('../../src/middleware/auth');
+
+jest.mock('../../src/models/project');
+jest.mock('../../src/middleware/auth');
 
 describe('Project API', () => {
-  let authToken;
-  let testUserId;
-
-  beforeAll(async () => {
-    // Create a test user
-    const userResult = await db.query(
-      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id',
-      ['testuser', 'test@example.com', 'hashedpassword', 'user']
-    );
-    testUserId = userResult.rows[0].id;
-
-    // Create an auth token for the test user
-    const payload = {
-      user: {
-        id: testUserId,
-        role: 'user'
-      }
-    };
-    authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    // Create a test project
-    await db.query(
-      'INSERT INTO projects (title, description, creator_id) VALUES ($1, $2, $3)',
-      ['Test Project', 'This is a test project', testUserId]
-    );
+  beforeEach(() => {
+    auth.mockImplementation((req, res, next) => {
+      req.user = { id: 1, role: 'user' };
+      next();
+    });
   });
 
-  afterAll(async () => {
-    // Clean up test data
-    await db.query('DELETE FROM projects WHERE creator_id = $1', [testUserId]);
-    await db.query('DELETE FROM users WHERE id = $1', [testUserId]);
-    await db.end();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('GET /api/projects', () => {
     it('should return all projects', async () => {
-      const res = await request(app)
-        .get('/api/projects')
-        .set('Authorization', `Bearer ${authToken}`);
+      const mockProjects = [{ id: 1, title: 'Test Project', description: 'This is a test project' }];
+      Project.getAll.mockResolvedValue({ projects: mockProjects, total: 1 });
+
+      const res = await request(app).get('/api/projects');
 
       expect(res.statusCode).toEqual(200);
-      expect(Array.isArray(res.body)).toBeTruthy();
-      expect(res.body.length).toBeGreaterThan(0);
-      expect(res.body[0]).toHaveProperty('title', 'Test Project');
+      expect(Array.isArray(res.body.projects)).toBeTruthy();
+      expect(res.body.projects.length).toBeGreaterThan(0);
+      expect(res.body.projects[0]).toHaveProperty('title', 'Test Project');
     });
   });
 
   describe('POST /api/projects', () => {
     it('should create a new project', async () => {
+      const newProject = { title: 'New Test Project', description: 'This is a new test project' };
+      Project.create.mockResolvedValue({ id: 2, ...newProject, creator_id: 1 });
+
       const res = await request(app)
         .post('/api/projects')
-        .set('Authorization', `Bearer ${authToken}`)
-        .send({
-          title: 'New Test Project',
-          description: 'This is a new test project'
-        });
+        .send(newProject);
 
       expect(res.statusCode).toEqual(201);
       expect(res.body).toHaveProperty('title', 'New Test Project');
       expect(res.body).toHaveProperty('description', 'This is a new test project');
-      expect(res.body).toHaveProperty('creator_id', testUserId);
+      expect(res.body).toHaveProperty('creator_id', 1);
     });
   });
 

@@ -1,12 +1,18 @@
-// tests/integration/weatherAPI.test.js
-
 const request = require('supertest');
-const app = require('../../server'); // Adjust the path as needed
+const app = require('../../server');
 const Weather = require('../../src/models/weather');
+const auth = require('../../src/middleware/auth');
 
-jest.mock('../../src/models/weather');
+jest.mock('../../src/middleware/auth');
+jest.mock('../../src/models/weather', () => ({
+  getLatestForCommunity: jest.fn(),
+}));
 
 describe('Weather API', () => {
+  beforeEach(() => {
+    auth.mockImplementation((req, res, next) => next());
+  });
+
   test('GET /api/communities/:id/weather should return weather data', async () => {
     const mockWeatherData = {
       id: 1,
@@ -18,8 +24,7 @@ describe('Weather API', () => {
     Weather.getLatestForCommunity.mockResolvedValue(mockWeatherData);
 
     const response = await request(app)
-      .get('/api/communities/1/weather')
-      .set('Authorization', 'Bearer fake-token'); // You might need to mock authentication
+      .get('/api/communities/1/weather');
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockWeatherData);
@@ -29,8 +34,7 @@ describe('Weather API', () => {
     Weather.getLatestForCommunity.mockResolvedValue(null);
 
     const response = await request(app)
-      .get('/api/communities/1/weather')
-      .set('Authorization', 'Bearer fake-token');
+      .get('/api/communities/1/weather');
 
     expect(response.status).toBe(404);
     expect(response.body).toEqual({ message: 'Weather data not found' });

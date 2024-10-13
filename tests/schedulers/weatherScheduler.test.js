@@ -3,7 +3,7 @@ const weatherService = require('../../src/services/weatherService');
 const scheduleWeatherUpdates = require('../../src/schedulers/weatherScheduler');
 
 jest.mock('node-schedule');
-jest.mock('../../services/weatherService');
+jest.mock('../../src/services/weatherService');
 
 describe('Weather Scheduler', () => {
   test('should schedule weather updates', () => {

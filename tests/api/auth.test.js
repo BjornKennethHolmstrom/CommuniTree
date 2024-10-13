@@ -31,7 +31,7 @@ describe('Authentication', () => {
         });
 
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('accessToken');
       expect(res.body.user).toHaveProperty('id');
       expect(res.body.user.username).toEqual('testuser');
       expect(res.body.user.email).toEqual('test@example.com');

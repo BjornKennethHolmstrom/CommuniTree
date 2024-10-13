@@ -8,6 +8,7 @@
     "start": "react-scripts start",
     "dev": "nodemon start.js",
     "test": "jest",
+    "test:e2e": "cypress run",
     "test:coverage": "jest --coverage"
   },
   "keywords": [],

@@ -6,7 +6,7 @@ const Weather = require('../../src/models/weather');
 // Mock the Community and User models
 jest.mock('../../src/models/community');
 jest.mock('../../src/models/user');
-jest.mock('../../models/weather');
+jest.mock('../../src/models/weather');
 
 describe('Community Controller', () => {
   let mockRequest;
@@ -20,9 +20,24 @@ describe('Community Controller', () => {
     };
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
+      send: jest.fn(),
     };
   });
+
+  jest.mock('../../src/models/community', () => ({
+    delete: jest.fn().mockResolvedValue({}),
+    getMembers: jest.fn().mockResolvedValue([]),
+  }));
+
+  jest.mock('../../src/models/user', () => ({
+    addToCommunity: jest.fn().mockResolvedValue({}),
+    removeFromCommunity: jest.fn().mockResolvedValue({}),
+  }));
+
+  jest.mock('../../src/models/weather', () => ({
+    getLatestForCommunity: jest.fn().mockResolvedValue({}),
+  }));
 
   test('createCommunity should create a new community', async () => {
     const communityData = { name: 'Test Community', description: 'A test community' };

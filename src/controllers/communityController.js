@@ -2,6 +2,7 @@
 
 const Community = require('../models/community');
 const User = require('../models/user');
+const Weather = require('../models/weather');
 
 const communityController = {
 
@@ -137,7 +138,11 @@ const communityController = {
       }
     } catch (error) {
       console.error('Error getting weather:', error);
-      res.status(500).json({ message: 'Failed to get weather data' });
+      if (error.name === 'CastError') {
+        res.status(400).json({ message: 'Invalid community ID' });
+      } else {
+        res.status(500).json({ message: 'Failed to get weather data' });
+      }
     }
   }
 };
