@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Box, VStack, Heading, Text, Button, Input, Textarea, Spinner, Alert, AlertIcon, FormControl, FormLabel } from '@chakra-ui/react';
 
 const UserProfile = () => {

@@ -54,7 +54,9 @@
     "dashboard": "Dashboard",
     "myProfile": "My Profile",
     "login": "Log In",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "admin": "Admin",
+    "settings": "Settings"
   },
   "pages": {
     "home": "Home",
@@ -290,6 +292,84 @@
   "errorContext": {
     "errorOccurred": "An error occurred",
     "dismiss": "Dismiss"
+  },
+  "community": {
+    "about": "About",
+    "recentProjects": "Recent Projects",
+    "upcomingEvents": "Upcoming Events",
+    "members": "Members",
+    "tags": "Tags",
+    "location": "Location",
+    "join": "Join Community",
+    "leave": "Leave Community",
+    "viewProject": "View Project",
+    "viewEvent": "View Event",
+    "loading": "Loading community...",
+    "notFound": "Community not found",
+    "statistics": {
+      "members": "Members",
+      "projects": "Active Projects",
+      "upcomingEvents": "Upcoming Events"
+    },
+    "joinConfirm": {
+      "title": "Join Community",
+      "message": "Are you sure you want to join this community?",
+      "success": "Successfully joined community",
+      "error": "Failed to join community"
+    },
+    "leaveConfirm": {
+      "title": "Leave Community",
+      "message": "Are you sure you want to leave this community?",
+      "success": "Successfully left community",
+      "error": "Failed to leave community"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "moderator": "Moderator",
+      "member": "Member"
+    },
+    "projectStatus": {
+      "open": "Open",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "weather": {
+      "title": "Current Weather",
+      "temperature": "Temperature",
+      "condition": "Condition"
+    },
+    "memberList": {
+      "title": "Community Members",
+      "role": "Role",
+      "joinDate": "Member Since",
+      "viewProfile": "View Profile"
+    }
+  },
+  "communityManagement": {
+    "title": "Community Management",
+    "management": "Community Management",
+    "managementDescription": "Manage your communities, members, and settings",
+    "settings": "Community Settings",
+    "manageUsers": "Manage Users",
+    "moderation": "Moderation",
+    "create": "Create Community",
+    "edit": "Edit Community",
+    "active": "Active",
+    "inactive": "Inactive",
+    "moderationQueue": "Moderation Queue",
+    "list": "Communities List",
+    "name": "Name",
+    "namePlaceholder": "Enter community name",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter community description",
+    "guidelines": "Community Guidelines",
+    "guidelinesPlaceholder": "Enter community guidelines and rules",
+    "location": "Location",
+    "locationPlaceholder": "Enter community location",
+    "timezone": "Timezone",
+    "timezonePlaceholder": "Select community timezone",
+    "deleteConfirmation": "Are you sure you want to delete this community?",
+    "memberCount": "Members",
+    "actions": "Actions"
   }
 }
-

@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.3] - 2024-11-03
+
+### Added
+- Implemented comprehensive role-based access control system
+- Created database schema for roles and permissions
+- Added role initialization script with hierarchical permissions
+- Added detailed permission definitions for all system functionalities
+- Implemented role-based navigation with permission checks
+- Enhanced database configuration to support both pooled and transactional operations
+
+### Changed
+- Updated database configuration to support both connection pooling and dedicated clients
+- Modified navigation to use role-based access control
+- Enhanced authentication system to include role and permission information in JWT
+- Updated documentation to reflect new role-based system
+
+### Security
+- Implemented granular permission system with scoped access control
+- Added role hierarchy with clearly defined capabilities
+- Enhanced database transaction handling for sensitive operations
+
+## [0.4.2] - 2024-10-27
+
+### Added
+- Implemented CommunityContext for global community state management
+- Added CommunityLanding page with rich community details
+- Created CommunitySwitcher component for easy community navigation
+- Enhanced ProjectList and EventCalendar with community-aware filtering
+- Added comprehensive community-related translations for English and Swedish
+- Created sample data script for testing community features
+
+### Changed
+- Updated database schema to support enhanced community features
+- Moved context files to dedicated contexts directory
+- Modified navigation to support community-specific views
+- Updated App.js routing configuration to include community routes
+- Enhanced existing components to respect community context
+
+### Fixed
+- Resolved component import issues in App.js and EventCalendar.js
+- Fixed translation structure for community-related content
+- Corrected context provider hierarchy in App.js
+
 ## [0.4.1] - 2024-10-07
 
 ### Added

@@ -1,19 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useCommunity } from '../contexts/CommunityContext';
+import { useError } from '../contexts/ErrorContext';
 import { debounce } from 'lodash';
 import {
-  Button, Input, Select, Alert, AlertIcon,
-  Box, VStack, Heading, Text, Flex
+  Button,
+  Input,
+  Select,
+  Alert,
+  AlertIcon,
+  Box,
+  VStack,
+  Heading,
+  Text,
+  Flex,
+  Badge,
+  HStack,
 } from '@chakra-ui/react';
 
 const ProjectList = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { showError } = useError();
+  const { activeCommunities } = useCommunity();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
@@ -23,25 +36,41 @@ const ProjectList = () => {
     if (!hasMore) return;
 
     setLoading(true);
-    setError(null);
     try {
-      const response = await fetch(`/api/projects?page=${page}&limit=10&search=${searchTerm}&filter=${filterTerm}`, {
+      const communityIds = activeCommunities.map(c => c.id).join(',');
+      const queryParams = new URLSearchParams({
+        page: page,
+        limit: 10,
+        search: searchTerm,
+        filter: filterTerm,
+        communities: communityIds
+      });
+
+      const response = await fetch(`/api/projects?${queryParams}`, {
         headers: {
           'x-auth-token': user.token
         }
       });
+      
       if (!response.ok) {
         throw new Error('Failed to fetch projects');
       }
+      
       const data = await response.json();
-      setProjects(prevProjects => [...prevProjects, ...data.projects]);
+      
+      if (page === 1) {
+        setProjects(data.projects);
+      } else {
+        setProjects(prev => [...prev, ...data.projects]);
+      }
+      
       setHasMore(data.projects.length === 10);
-      setLoading(false);
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
+    } finally {
       setLoading(false);
     }
-  }, [user.token, hasMore]);
+  }, [user.token, hasMore, activeCommunities, showError]);
 
   const debouncedFetch = useCallback(
     debounce((search, filter) => {
@@ -54,7 +83,7 @@ const ProjectList = () => {
 
   useEffect(() => {
     debouncedFetch(search, filter);
-  }, [search, filter, debouncedFetch]);
+  }, [search, filter, activeCommunities, debouncedFetch]);
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -69,48 +98,105 @@ const ProjectList = () => {
     fetchProjects(page + 1, search, filter);
   };
 
+  const getCommunityName = (communityId) => {
+    const community = activeCommunities.find(c => c.id === communityId);
+    return community ? community.name : t('projects.unknownCommunity');
+  };
+
   return (
     <Box maxW="4xl" mx="auto" mt={8}>
-      <Heading as="h2" size="xl" mb={4}>{t('projects.title')}</Heading>
-      <Link to="/projects/new">
-        <Button colorScheme="blue" mb={4}>{t('projects.createNew')}</Button>
-      </Link>
-      <Flex mb={4}>
-        <Input
-          placeholder={t('projects.searchPlaceholder')}
-          value={search}
-          onChange={handleSearchChange}
-          mr={2}
-        />
-        <Select value={filter} onChange={handleFilterChange}>
-          <option value="">{t('projects.filterAll')}</option>
-          <option value="open">{t('projects.filterOpen')}</option>
-          <option value="in_progress">{t('projects.filterInProgress')}</option>
-          <option value="completed">{t('projects.filterCompleted')}</option>
-        </Select>
+      <Flex justify="space-between" align="center" mb={4}>
+        <Heading as="h2" size="xl">{t('projects.title')}</Heading>
+        {activeCommunities.length > 0 && (
+          <Button as={Link} to="/projects/new" colorScheme="blue">
+            {t('projects.createNew')}
+          </Button>
+        )}
       </Flex>
-      {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
-      {projects.length === 0 && !loading ? (
-        <Text>{t('projects.noProjects')}</Text>
+
+      {activeCommunities.length === 0 ? (
+        <Alert status="info">
+          <AlertIcon />
+          {t('projects.selectCommunity')}
+        </Alert>
       ) : (
-        <VStack spacing={4} align="stretch">
-          {projects.map((project) => (
-            <Box key={project.id} borderWidth={1} borderRadius="lg" p={4}>
-              <Heading as="h3" size="md">{project.title}</Heading>
-              <Text mt={2}>{project.description}</Text>
-              <Text mt={2}>{t('projects.status')}: {project.status}</Text>
-              <Button as={Link} to={`/projects/${project.id}`} variant="link" mt={2}>
-                {t('projects.viewDetails')}
-              </Button>
-            </Box>
-          ))}
-        </VStack>
-      )}
-      {loading && <Text textAlign="center" mt={4}>{t('projects.loading')}</Text>}
-      {hasMore && !loading && (
-        <Button onClick={loadMore} mt={4} mx="auto" display="block">
-          {t('projects.loadMore')}
-        </Button>
+        <>
+          <Flex mb={4} gap={4}>
+            <Input
+              placeholder={t('projects.searchPlaceholder')}
+              value={search}
+              onChange={handleSearchChange}
+              flex={1}
+            />
+            <Select
+              value={filter}
+              onChange={handleFilterChange}
+              w="200px"
+            >
+              <option value="">{t('projects.filterAll')}</option>
+              <option value="open">{t('projects.filterOpen')}</option>
+              <option value="in_progress">{t('projects.filterInProgress')}</option>
+              <option value="completed">{t('projects.filterCompleted')}</option>
+            </Select>
+          </Flex>
+
+          {projects.length === 0 && !loading ? (
+            <Text>{t('projects.noProjects')}</Text>
+          ) : (
+            <VStack spacing={4} align="stretch">
+              {projects.map((project) => (
+                <Box
+                  key={project.id}
+                  borderWidth={1}
+                  borderRadius="lg"
+                  p={4}
+                  _hover={{ shadow: 'md' }}
+                >
+                  <Flex justify="space-between" align="start">
+                    <Box>
+                      <Heading as="h3" size="md">{project.title}</Heading>
+                      <HStack spacing={2} mt={2}>
+                        <Badge colorScheme={project.status === 'open' ? 'green' : project.status === 'in_progress' ? 'blue' : 'gray'}>
+                          {project.status}
+                        </Badge>
+                        <Badge colorScheme="purple">
+                          {getCommunityName(project.community_id)}
+                        </Badge>
+                      </HStack>
+                      <Text mt={2}>{project.description}</Text>
+                    </Box>
+                    <Button
+                      as={Link}
+                      to={`/projects/${project.id}`}
+                      variant="ghost"
+                      colorScheme="blue"
+                      size="sm"
+                    >
+                      {t('projects.viewDetails')}
+                    </Button>
+                  </Flex>
+                </Box>
+              ))}
+            </VStack>
+          )}
+
+          {loading && (
+            <Text textAlign="center" mt={4}>{t('projects.loading')}</Text>
+          )}
+          
+          {hasMore && !loading && (
+            <Button
+              onClick={loadMore}
+              mt={4}
+              mx="auto"
+              display="block"
+              colorScheme="blue"
+              variant="outline"
+            >
+              {t('projects.loadMore')}
+            </Button>
+          )}
+        </>
       )}
     </Box>
   );

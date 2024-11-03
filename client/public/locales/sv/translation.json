@@ -52,7 +52,9 @@
     "dashboard": "Panel",
     "myProfile": "Min profil",
     "login": "Logga in",
-    "logout": "Logga ut"
+    "logout": "Logga ut",
+    "admin": "Admin",
+    "settings": "Inställningar"
   },
   "pages": {
     "home": "Hem",
@@ -289,5 +291,84 @@
   "errorContext": {
     "errorOccurred": "Ett fel inträffade",
     "dismiss": "Avfärda"
+  },
+  "community": {
+    "about": "Om",
+    "recentProjects": "Senaste Projekten",
+    "upcomingEvents": "Kommande Händelser",
+    "members": "Medlemmar",
+    "tags": "Taggar",
+    "location": "Plats",
+    "join": "Gå med i Gemenskap",
+    "leave": "Lämna Gemenskap",
+    "viewProject": "Visa Projekt",
+    "viewEvent": "Visa Händelse",
+    "loading": "Laddar gemenskap...",
+    "notFound": "Gemenskap hittades inte",
+    "statistics": {
+      "members": "Medlemmar",
+      "projects": "Aktiva Projekt",
+      "upcomingEvents": "Kommande Händelser"
+    },
+    "joinConfirm": {
+      "title": "Gå med i Gemenskap",
+      "message": "Är du säker på att du vill gå med i denna gemenskap?",
+      "success": "Gick med i gemenskapen",
+      "error": "Kunde inte gå med i gemenskapen"
+    },
+    "leaveConfirm": {
+      "title": "Lämna Gemenskap",
+      "message": "Är du säker på att du vill lämna denna gemenskap?",
+      "success": "Lämnade gemenskapen",
+      "error": "Kunde inte lämna gemenskapen"
+    },
+    "roles": {
+      "admin": "Administratör",
+      "moderator": "Moderator",
+      "member": "Medlem"
+    },
+    "projectStatus": {
+      "open": "Öppen",
+      "inProgress": "Pågående",
+      "completed": "Avslutad"
+    },
+    "weather": {
+      "title": "Aktuellt Väder",
+      "temperature": "Temperatur",
+      "condition": "Tillstånd"
+    },
+    "memberList": {
+      "title": "Gemenskapsmedlemmar",
+      "role": "Roll",
+      "joinDate": "Medlem Sedan",
+      "viewProfile": "Visa Profil"
+    }
+  },
+  "communityManagement": {
+    "title": "Gemenskapshantering",
+    "management": "Gemenskapshantering",
+    "managementDescription": "Hantera dina gemenskaper, medlemmar och inställningar",
+    "settings": "Gemenskapsinställningar",
+    "manageUsers": "Hantera Användare",
+    "moderation": "Moderering",
+    "create": "Skapa Gemenskap",
+    "edit": "Redigera Gemenskap",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "moderationQueue": "Modereringskö",
+    "list": "Lista över Gemenskaper",
+    "name": "Namn",
+    "namePlaceholder": "Ange gemenskapens namn",
+    "description": "Beskrivning",
+    "descriptionPlaceholder": "Ange gemenskapens beskrivning",
+    "guidelines": "Gemenskapsriktlinjer",
+    "guidelinesPlaceholder": "Ange gemenskapens riktlinjer och regler",
+    "location": "Plats",
+    "locationPlaceholder": "Ange gemenskapens plats",
+    "timezone": "Tidszon",
+    "timezonePlaceholder": "Välj gemenskapens tidszon",
+    "deleteConfirmation": "Är du säker på att du vill ta bort denna gemenskap?",
+    "memberCount": "Medlemmar",
+    "actions": "Åtgärder"
   }
 }

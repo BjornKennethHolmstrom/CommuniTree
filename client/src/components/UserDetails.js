@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 function UserDetails({ userId, onClose }) {
   const { t } = useTranslation();

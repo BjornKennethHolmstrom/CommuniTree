@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ProjectForm from './ProjectForm';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Alert, AlertIcon, AlertTitle, AlertDescription, Box, Heading } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 

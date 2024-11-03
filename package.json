@@ -9,7 +9,8 @@
     "dev": "nodemon start.js",
     "test": "jest",
     "test:e2e": "cypress run",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "init-roles": "node scripts/initRolesAndPermissions.js"
   },
   "keywords": [],
   "author": "",

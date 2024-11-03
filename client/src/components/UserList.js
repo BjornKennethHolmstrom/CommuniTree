@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import AddUserForm from './AddUserForm';
 import UserDetails from './UserDetails';
 import EditUserForm from './EditUserForm';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import {
   Button, Input, Alert, AlertIcon,
   Box, VStack, Heading, Text, Flex, Spacer,

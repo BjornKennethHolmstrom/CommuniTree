@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { Box, Heading, Text, VStack, HStack, Button, Alert, AlertIcon, Spinner } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';

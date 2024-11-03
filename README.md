@@ -13,7 +13,6 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Search and filter functionality for projects, events, and communities
 - Pagination for project and event listings
 - User authentication system with JWT and token refresh mechanism
-- User roles and permissions (Admin, Regular User)
 - Protected routes for authenticated users
 - Messaging system for user communication
 - User profiles with edit capabilities
@@ -22,6 +21,20 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Location-based theming system
 - User-selectable themes with dark mode support
 - Weather-based theming system with periodic updates
+- Community Management System:
+  - Rich community profiles with activity feeds
+  - Multi-community support with easy switching
+  - Community-specific content filtering
+  - Community membership management
+  - Community-based project and event organization
+  - Community statistics and analytics
+- Comprehensive Role-Based Access Control:
+  - Hierarchical role system (Super Admin → Guest)
+  - Granular permission definitions
+  - Scoped access control (global, community, self)
+  - Role-based navigation and UI adaptation
+  - Permission-based feature access
+  - Community-specific role assignments
 
 ## Technical Stack
 
@@ -44,6 +57,7 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Node.js (v14 or later)
 - PostgreSQL
 
+
 ### Installation
 
 1. Clone the repository:
@@ -60,6 +74,12 @@ CommuniTree is a community engagement platform designed to connect municipalitie
    ```
 
 3. Set up your PostgreSQL database and update the `.env` file with your database credentials.
+
+   ```# After database setup, you can populate with sample data:
+   psql -U your_username -d your_database -f scripts/init.sql
+   psql -U your_username -d your_database -f scripts/sample-data.sql
+   ```
+
 
 4. Start the backend server:
    ```
@@ -131,6 +151,11 @@ CommuniTree
 │       │   ├── UserDetails.js
 │       │   ├── UserList.js
 │       │   └── UserProfile.js
+│       ├── contexts/           # Application contexts
+│       │   ├── AuthContext.js
+│       │   ├── CommunityContext.js
+│       │   ├── ErrorContext.js
+│       │   └── ThemeContext.js
 │       ├── i18n.js
 │       ├── index.css
 │       ├── index.js

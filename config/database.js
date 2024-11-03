@@ -1,3 +1,4 @@
+// config/database.js
 const { Pool } = require('pg');
 require('dotenv').config();
 
@@ -11,20 +12,31 @@ pool.on('error', (err, client) => {
   process.exit(-1);
 });
 
+// For standard queries with logging and automatic release
+const query = async (text, params) => {
+  const client = await pool.connect();
+  try {
+    const start = Date.now();
+    const res = await client.query(text, params);
+    const duration = Date.now() - start;
+    console.log('Executed query', { text, duration, rows: res.rowCount });
+    return res;
+  } catch (err) {
+    console.error('Error executing query', { text, err });
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+// For transaction operations that need a dedicated client
+const getClient = async () => {
+  const client = await pool.connect();
+  return client;
+};
+
 module.exports = {
-  query: async (text, params) => {
-    const client = await pool.connect();
-    try {
-      const start = Date.now();
-      const res = await client.query(text, params);
-      const duration = Date.now() - start;
-      console.log('Executed query', { text, duration, rows: res.rowCount });
-      return res;
-    } catch (err) {
-      console.error('Error executing query', { text, err });
-      throw err;
-    } finally {
-      client.release();
-    }
-  },
+  query,
+  getClient,
+  pool
 };
