@@ -4,6 +4,9 @@
     "default": "Default",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
+    "forest": "Forest",
+    "ocean": "Ocean",
+    "desert": "Desert",
     "tropical": "Tropical",
     "continental": "Continental",
     "polar": "Polar"
@@ -26,7 +29,66 @@
     "email": "Email",
     "password": "Password",
     "submit": "Login",
-    "error": "An error occurred. Please try again."
+    "error": "An error occurred. Please try again.",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Sign up here"
+  },
+  "forgotPassword": {
+    "title": "Reset Password",
+    "description": "Enter your email address and we'll send you a link to reset your password.",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "submit": "Send Reset Link",
+    "backToLogin": "Back to Login",
+    "checkEmail": "Check your email",
+    "resetLinkSent": "If an account exists with that email, we've sent a password reset link.",
+    "error": {
+      "invalidEmail": "Please enter a valid email address",
+      "serverError": "Unable to send reset link. Please try again later."
+    }
+  },
+  "resetPassword": {
+    "title": "Create New Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordPlaceholder": "Enter new password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "submit": "Reset Password",
+    "success": "Your password has been reset successfully!",
+    "redirecting": "Redirecting to login...",
+    "invalidToken": "This password reset link is invalid or has expired.",
+    "requestNewLink": "Request a new reset link",
+    "passwordLength": "Password must be at least 8 characters",
+    "passwordStrength": "Password must include letters and numbers",
+    "passwordsMustMatch": "Passwords must match",
+    "error": {
+      "mismatch": "Passwords do not match",
+      "serverError": "Unable to reset password. Please try again later."
+    }
+  },
+  "register": {
+    "title": "Create Account",
+    "username": "Username",
+    "usernamePlaceholder": "Choose a username",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "name": "Full Name",
+    "namePlaceholder": "Enter your full name",
+    "password": "Password",
+    "passwordPlaceholder": "Create a password",
+    "submit": "Register",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login here",
+    "usernameRequired": "Username is required",
+    "usernameLength": "Username must be at least 3 characters",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordLength": "Password must be at least 8 characters",
+    "passwordStrength": "Password must contain at least one letter and one number",
+    "nameRequired": "Full name is required",
+    "genericError": "Registration failed. Please try again."
   },
   "authContext": {
     "loginError": "Login error:",
@@ -65,7 +127,7 @@
     "dashboard": "Dashboard",
     "myProfile": "My Profile"
   },
-  "communities": {
+  "community": {
     "title": "Communities",
     "createNew": "Create New Community",
     "searchPlaceholder": "Search communities...",
@@ -74,7 +136,30 @@
     "loading": "Loading communities...",
     "join": "Join Community",
     "leave": "Leave Community",
-    "members": "Members"
+    "members": "Members",
+    "selectCommunities": "Select Communities",
+    "multipleCommunities": "{{count}} Communities",
+    "searchPlaceholder": "Search communities...",
+    "selector": {
+      "title": "Select Communities",
+      "multipleSelected": "{{count}} Communities",
+      "search": "Search communities...",
+      "memberCount": "{{count}} members",
+      "removeFromActive": "Remove from active",
+      "addToActive": "Add to active",
+      "join": "Join",
+      "clearSelection": "Clear Selection",
+      "noCommunitiesFound": "No communities found",
+      "loading": "Loading communities..."
+    },
+    "actions": {
+      "join": "Join Community",
+      "leave": "Leave Community",
+      "view": "View Details",
+      "edit": "Edit Community",
+      "delete": "Delete Community",
+      "manage": "Manage Community"
+    }
   },
   "communityDetails": {
     "loading": "Loading community details...",
@@ -122,7 +207,8 @@
     "viewDetails": "View Details",
     "loading": "Loading projects...",
     "loadMore": "Load More",
-    "status": "Status"
+    "status": "Status",
+    "selectCommunity": "Select a community"
   },
   "projectDetails": {
     "loading": "Loading project details...",

@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
   Box, VStack, HStack, Button, Table, Thead, Tbody, Tr, Th, Td,
   useDisclosure, Alert, AlertIcon, Badge, IconButton,
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, Text
 } from '@chakra-ui/react';
 import { Settings, Users, AlertTriangle, Edit, Trash2 } from 'lucide-react';
-import { usePermissions, useCommunityPermissions } from '../contexts/PermissionContext';
-import { AccessibleButton, AccessibleCard } from '../components/common';
+import { usePermissions } from '../../contexts/PermissionContext';
+import { AccessibleButton, AccessibleCard } from '../common';
+import CommunityForm from './CommunityForm';
 
 const CommunityManagement = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { checkPermission } = usePermissions();
   const [communities, setCommunities] = useState([]);
   const [selectedCommunity, setSelectedCommunity] = useState(null);
@@ -60,6 +63,10 @@ const CommunityManagement = () => {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
   };
 
   return (
@@ -137,13 +144,13 @@ const CommunityManagement = () => {
                         aria-label={t('communities.manageUsers')}
                         icon={<Users size={16} />}
                         size="sm"
-                        onClick={() => navigate(`/communities/${community.id}/users`)}
+                        onClick={() => handleNavigate(`/communities/${community.id}/users`)}
                       />
                       <IconButton
                         aria-label={t('communities.moderation')}
                         icon={<AlertTriangle size={16} />}
                         size="sm"
-                        onClick={() => navigate(`/communities/${community.id}/moderation`)}
+                        onClick={() => handleNavigate(`/communities/${community.id}/moderation`)}
                       />
                       <IconButton
                         aria-label={t('common.delete')}

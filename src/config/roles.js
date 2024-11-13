@@ -1,4 +1,4 @@
-// src/config/roles.js
+// Server-side roles configuration
 const UserRoles = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
@@ -38,101 +38,30 @@ const Permissions = {
   // Content moderation permissions
   MODERATE_CONTENT: 'MODERATE_CONTENT',
   DELETE_CONTENT: 'DELETE_CONTENT',
-  PIN_CONTENT: 'PIN_CONTENT',
-  
-  // Project permissions
-  MANAGE_PROJECTS: 'MANAGE_PROJECTS',
-  CREATE_PROJECT: 'CREATE_PROJECT',
-  EDIT_PROJECT: 'EDIT_PROJECT',
-  DELETE_PROJECT: 'DELETE_PROJECT',
-  MANAGE_VOLUNTEERS: 'MANAGE_VOLUNTEERS',
-  
-  // Event permissions
-  MANAGE_EVENTS: 'MANAGE_EVENTS',
-  CREATE_EVENT: 'CREATE_EVENT',
-  EDIT_EVENT: 'EDIT_EVENT',
-  DELETE_EVENT: 'DELETE_EVENT',
-  
-  // Basic permissions
-  VIEW_CONTENT: 'VIEW_CONTENT',
-  CREATE_COMMENTS: 'CREATE_COMMENTS',
-  UPLOAD_FILES: 'UPLOAD_FILES'
+  PIN_CONTENT: 'PIN_CONTENT'
 };
 
 const RolePermissions = {
-  [UserRoles.SUPER_ADMIN]: {
-    permissions: Object.values(Permissions),
-    scope: 'global'
-  },
-  
-  [UserRoles.ADMIN]: {
-    permissions: [
-      Permissions.MANAGE_COMMUNITIES,
-      Permissions.CREATE_COMMUNITY,
-      Permissions.EDIT_COMMUNITY,
-      Permissions.DELETE_COMMUNITY,
-      Permissions.MANAGE_USERS,
-      Permissions.BAN_USERS,
-      Permissions.MODERATE_CONTENT,
-      Permissions.DELETE_CONTENT,
-      Permissions.MANAGE_PROJECTS,
-      Permissions.MANAGE_EVENTS,
-      Permissions.VIEW_METRICS
-    ],
-    scope: 'global'
-  },
-  
-  [UserRoles.COMMUNITY_ADMIN]: {
-    permissions: [
-      Permissions.EDIT_COMMUNITY,
-      Permissions.MANAGE_USERS,
-      Permissions.MODERATE_CONTENT,
-      Permissions.DELETE_CONTENT,
-      Permissions.PIN_CONTENT,
-      Permissions.MANAGE_PROJECTS,
-      Permissions.MANAGE_EVENTS,
-      Permissions.VIEW_METRICS
-    ],
-    scope: 'community'
-  },
-  
-  [UserRoles.MODERATOR]: {
-    permissions: [
-      Permissions.MODERATE_CONTENT,
-      Permissions.DELETE_CONTENT,
-      Permissions.PIN_CONTENT
-    ],
-    scope: 'community'
-  },
-  
-  [UserRoles.VERIFIED_USER]: {
-    permissions: [
-      Permissions.VIEW_CONTENT,
-      Permissions.CREATE_PROJECT,
-      Permissions.EDIT_PROJECT,
-      Permissions.CREATE_EVENT,
-      Permissions.EDIT_EVENT,
-      Permissions.CREATE_COMMENTS,
-      Permissions.UPLOAD_FILES
-    ],
-    scope: 'self'
-  },
-  
-  [UserRoles.USER]: {
-    permissions: [
-      Permissions.VIEW_CONTENT,
-      Permissions.CREATE_COMMENTS,
-      Permissions.UPLOAD_FILES
-    ],
-    scope: 'self'
-  },
-  
-  [UserRoles.GUEST]: {
-    permissions: [
-      Permissions.VIEW_CONTENT
-    ],
-    scope: 'none'
-  }
+  [UserRoles.SUPER_ADMIN]: Object.values(Permissions),
+  [UserRoles.ADMIN]: [
+    Permissions.MANAGE_COMMUNITIES,
+    Permissions.MANAGE_USERS,
+    Permissions.MODERATE_CONTENT,
+    Permissions.VIEW_METRICS
+  ],
+  [UserRoles.COMMUNITY_ADMIN]: [
+    Permissions.EDIT_COMMUNITY,
+    Permissions.MANAGE_USERS,
+    Permissions.MODERATE_CONTENT
+  ],
+  [UserRoles.MODERATOR]: [
+    Permissions.MODERATE_CONTENT,
+    Permissions.DELETE_CONTENT,
+    Permissions.PIN_CONTENT
+  ],
+  [UserRoles.VERIFIED_USER]: [],
+  [UserRoles.USER]: [],
+  [UserRoles.GUEST]: []
 };
 
 module.exports = {

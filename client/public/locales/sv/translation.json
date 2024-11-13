@@ -4,6 +4,9 @@
     "default": "Default",
     "darkMode": "Mörkt läge",
     "lightMode": "Ljust läge",
+    "forest": "Skog",
+    "ocean": "Hav",
+    "desert": "Öken",
     "tropical": "Tropisk",
     "continental": "Kontinental",
     "polar": "Polar"
@@ -24,7 +27,66 @@
     "email": "E-post",
     "password": "Lösenord",
     "submit": "Logga in",
-    "error": "Ett fel uppstod. Försök igen."
+    "error": "Ett fel uppstod. Försök igen.",
+    "forgotPassword": "Glömt lösenord?",
+    "noAccount": "Har du inget konto?",
+    "registerLink": "Registrera dig här"
+  },
+  "forgotPassword": {
+    "title": "Återställ Lösenord",
+    "description": "Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord.",
+    "email": "E-post",
+    "emailPlaceholder": "Ange din e-postadress",
+    "submit": "Skicka Återställningslänk",
+    "backToLogin": "Tillbaka till Inloggning",
+    "checkEmail": "Kontrollera din e-post",
+    "resetLinkSent": "Om ett konto finns med den e-postadressen har vi skickat en återställningslänk.",
+    "error": {
+      "invalidEmail": "Ange en giltig e-postadress",
+      "serverError": "Kunde inte skicka återställningslänk. Försök igen senare."
+    }
+  },
+  "resetPassword": {
+    "title": "Skapa Nytt Lösenord",
+    "newPassword": "Nytt Lösenord",
+    "confirmPassword": "Bekräfta Lösenord",
+    "passwordPlaceholder": "Ange nytt lösenord",
+    "confirmPasswordPlaceholder": "Bekräfta nytt lösenord",
+    "submit": "Återställ Lösenord",
+    "success": "Ditt lösenord har återställts!",
+    "redirecting": "Omdirigerar till inloggning...",
+    "invalidToken": "Denna återställningslänk är ogiltig eller har gått ut.",
+    "requestNewLink": "Begär en ny återställningslänk",
+    "passwordLength": "Lösenordet måste vara minst 8 tecken",
+    "passwordStrength": "Lösenordet måste innehålla både bokstäver och siffror",
+    "passwordsMustMatch": "Lösenorden måste matcha",
+    "error": {
+      "mismatch": "Lösenorden matchar inte",
+      "serverError": "Kunde inte återställa lösenord. Försök igen senare."
+    }
+  },
+  "register": {
+    "title": "Skapa Konto",
+    "username": "Användarnamn",
+    "usernamePlaceholder": "Välj ett användarnamn",
+    "email": "E-post",
+    "emailPlaceholder": "Ange din e-postadress",
+    "name": "Fullständigt Namn",
+    "namePlaceholder": "Ange ditt fullständiga namn",
+    "password": "Lösenord",
+    "passwordPlaceholder": "Skapa ett lösenord",
+    "submit": "Registrera",
+    "haveAccount": "Har du redan ett konto?",
+    "loginLink": "Logga in här",
+    "usernameRequired": "Användarnamn krävs",
+    "usernameLength": "Användarnamnet måste vara minst 3 tecken",
+    "emailRequired": "E-postadress krävs",
+    "emailInvalid": "Ange en giltig e-postadress",
+    "passwordRequired": "Lösenord krävs",
+    "passwordLength": "Lösenordet måste vara minst 8 tecken",
+    "passwordStrength": "Lösenordet måste innehålla minst en bokstav och en siffra",
+    "nameRequired": "Hela namnet krävs",
+    "genericError": "Registrering misslyckades. Var god försök igen",
   },
   "authContext": {
     "loginError": "Inloggningsfel:",
@@ -63,7 +125,7 @@
     "dashboard": "Panel",
     "myProfile": "Min profil"
   },
-  "communities": {
+  "community": {
     "title": "Gemenskaper",
     "createNew": "Skapa ny gemenskap",
     "searchPlaceholder": "Sök gemenskaper...",
@@ -72,7 +134,30 @@
     "loading": "Laddar gemenskaper...",
     "join": "Gå med i gemenskap",
     "leave": "Lämna gemenskap",
-    "members": "Medlemmar"
+    "members": "Medlemmar",
+    "selectCommunities": "Välj Communities",
+    "multipleCommunities": "{{count}} Communities",
+    "searchPlaceholder": "Sök communities...",
+    "selector": {
+      "title": "Välj Gemenskaper",
+      "multipleSelected": "{{count}} Gemenskaper",
+      "search": "Sök gemenskaper...",
+      "memberCount": "{{count}} medlemmar",
+      "removeFromActive": "Ta bort från aktiva",
+      "addToActive": "Lägg till som aktiv",
+      "join": "Gå med",
+      "clearSelection": "Rensa val",
+      "noCommunitiesFound": "Inga gemenskaper hittades",
+      "loading": "Laddar gemenskaper..."
+    },
+    "actions": {
+      "join": "Gå med i Gemenskap",
+      "leave": "Lämna Gemenskap",
+      "view": "Visa Detaljer",
+      "edit": "Redigera Gemenskap",
+      "delete": "Ta Bort Gemenskap",
+      "manage": "Hantera Gemenskap"
+    }
   },
   "communityDetails": {
     "loading": "Laddar gemenskapsdetaljer...",
@@ -120,7 +205,8 @@
     "viewDetails": "Visa detaljer",
     "loading": "Laddar projekt...",
     "loadMore": "Ladda fler",
-    "status": "Status"
+    "status": "Status",
+    "selectCommunity": "Välj en gemenskap"
   },
   "projectDetails": {
     "loading": "Laddar projektdetaljer...",

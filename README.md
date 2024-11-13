@@ -94,6 +94,57 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 
 6. Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
 
+### Database Setup
+
+1. Create PostgreSQL database:
+   ```sql
+   CREATE DATABASE communitree;
+   ```
+
+2. Initialize the database schema:
+   ```bash
+   # Run the initial schema setup
+   psql -U postgres -d communitree -f scripts/init.sql
+   
+   # Add sample data
+   psql -U postgres -d communitree -f scripts/sample-data.sql
+
+   # Run roles schema updates
+   psql -U postgres -d communitree -f scripts/roles-schema.sql
+   
+   # Run community schema updates
+   psql -U postgres -d communitree -f scripts/community-schema.sql
+   ```
+
+3. Create admin user:
+   ```bash
+   npm run create-admin
+   ```
+
+### Environment Setup
+
+Create a `.env` file in the root directory:
+
+```env
+# Database Configuration
+DB_USER=postgres
+DB_HOST=localhost
+DB_NAME=communitree
+DB_PASSWORD=your_password
+DB_PORT=5432
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+
+# Server Configuration
+PORT=3001
+NODE_ENV=development
+
+# Frontend URL
+FRONTEND_URL=http://localhost:3000
+```
+
 ## Project Structure
 
 The project follows a monorepo structure:

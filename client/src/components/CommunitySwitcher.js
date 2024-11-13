@@ -14,16 +14,20 @@ import {
   Input,
   Divider,
   Avatar,
-  Flex
+  Flex,
+  Spinner
 } from '@chakra-ui/react';
 import { Search, ChevronDown, X, Check, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function CommunitySwitcher() {
+  const { t } = useTranslation();
   const {
     activeCommunities,
     availableCommunities,
     toggleCommunity,
     joinCommunity,
+    loading
   } = useCommunity();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,6 +44,10 @@ function CommunitySwitcher() {
     }
   };
 
+  if (loading) {
+    return <Spinner size="sm" />;
+  }
+
   return (
     <Popover placement="bottom-start">
       <PopoverTrigger>
@@ -52,10 +60,10 @@ function CommunitySwitcher() {
           <HStack spacing={2}>
             <Text>
               {activeCommunities.length === 0
-                ? "Select Communities"
+                ? t('community.selector.title')
                 : activeCommunities.length === 1
                 ? activeCommunities[0].name
-                : `${activeCommunities.length} Communities`}
+                : t('community.selector.multipleSelected', { count: activeCommunities.length })}
             </Text>
             {activeCommunities.length > 0 && (
               <Badge colorScheme="green" borderRadius="full">
@@ -68,9 +76,9 @@ function CommunitySwitcher() {
       <PopoverContent w="300px" p={0}>
         <Box p={4}>
           <HStack spacing={2}>
-            <Search />
+            <Search size={16} />
             <Input
-              placeholder="Search communities..."
+              placeholder={t('community.selector.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               variant="unstyled"
@@ -79,54 +87,60 @@ function CommunitySwitcher() {
         </Box>
         <Divider />
         <VStack align="stretch" maxH="300px" overflow="auto" p={2}>
-          {filteredCommunities.map((community) => {
-            const isActive = activeCommunities.some(c => c.id === community.id);
-            const isMember = availableCommunities.some(c => c.id === community.id);
+          {filteredCommunities.length === 0 ? (
+            <Text p={4} textAlign="center" color="gray.500">
+              {t('community.selector.noCommunitiesFound')}
+            </Text>
+          ) : (
+            filteredCommunities.map((community) => {
+              const isActive = activeCommunities.some(c => c.id === community.id);
+              const isMember = availableCommunities.some(c => c.id === community.id);
 
-            return (
-              <Box
-                key={community.id}
-                p={2}
-                _hover={{ bg: "gray.100" }}
-                borderRadius="md"
-                cursor="pointer"
-              >
-                <Flex justify="space-between" align="center">
-                  <HStack spacing={3}>
-                    <Avatar
-                      size="sm"
-                      name={community.name}
-                      src={community.cover_image_url}
-                    />
-                    <Box>
-                      <Text fontWeight="medium">{community.name}</Text>
-                      <Text fontSize="sm" color="gray.500">
-                        {community.member_count} members
-                      </Text>
-                    </Box>
-                  </HStack>
-                  {isMember ? (
-                    <IconButton
-                      size="sm"
-                      variant={isActive ? "solid" : "ghost"}
-                      colorScheme={isActive ? "green" : "gray"}
-                      icon={isActive ? <Check /> : <Plus />}
-                      onClick={() => toggleCommunity(community.id)}
-                      aria-label={isActive ? "Remove from active" : "Add to active"}
-                    />
-                  ) : (
-                    <Button
-                      size="sm"
-                      colorScheme="blue"
-                      onClick={() => handleJoinCommunity(community.id)}
-                    >
-                      Join
-                    </Button>
-                  )}
-                </Flex>
-              </Box>
-            );
-          })}
+              return (
+                <Box
+                  key={community.id}
+                  p={2}
+                  _hover={{ bg: "gray.100" }}
+                  borderRadius="md"
+                  cursor="pointer"
+                >
+                  <Flex justify="space-between" align="center">
+                    <HStack spacing={3}>
+                      <Avatar
+                        size="sm"
+                        name={community.name}
+                        src={community.cover_image_url}
+                      />
+                      <Box>
+                        <Text fontWeight="medium">{community.name}</Text>
+                        <Text fontSize="sm" color="gray.500">
+                          {t('community.selector.memberCount', { count: community.member_count || 0 })}
+                        </Text>
+                      </Box>
+                    </HStack>
+                    {isMember ? (
+                      <IconButton
+                        size="sm"
+                        variant={isActive ? "solid" : "ghost"}
+                        colorScheme={isActive ? "green" : "gray"}
+                        icon={isActive ? <Check size={16} /> : <Plus size={16} />}
+                        onClick={() => toggleCommunity(community.id)}
+                        aria-label={isActive ? t('community.selector.removeFromActive') : t('community.selector.addToActive')}
+                      />
+                    ) : (
+                      <Button
+                        size="sm"
+                        colorScheme="blue"
+                        onClick={() => handleJoinCommunity(community.id)}
+                      >
+                        {t('community.selector.join')}
+                      </Button>
+                    )}
+                  </Flex>
+                </Box>
+              )
+            })
+          )}
         </VStack>
         {activeCommunities.length > 0 && (
           <>
@@ -136,10 +150,10 @@ function CommunitySwitcher() {
                 size="sm"
                 variant="ghost"
                 colorScheme="red"
-                leftIcon={<X />}
+                leftIcon={<X size={16} />}
                 onClick={() => toggleCommunity(activeCommunities.map(c => c.id))}
               >
-                Clear Selection
+                {t('community.selector.clearSelection')}
               </Button>
             </Box>
           </>

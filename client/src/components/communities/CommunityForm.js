@@ -4,7 +4,7 @@ import {
   VStack, FormControl, FormLabel, Input, Textarea, 
   Switch, Button, HStack 
 } from '@chakra-ui/react';
-import { AccessibleForm } from '../components/common';
+import { AccessibleForm } from '../common';
 
 const CommunityForm = ({ community, onSubmit }) => {
   const { t } = useTranslation();

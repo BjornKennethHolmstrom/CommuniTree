@@ -14,6 +14,8 @@ export const CommunityProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserCommunities = async () => {
       if (!user) {
+        setActiveCommunities([]);
+        setAvailableCommunities([]);
         setLoading(false);
         return;
       }
@@ -24,17 +26,19 @@ export const CommunityProvider = ({ children }) => {
           headers: { 'x-auth-token': user.token }
         });
         const memberData = await memberResponse.json();
-        setActiveCommunities(memberData);
+        setActiveCommunities(Array.isArray(memberData) ? memberData : []);
 
         // Fetch all available communities
         const availableResponse = await fetch('/api/communities', {
           headers: { 'x-auth-token': user.token }
         });
         const availableData = await availableResponse.json();
-        setAvailableCommunities(availableData);
+        setAvailableCommunities(Array.isArray(availableData) ? availableData : []);
       } catch (err) {
         console.error('Error fetching communities:', err);
         setError(err.message);
+        setActiveCommunities([]);
+        setAvailableCommunities([]);
       } finally {
         setLoading(false);
       }
@@ -51,13 +55,15 @@ export const CommunityProvider = ({ children }) => {
         return prev.filter(c => c.id !== communityId);
       } else {
         const communityToAdd = availableCommunities.find(c => c.id === communityId);
-        return [...prev, communityToAdd];
+        return communityToAdd ? [...prev, communityToAdd] : prev;
       }
     });
   };
 
   // Join a community
   const joinCommunity = async (communityId) => {
+    if (!user) return;
+    
     try {
       const response = await fetch(`/api/communities/${communityId}/join`, {
         method: 'POST',
@@ -69,7 +75,7 @@ export const CommunityProvider = ({ children }) => {
       setActiveCommunities(prev => {
         if (prev.some(c => c.id === communityId)) return prev;
         const communityToAdd = availableCommunities.find(c => c.id === communityId);
-        return [...prev, communityToAdd];
+        return communityToAdd ? [...prev, communityToAdd] : prev;
       });
     } catch (err) {
       setError(err.message);
@@ -79,6 +85,8 @@ export const CommunityProvider = ({ children }) => {
 
   // Leave a community
   const leaveCommunity = async (communityId) => {
+    if (!user) return;
+
     try {
       const response = await fetch(`/api/communities/${communityId}/leave`, {
         method: 'POST',
@@ -94,37 +102,18 @@ export const CommunityProvider = ({ children }) => {
     }
   };
 
-  // Get filtered content based on active communities
-  const getFilteredContent = async (contentType, options = {}) => {
-    const communityIds = activeCommunities.map(c => c.id).join(',');
-    const queryParams = new URLSearchParams({
-      ...options,
-      communities: communityIds
-    });
-
-    try {
-      const response = await fetch(`/api/${contentType}?${queryParams}`, {
-        headers: { 'x-auth-token': user.token }
-      });
-      if (!response.ok) throw new Error(`Failed to fetch ${contentType}`);
-      return await response.json();
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
+  const value = {
+    activeCommunities,
+    availableCommunities,
+    loading,
+    error,
+    toggleCommunity,
+    joinCommunity,
+    leaveCommunity
   };
 
   return (
-    <CommunityContext.Provider value={{
-      activeCommunities,
-      availableCommunities,
-      loading,
-      error,
-      toggleCommunity,
-      joinCommunity,
-      leaveCommunity,
-      getFilteredContent
-    }}>
+    <CommunityContext.Provider value={value}>
       {children}
     </CommunityContext.Provider>
   );

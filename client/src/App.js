@@ -17,6 +17,9 @@ import ProjectList from './components/ProjectList';
 import ProjectDetails from './components/ProjectDetails';
 import CreateProject from './components/CreateProject';
 import Login from './components/Login';
+import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import PrivateRoute from './components/PrivateRoute';
 import Dashboard from './components/Dashboard';
 import EventCalendar from './components/EventCalendar';
@@ -24,6 +27,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import UserProfile from './components/UserProfile';
 import Navigation from './components/Navigation';
 import { PermissionProvider } from './contexts/PermissionContext';
+import CommunityManagement from './components/communities/CommunityManagement';
 
 function AppContent() {
   const { t, ready } = useTranslation();
@@ -67,6 +71,9 @@ function AppContent() {
                       <main>
                         <Routes>
                           <Route path="/login" element={<Login />} />
+                          <Route path="/register" element={<Register />} />
+                          <Route path="/forgot-password" element={<ForgotPassword />} />
+                          <Route path="/reset-password/:token" element={<ResetPassword />} />
                           <Route element={<PrivateRoute />}>
                             <Route path="/" element={<UserList />} />
                             <Route path="/projects" element={<ProjectList />} />

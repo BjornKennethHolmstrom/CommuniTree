@@ -11,6 +11,23 @@ router.use((req, res, next) => {
   next();
 });
 
+// Add the communities route
+router.get('/communities', auth, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT c.*, cm.role 
+       FROM communities c
+       JOIN community_memberships cm ON c.id = cm.community_id
+       WHERE cm.user_id = $1 AND cm.status = 'active'`,
+      [req.user.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error getting user communities:', err);
+    res.status(500).json({ message: 'Error fetching user communities', error: err.message });
+  }
+});
+
 // Dashboard routes (these should come before the /:id route)
 router.get('/projects', auth, dashboardController.getUserProjects);
 router.get('/volunteer-activities', auth, dashboardController.getVolunteerActivities);

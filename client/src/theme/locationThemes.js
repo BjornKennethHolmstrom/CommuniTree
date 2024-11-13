@@ -26,6 +26,7 @@ const baseTheme = {
   },
 };
 
+// Base themes that users can select
 export const themes = {
   default: {
     colors: {
@@ -38,18 +39,7 @@ export const themes = {
       },
     },
   },
-  tropical: {
-    colors: {
-      brand: {
-        50: '#FFFAF0',
-        100: '#FEEBC8',
-        500: '#DD6B20',
-        600: '#C05621',
-        700: '#9C4221',
-      },
-    },
-  },
-  continental: {
+  forest: {
     colors: {
       brand: {
         50: '#F0FFF4',
@@ -60,7 +50,7 @@ export const themes = {
       },
     },
   },
-  polar: {
+  ocean: {
     colors: {
       brand: {
         50: '#EBF8FF',
@@ -71,29 +61,115 @@ export const themes = {
       },
     },
   },
-  darkMode: {
+  desert: {
     colors: {
       brand: {
-        50: '#F7FAFC',
-        100: '#EDF2F7',
-        500: '#718096',
-        600: '#4A5568',
-        700: '#2D3748',
+        50: '#FFFAF0',
+        100: '#FEEBC8',
+        500: '#DD6B20',
+        600: '#C05621',
+        700: '#9C4221',
       },
     },
   },
 };
 
-export const getTheme = (themeName, colorMode = 'light') => {
+// Weather overlay themes
+const weatherOverlays = {
+  sunny: {
+    styles: {
+      global: {
+        body: {
+          bg: 'rgba(255, 244, 224, 0.2)',
+        }
+      }
+    },
+    colors: {
+      overlay: '#FFD700',
+    }
+  },
+  rainy: {
+    styles: {
+      global: {
+        body: {
+          bg: 'rgba(176, 196, 222, 0.2)',
+        }
+      }
+    },
+    colors: {
+      overlay: '#4682B4',
+    }
+  },
+  cloudy: {
+    styles: {
+      global: {
+        body: {
+          bg: 'rgba(211, 211, 211, 0.2)',
+        }
+      }
+    },
+    colors: {
+      overlay: '#708090',
+    }
+  },
+  snowy: {
+    styles: {
+      global: {
+        body: {
+          bg: 'rgba(255, 250, 250, 0.2)',
+        }
+      }
+    },
+    colors: {
+      overlay: '#F0F8FF',
+    }
+  },
+  stormy: {
+    styles: {
+      global: {
+        body: {
+          bg: 'rgba(47, 79, 79, 0.2)',
+        }
+      }
+    },
+    colors: {
+      overlay: '#483D8B',
+    }
+  },
+};
+
+export const getTheme = (themeName, colorMode = 'light', weatherTheme = null) => {
+  // Get base theme
   const selectedTheme = themes[themeName] || themes.default;
-  const darkModeColors = themes.darkMode.colors;
   
-  const themeWithColorMode = {
+  // Apply dark mode adjustments if needed
+  const themeWithColorMode = colorMode === 'dark' ? {
     ...selectedTheme,
-    colors: colorMode === 'dark' ? { ...selectedTheme.colors, ...darkModeColors } : selectedTheme.colors,
+    colors: {
+      ...selectedTheme.colors,
+      brand: {
+        ...selectedTheme.colors.brand,
+        50: selectedTheme.colors.brand[700],
+        100: selectedTheme.colors.brand[600],
+        700: selectedTheme.colors.brand[50],
+      }
+    }
+  } : selectedTheme;
+
+  // Apply weather overlay if present
+  const weatherOverlay = weatherTheme ? weatherOverlays[weatherTheme] : null;
+  
+  // Combine all theme elements
+  const finalTheme = weatherOverlay ? {
+    ...baseTheme,
+    ...themeWithColorMode,
+    ...weatherOverlay,
+  } : {
+    ...baseTheme,
+    ...themeWithColorMode,
   };
 
-  return extendTheme(baseTheme, themeWithColorMode);
+  return extendTheme(finalTheme);
 };
 
 export { baseTheme };

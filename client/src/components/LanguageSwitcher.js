@@ -1,11 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Select } from '@chakra-ui/react';
-import { useTheme } from '../contexts/ThemeContext';
+import { Select, useColorModeValue } from '@chakra-ui/react';
 
 function LanguageSwitcher() {
   const { i18n } = useTranslation();
-  const { theme } = useTheme();
+  
+  // Use Chakra's color mode values for consistent theming
+  const bg = useColorModeValue('gray.100', 'gray.700');
+  const color = useColorModeValue('gray.800', 'white');
+  const hoverBg = useColorModeValue('gray.200', 'gray.600');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   const changeLanguage = (event) => {
     const lng = event.target.value;
@@ -17,10 +21,11 @@ function LanguageSwitcher() {
       onChange={changeLanguage}
       value={i18n.language}
       width="auto"
-      color={theme.colors.brand[700]}
-      bg={theme.colors.brand[50]}
-      _hover={{ bg: theme.colors.brand[100] }}
-      borderColor={theme.colors.brand[500]}
+      size="sm"
+      bg={bg}
+      color={color}
+      borderColor={borderColor}
+      _hover={{ bg: hoverBg }}
     >
       <option value="en">English</option>
       <option value="sv">Svenska</option>

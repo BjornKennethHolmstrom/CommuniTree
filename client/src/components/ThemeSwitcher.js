@@ -1,59 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { Select } from '@chakra-ui/react';
+import React from 'react';
+import { Select, useColorMode } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import api from '../api';
+import { useTheme } from '../contexts/ThemeContext';
 
-const weatherThemes = {
-  Clear: 'sunny',
-  Clouds: 'cloudy',
-  Rain: 'rainy',
-  Snow: 'snowy',
-  Thunderstorm: 'stormy'
-};
-
-const ThemeSwitcher = ({ onThemeChange, currentCommunityId }) => {
+const ThemeSwitcher = () => {
   const { t } = useTranslation();
-  const [selectedTheme, setSelectedTheme] = useState('default');
-  const [weatherTheme, setWeatherTheme] = useState(null);
-
-  useEffect(() => {
-    const fetchWeather = async () => {
-      if (!currentCommunityId) return;
-
-      try {
-        const response = await api.get(`/api/communities/${currentCommunityId}/weather`);
-        const weatherData = response.data;
-        const theme = weatherThemes[weatherData.weather] || 'default';
-        setWeatherTheme(theme);
-        onThemeChange(theme);
-      } catch (error) {
-        console.error('Error fetching weather:', error);
-      }
-    };
-
-    fetchWeather();
-    // Set up an interval to fetch weather every 30 minutes
-    const intervalId = setInterval(fetchWeather, 30 * 60 * 1000);
-
-    return () => clearInterval(intervalId);
-  }, [currentCommunityId, onThemeChange]);
+  const { colorMode, toggleColorMode } = useColorMode();
+  const { themeName, setThemeName } = useTheme();
 
   const handleThemeChange = (event) => {
     const newTheme = event.target.value;
-    setSelectedTheme(newTheme);
-    onThemeChange(newTheme);
+    if (newTheme === 'dark' || newTheme === 'light') {
+      if (colorMode !== newTheme) {
+        toggleColorMode();
+      }
+    } else {
+      setThemeName(newTheme);
+    }
   };
 
   return (
-    <Select value={selectedTheme} onChange={handleThemeChange}>
+    <Select 
+      value={colorMode === 'dark' ? 'dark' : (colorMode === 'light' ? 'light' : themeName)} 
+      onChange={handleThemeChange}
+      size="sm"
+      width="auto"
+    >
       <option value="default">{t('themes.default')}</option>
-      <option value="dark">{t('themes.darkMode')}</option>
       <option value="light">{t('themes.lightMode')}</option>
-      {weatherTheme && (
-        <option value={weatherTheme}>
-          {t(`themes.${weatherTheme}`)}
-        </option>
-      )}
+      <option value="dark">{t('themes.darkMode')}</option>
+      <option value="forest">{t('themes.forest')}</option>
+      <option value="ocean">{t('themes.ocean')}</option>
+      <option value="desert">{t('themes.desert')}</option>
     </Select>
   );
 };

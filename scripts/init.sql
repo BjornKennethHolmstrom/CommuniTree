@@ -246,3 +246,11 @@ CREATE INDEX idx_user_roles_user_id ON user_roles(user_id);
 CREATE INDEX idx_user_roles_role_id ON user_roles(role_id);
 CREATE INDEX idx_user_roles_community_id ON user_roles(community_id);
 CREATE INDEX idx_role_permissions_role_id ON role_permissions(role_id);
+
+-- Add password reset fields to users table
+ALTER TABLE users
+ADD COLUMN reset_token VARCHAR(255),
+ADD COLUMN reset_token_expiry TIMESTAMP;
+
+-- Add index for faster token lookups
+CREATE INDEX idx_users_reset_token ON users(reset_token);
