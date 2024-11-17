@@ -1,104 +1,147 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, Textarea, Select } from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { validateProject, parseSkillsList } from '../utils/projectUtils';
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Input,
+  Textarea,
+  VStack,
+  Select,
+  HStack
+} from '@chakra-ui/react';
 
 const ProjectForm = ({ project, onSubmit, isLoading }) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: {
-      title: project?.title || '',
-      description: project?.description || '',
-      requiredSkills: project?.required_skills?.join(', ') || '',
-      timeCommitment: project?.time_commitment || '',
-      location: project?.location || '',
-      categoryId: project?.category_id || ''
-    }
-  });
   const navigate = useNavigate();
+  
+  const defaultValues = {
+    title: project?.title || '',
+    description: project?.description || '',
+    requiredSkills: project?.required_skills?.join(', ') || '',
+    timeCommitment: project?.time_commitment || '',
+    location: project?.location || '',
+    categoryId: project?.category_id || ''
+  };
+
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors },
+    setError
+  } = useForm({ defaultValues });
 
   const onSubmitForm = (data) => {
-    const projectData = {
+    // Validate form data
+    const formattedData = {
       ...data,
-      required_skills: data.requiredSkills.split(',').map(skill => skill.trim()),
+      required_skills: parseSkillsList(data.requiredSkills)
     };
-    onSubmit(projectData);
+
+    const { isValid, errors: validationErrors } = validateProject(formattedData);
+    
+    if (!isValid) {
+      // Set validation errors in form
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        setError(field, { type: 'manual', message });
+      });
+      return;
+    }
+
+    onSubmit(formattedData);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
-      <div>
-        <label htmlFor="title" className="block mb-1">{t('projectForm.title')}</label>
-        <Input
-          id="title"
-          {...register('title', { required: t('projectForm.titleRequired') })}
-          className={errors.title ? 'border-red-500' : ''}
-        />
-        {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
-      </div>
+    <form onSubmit={handleSubmit(onSubmitForm)}>
+      <VStack spacing={4}>
+        <FormControl isInvalid={errors.title}>
+          <FormLabel>{t('projectForm.title')}</FormLabel>
+          <Input
+            {...register('title', { 
+              required: t('projectForm.titleRequired') 
+            })}
+          />
+          <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+        </FormControl>
 
-      <div>
-        <label htmlFor="description" className="block mb-1">{t('projectForm.description')}</label>
-        <Textarea
-          id="description"
-          {...register('description', { required: t('projectForm.descriptionRequired') })}
-          className={errors.description ? 'border-red-500' : ''}
-        />
-        {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
-      </div>
+        <FormControl isInvalid={errors.description}>
+          <FormLabel>{t('projectForm.description')}</FormLabel>
+          <Textarea
+            {...register('description', { 
+              required: t('projectForm.descriptionRequired')
+            })}
+            minH="150px"
+          />
+          <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
+        </FormControl>
 
-      <div>
-        <label htmlFor="requiredSkills" className="block mb-1">{t('projectForm.requiredSkills')}</label>
-        <Input
-          id="requiredSkills"
-          {...register('requiredSkills', { required: t('projectForm.skillsRequired') })}
-          className={errors.requiredSkills ? 'border-red-500' : ''}
-        />
-        {errors.requiredSkills && <p className="text-red-500 text-sm mt-1">{errors.requiredSkills.message}</p>}
-      </div>
+        <FormControl isInvalid={errors.requiredSkills}>
+          <FormLabel>{t('projectForm.requiredSkills')}</FormLabel>
+          <Input
+            {...register('requiredSkills', {
+              required: t('projectForm.skillsRequired')
+            })}
+            placeholder={t('projectForm.skillsPlaceholder')}
+          />
+          <FormErrorMessage>{errors.requiredSkills?.message}</FormErrorMessage>
+        </FormControl>
 
-      <div>
-        <label htmlFor="timeCommitment" className="block mb-1">{t('projectForm.timeCommitment')}</label>
-        <Input
-          id="timeCommitment"
-          {...register('timeCommitment', { required: t('projectForm.timeCommitmentRequired') })}
-          className={errors.timeCommitment ? 'border-red-500' : ''}
-        />
-        {errors.timeCommitment && <p className="text-red-500 text-sm mt-1">{errors.timeCommitment.message}</p>}
-      </div>
+        <FormControl isInvalid={errors.timeCommitment}>
+          <FormLabel>{t('projectForm.timeCommitment')}</FormLabel>
+          <Input
+            {...register('timeCommitment', {
+              required: t('projectForm.timeCommitmentRequired')
+            })}
+            placeholder={t('projectForm.timeCommitmentPlaceholder')}
+          />
+          <FormErrorMessage>{errors.timeCommitment?.message}</FormErrorMessage>
+        </FormControl>
 
-      <div>
-        <label htmlFor="location" className="block mb-1">{t('projectForm.location')}</label>
-        <Input
-          id="location"
-          {...register('location', { required: t('projectForm.locationRequired') })}
-          className={errors.location ? 'border-red-500' : ''}
-        />
-        {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
-      </div>
+        <FormControl isInvalid={errors.location}>
+          <FormLabel>{t('projectForm.location')}</FormLabel>
+          <Input
+            {...register('location', {
+              required: t('projectForm.locationRequired')
+            })}
+            placeholder={t('projectForm.locationPlaceholder')}
+          />
+          <FormErrorMessage>{errors.location?.message}</FormErrorMessage>
+        </FormControl>
 
-      <div>
-        <label htmlFor="categoryId" className="block mb-1">{t('projectForm.category')}</label>
-        <Select
-          id="categoryId"
-          {...register('categoryId', { required: t('projectForm.categoryRequired') })}
-          className={errors.categoryId ? 'border-red-500' : ''}
-        >
-          <option value="">{t('projectForm.selectCategory')}</option>
-          {/* Add category options here */}
-        </Select>
-        {errors.categoryId && <p className="text-red-500 text-sm mt-1">{errors.categoryId.message}</p>}
-      </div>
+        <FormControl isInvalid={errors.categoryId}>
+          <FormLabel>{t('projectForm.category')}</FormLabel>
+          <Select
+            {...register('categoryId', {
+              required: t('projectForm.categoryRequired')
+            })}
+          >
+            <option value="">{t('projectForm.selectCategory')}</option>
+            {/* Add category options dynamically */}
+          </Select>
+          <FormErrorMessage>{errors.categoryId?.message}</FormErrorMessage>
+        </FormControl>
 
-      <div className="flex space-x-4">
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? t('projectForm.submitting') : (project ? t('projectForm.updateProject') : t('projectForm.createProject'))}
-        </Button>
-        <Button type="button" variant="outline" onClick={() => navigate(-1)}>
-          {t('projectForm.cancel')}
-        </Button>
-      </div>
+        <HStack spacing={4} width="100%" justify="flex-end">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate(-1)}
+          >
+            {t('projectForm.cancel')}
+          </Button>
+          <Button 
+            type="submit" 
+            colorScheme="blue"
+            isLoading={isLoading}
+            loadingText={t('projectForm.submitting')}
+          >
+            {project ? t('projectForm.updateProject') : t('projectForm.createProject')}
+          </Button>
+        </HStack>
+      </VStack>
     </form>
   );
 };

@@ -1,216 +1,177 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import {
   Box, VStack, HStack, Heading, Text, Button, Select,
-  Alert, AlertIcon, Container, Divider, Spinner
+  Alert, AlertIcon, Container, Divider, Spinner,
+  Badge, useToast
 } from '@chakra-ui/react';
+import { useProject } from '../hooks/useProject';
+import { formatProjectStatus, calculateProjectProgress } from '../utils/projectUtils';
 import Comments from './Comments';
 import FileUpload from './FileUpload';
 
 const ProjectDetails = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const [project, setProject] = useState(null);
-  const [volunteers, setVolunteers] = useState([]);
   const { id } = useParams();
-  const [status, setStatus] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
+  
+  const {
+    project,
+    loading,
+    error,
+    volunteerStatus,
+    updateProject,
+    signUpVolunteer,
+    refreshProject
+  } = useProject(id);
 
-  useEffect(() => {
-    fetchProjectDetails();
-    fetchProjectVolunteers();
-  }, [id]);
-
-  const canEditProject = (project) => {
-    return user.role === 'admin' || project.creator_id === user.id;
-  };
-
-  const fetchProjectDetails = async () => {
+  const handleStatusChange = async (newStatus) => {
     try {
-      setLoading(true);
-      const response = await fetch(`/api/projects/${id}`, {
-        headers: {
-          'x-auth-token': user.token
-        }
+      await updateProject({ status: newStatus });
+      toast({
+        title: t('projectDetails.statusUpdated'),
+        status: 'success',
+        duration: 3000,
       });
-      if (!response.ok) {
-        throw new Error(t('projectDetails.fetchError'));
-      }
-      const data = await response.json();
-      setProject(data);
-      setStatus(data.status);
-    } catch (error) {
-      console.error('Error fetching project details:', error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchProjectVolunteers = async () => {
-    try {
-      const response = await fetch(`/api/projects/${id}/volunteers`, {
-        headers: {
-          'x-auth-token': user.token
-        }
+    } catch (err) {
+      toast({
+        title: t('projectDetails.statusUpdateError'),
+        description: err.message,
+        status: 'error',
+        duration: 5000,
       });
-      if (!response.ok) {
-        throw new Error(t('projectDetails.volunteersFetchError'));
-      }
-      const data = await response.json();
-      setVolunteers(data);
-    } catch (error) {
-      console.error('Error fetching project volunteers:', error);
-      setError(error.message);
     }
   };
 
   const handleVolunteerSignUp = async () => {
     try {
-      const response = await fetch('/api/projects/volunteer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': user.token
-        },
-        body: JSON.stringify({ project_id: id }),
+      await signUpVolunteer();
+      toast({
+        title: t('projectDetails.volunteerSuccess'),
+        status: 'success',
+        duration: 3000,
       });
-      if (!response.ok) {
-        throw new Error(t('projectDetails.volunteerSignUpError'));
-      }
-      alert(t('projectDetails.volunteerSuccess'));
-      fetchProjectVolunteers();
-    } catch (error) {
-      console.error('Error signing up as volunteer:', error);
-      setError(error.message);
-    }
-  };
-
-  const updateProjectStatus = async (newStatus) => {
-    try {
-      const response = await fetch(`/api/projects/${id}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': user.token
-        },
-        body: JSON.stringify({ status: newStatus })
+    } catch (err) {
+      toast({
+        title: t('projectDetails.volunteerError'),
+        description: err.message,
+        status: 'error',
+        duration: 5000,
       });
-      if (!response.ok) {
-        throw new Error(t('projectDetails.statusUpdateError'));
-      }
-      setStatus(newStatus);
-      alert('Project status updated successfully');
-    } catch (error) {
-      console.error('Error updating project status:', error);
-      setError(error.message);
-    }
-  };
-
-  const handleEditProject = async (updatedProjectData) => {
-    try {
-      const response = await fetch(`/api/projects/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': user.token
-        },
-        body: JSON.stringify(updatedProjectData)
-      });
-      if (!response.ok) {
-        throw new Error(t('projectDetails.projectUpdateError'));
-      }
-      const updatedProject = await response.json();
-      setProject(updatedProject);
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error updating project:', error);
-      setError(error.message);
     }
   };
 
   const handleDeleteProject = async () => {
     if (window.confirm(t('projectDetails.deleteConfirmation'))) {
       try {
-        const response = await fetch(`/api/projects/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'x-auth-token': user.token
-          }
-        });
-        if (!response.ok) {
-          throw new Error(t('projectDetails.projectDeleteError'));
-        }
+        await updateProject({ deleted: true });
         navigate('/projects');
-      } catch (error) {
-        console.error('Error deleting project:', error);
-        setError(error.message);
+        toast({
+          title: t('projectDetails.deleteSuccess'),
+          status: 'success',
+          duration: 3000,
+        });
+      } catch (err) {
+        toast({
+          title: t('projectDetails.deleteError'),
+          description: err.message,
+          status: 'error',
+          duration: 5000,
+        });
       }
     }
   };
 
-  if (loading) return <Spinner />;
+  if (loading) return <Spinner size="xl" />;
   if (error) return <Alert status="error"><AlertIcon />{error}</Alert>;
   if (!project) return <Alert status="warning"><AlertIcon />{t('projectDetails.notFound')}</Alert>;
+
+  const progress = calculateProjectProgress(project);
 
   return (
     <Container maxW="container.xl" py={8}>
       <VStack spacing={6} align="stretch">
-        <Heading as="h2" size="xl">{project.title}</Heading>
-        <Text>{project.description}</Text>
+        <HStack justify="space-between">
+          <Heading as="h2" size="xl">{project.title}</Heading>
+          <Badge colorScheme={project.status === 'open' ? 'green' : 'blue'}>
+            {formatProjectStatus(project.status)}
+          </Badge>
+        </HStack>
 
         <Box>
-          <Text fontWeight="bold">{t('projectDetails.requiredSkills')}:</Text>
-          <Text>{project.required_skills?.join(', ') || t('common.none')}</Text>
+          <Text>{project.description}</Text>
+        </Box>
+
+        <Box>
+          <Heading as="h3" size="md" mb={2}>{t('projectDetails.requiredSkills')}</Heading>
+          <HStack spacing={2}>
+            {project.required_skills?.map((skill, index) => (
+              <Badge key={index} colorScheme="purple">{skill}</Badge>
+            ))}
+          </HStack>
         </Box>
 
         <Box>
           <Text fontWeight="bold">{t('projectDetails.timeCommitment')}:</Text>
-          <Text>{project.time_commitment || t('common.notSpecified')}</Text>
+          <Text>{project.time_commitment}</Text>
         </Box>
 
         <Box>
           <Text fontWeight="bold">{t('projectDetails.location')}:</Text>
-          <Text>{project.location || t('common.notSpecified')}</Text>
+          <Text>{project.location}</Text>
         </Box>
 
-        <Button colorScheme="blue" onClick={handleVolunteerSignUp}>
-          {t('projectDetails.volunteerSignUp')}
-        </Button>
-
-        {canEditProject(project) && (
-          <HStack spacing={4}>
-            <Button onClick={() => setIsEditing(true)}>{t('common.edit')}</Button>
-            <Button colorScheme="red" onClick={handleDeleteProject}>{t('common.delete')}</Button>
-          </HStack>
+        {progress > 0 && (
+          <Box>
+            <Text fontWeight="bold">{t('projectDetails.progress')}: {progress}%</Text>
+            <Box bg="gray.200" h="2" borderRadius="full" mt={2}>
+              <Box
+                bg="green.500"
+                h="100%"
+                borderRadius="full"
+                width={`${progress}%`}
+              />
+            </Box>
+          </Box>
         )}
 
         <Box>
-          <Heading as="h3" size="md" mb={2}>{t('projectDetails.currentVolunteers')}</Heading>
-          {volunteers.length > 0 ? (
-            <VStack align="stretch">
-              {volunteers.map((volunteer) => (
-                <Text key={volunteer.id}>{volunteer.name}</Text>
-              ))}
-            </VStack>
-          ) : (
-            <Text>{t('projectDetails.noVolunteers')}</Text>
-          )}
-        </Box>
-
-        <Box>
-          <Heading as="h3" size="md" mb={2}>{t('projectDetails.updateStatus')}</Heading>
-          <Select value={status} onChange={(e) => updateProjectStatus(e.target.value)}>
+          <Heading as="h3" size="md" mb={2}>{t('projectDetails.status')}</Heading>
+          <Select
+            value={project.status}
+            onChange={(e) => handleStatusChange(e.target.value)}
+            width="200px"
+          >
             <option value="open">{t('projectDetails.statusOpen')}</option>
             <option value="in_progress">{t('projectDetails.statusInProgress')}</option>
             <option value="completed">{t('projectDetails.statusCompleted')}</option>
           </Select>
         </Box>
+
+        <HStack spacing={4}>
+          <Button
+            colorScheme="blue"
+            onClick={handleVolunteerSignUp}
+            isDisabled={volunteerStatus === 'signed_up'}
+          >
+            {volunteerStatus === 'signed_up' 
+              ? t('projectDetails.alreadyVolunteered')
+              : t('projectDetails.volunteerSignUp')}
+          </Button>
+
+          {project.creator_id === id && (
+            <>
+              <Button onClick={() => navigate(`/projects/${id}/edit`)}>
+                {t('common.edit')}
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteProject}>
+                {t('common.delete')}
+              </Button>
+            </>
+          )}
+        </HStack>
 
         <Divider />
 

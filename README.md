@@ -35,6 +35,12 @@ CommuniTree is a community engagement platform designed to connect municipalitie
   - Role-based navigation and UI adaptation
   - Permission-based feature access
   - Community-specific role assignments
+- Enhanced Project Management System:
+  - Centralized project data management with custom hooks
+  - Advanced filtering and sorting capabilities
+  - Skills-based search and validation
+  - Progress tracking and volunteer management
+  - Standardized project status handling
 
 ## Technical Stack
 
@@ -49,6 +55,10 @@ CommuniTree is a community engagement platform designed to connect municipalitie
 - Testing: Jest and Supertest
 - Weather Data: OpenWeatherMap API
 - Scheduling: node-schedule
+- State Management: 
+  - React Hooks (useState, useEffect)
+  - Custom hooks for domain-specific logic
+  - Utility functions for common operations
 
 ## Getting Started
 

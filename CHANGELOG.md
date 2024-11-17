@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.5] - 2024-11-14
+
+### Added
+- Implemented `useProject` hook for centralized project data management
+- Created comprehensive project utilities for common operations
+- Added project validation functions and skills parsing
+- Implemented project sorting and filtering utilities
+- Added project progress calculation functionality
+- Created volunteer requirement validation system
+
+### Changed
+- Refactored ProjectDetails to use new useProject hook
+- Updated ProjectList with enhanced filtering and sorting capabilities
+- Modified ProjectForm to use new validation utilities
+- Enhanced CreateProject with improved error handling and validation
+- Updated all project-related components to use shared utilities
+- Improved project status formatting and display consistency
+- Enhanced project filtering with skills-based search
+
+### Fixed
+- Improved form validation in project creation and editing
+- Enhanced error handling in project-related operations
+- Fixed project status display inconsistencies
+- Standardized project skills handling across components
+
+### Technical
+- Added unit tests for project utilities
+- Added comprehensive tests for useProject hook
+- Improved code organization with shared project utilities
+- Enhanced type safety in project-related functions
+
 ## [0.4.4] - 2024-11-13
 
 ### Added
