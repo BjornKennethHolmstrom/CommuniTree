@@ -1,6 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { validateProject, parseSkillsList } from '../utils/projectUtils';
 import {
@@ -12,12 +11,21 @@ import {
   Textarea,
   VStack,
   Select,
-  HStack
+  HStack,
 } from '@chakra-ui/react';
 
-const ProjectForm = ({ project, onSubmit, isLoading }) => {
+const ProjectForm = ({ 
+  project, 
+  onSubmit, 
+  isLoading,
+  customCategories,
+  disableFields = [],
+  showCategoryField = true,
+  showLocationField = true,
+  additionalFields = [],
+  onCancel
+}) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   
   const defaultValues = {
     title: project?.title || '',
@@ -45,7 +53,6 @@ const ProjectForm = ({ project, onSubmit, isLoading }) => {
     const { isValid, errors: validationErrors } = validateProject(formattedData);
     
     if (!isValid) {
-      // Set validation errors in form
       Object.entries(validationErrors).forEach(([field, message]) => {
         setError(field, { type: 'manual', message });
       });
@@ -58,7 +65,7 @@ const ProjectForm = ({ project, onSubmit, isLoading }) => {
   return (
     <form onSubmit={handleSubmit(onSubmitForm)}>
       <VStack spacing={4}>
-        <FormControl isInvalid={errors.title}>
+        <FormControl isInvalid={errors.title} isDisabled={disableFields.includes('title')}>
           <FormLabel>{t('projectForm.title')}</FormLabel>
           <Input
             {...register('title', { 
@@ -126,12 +133,15 @@ const ProjectForm = ({ project, onSubmit, isLoading }) => {
         </FormControl>
 
         <HStack spacing={4} width="100%" justify="flex-end">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate(-1)}
-          >
-            {t('projectForm.cancel')}
-          </Button>
+          {onCancel && (
+            <Button 
+              variant="outline" 
+              onClick={onCancel}
+              isDisabled={isLoading}
+            >
+              {t('projectForm.cancel')}
+            </Button>
+          )}
           <Button 
             type="submit" 
             colorScheme="blue"
@@ -145,5 +155,81 @@ const ProjectForm = ({ project, onSubmit, isLoading }) => {
     </form>
   );
 };
+
+ProjectForm.propTypes = {
+  // Project data
+  project: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    title: PropTypes.string,
+    description: PropTypes.string,
+    required_skills: PropTypes.arrayOf(PropTypes.string),
+    time_commitment: PropTypes.string,
+    location: PropTypes.string,
+    category_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  }),
+
+  // Required callbacks
+  onSubmit: PropTypes.func.isRequired,
+
+  // Optional callbacks
+  onCancel: PropTypes.func,
+
+  // Loading state
+  isLoading: PropTypes.bool,
+
+  // Form configuration
+  customCategories: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired
+    })
+  ),
+
+  // Field configuration
+  disableFields: PropTypes.arrayOf(
+    PropTypes.oneOf(['title', 'description', 'requiredSkills', 'timeCommitment', 'location', 'categoryId'])
+  ),
+  showCategoryField: PropTypes.bool,
+  showLocationField: PropTypes.bool,
+
+  // Additional fields configuration
+  additionalFields: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['text', 'textarea', 'select', 'number']).isRequired,
+      required: PropTypes.bool,
+      options: PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+          label: PropTypes.string.isRequired
+        })
+      )
+    })
+  )
+};
+
+ProjectForm.defaultProps = {
+  project: undefined,
+  onCancel: undefined,
+  isLoading: false,
+  customCategories: [],
+  disableFields: [],
+  showCategoryField: true,
+  showLocationField: true,
+  additionalFields: []
+};
+
+// Additional type definitions for documentation
+ProjectForm.fieldTypes = ['text', 'textarea', 'select', 'number'];
+
+ProjectForm.defaultFields = [
+  'title',
+  'description',
+  'requiredSkills',
+  'timeCommitment',
+  'location',
+  'categoryId'
+];
 
 export default ProjectForm;

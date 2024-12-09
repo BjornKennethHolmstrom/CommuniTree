@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import {
@@ -17,7 +18,7 @@ import {
   AlertDescription,
 } from '@chakra-ui/react';
 
-const ForgotPassword = () => {
+const ForgotPassword = ({ onSubmitSuccess }) => {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,6 +45,9 @@ const ForgotPassword = () => {
       }
 
       setIsSubmitted(true);
+      if (onSubmitSuccess) {
+        onSubmitSuccess(email);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -125,6 +129,15 @@ const ForgotPassword = () => {
       </VStack>
     </Box>
   );
+};
+
+ForgotPassword.propTypes = {
+  // Optional callback that runs after successful submission
+  onSubmitSuccess: PropTypes.func
+};
+
+ForgotPassword.defaultProps = {
+  onSubmitSuccess: undefined
 };
 
 export default ForgotPassword;

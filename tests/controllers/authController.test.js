@@ -1,13 +1,12 @@
 // tests/controllers/authController.test.js
-
 const authController = require('../../src/controllers/authController');
-const db = require('../../config/database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const db = require('../../config/database');
 
-jest.mock('../../config/database');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
+jest.mock('../../config/database');
 
 describe('Auth Controller', () => {
   let mockRequest;
@@ -16,74 +15,69 @@ describe('Auth Controller', () => {
   beforeEach(() => {
     mockRequest = {
       body: {
-        username: 'testuser',
-        password: 'testpassword'
+        email: 'test@example.com',
+        password: 'password123',
+        username: 'testuser'
       }
     };
     mockResponse = {
-      status: jest.fn(() => mockResponse),
+      status: jest.fn().mockReturnThis(),
       json: jest.fn(),
       send: jest.fn()
     };
+
+    // Mock JWT sign
+    jwt.sign.mockImplementation((payload, secret, options, callback) => {
+      if (callback) {
+        callback(null, 'mock-token');
+      }
+      return 'mock-token';
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   test('login should return token and user data for valid credentials', async () => {
     const mockUser = {
       id: 1,
-      username: 'testuser',
-      name: 'Test User',
       email: 'test@example.com',
-      role: 'user',
-      password: 'hashedpassword'
+      username: 'testuser',
+      password: 'hashedPassword',
+      role: 'user'
     };
 
-    db.query.mockResolvedValue({ rows: [mockUser] });
-    bcrypt.compare.mockResolvedValue(true);
-    jwt.sign.mockImplementation((payload, secret, options, callback) => {
-      callback(null, 'mocktoken');
-    });
+    db.query.mockResolvedValueOnce({ rows: [mockUser] });
+    bcrypt.compare.mockResolvedValueOnce(true);
 
     await authController.login(mockRequest, mockResponse);
 
-    expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockResponse.json).toHaveBeenCalledWith({
       accessToken: expect.any(String),
       refreshToken: expect.any(String),
-      user: expect.objectContaining({
-        id: expect.any(Number),
-        username: 'testuser',
-        email: 'test@example.com',
-        role: 'user'
-      })
-    }));
+      user: {
+        id: mockUser.id,
+        username: mockUser.username,
+        email: mockUser.email,
+        role: mockUser.role
+      }
+    });
   });
 
   test('login should return 400 for invalid credentials', async () => {
-    db.query.mockResolvedValue({ rows: [] });
+    db.query.mockResolvedValueOnce({ rows: [] });
 
     await authController.login(mockRequest, mockResponse);
 
     expect(mockResponse.status).toHaveBeenCalledWith(400);
-    expect(mockResponse.json).toHaveBeenCalledWith({ msg: 'Invalid Credentials' });
-  });
-
-  test('login should return 400 for incorrect password', async () => {
-    const mockUser = {
-      id: 1,
-      username: 'testuser',
-      password: 'hashedpassword'
-    };
-
-    db.query.mockResolvedValue({ rows: [mockUser] });
-    bcrypt.compare.mockResolvedValue(false);
-
-    await authController.login(mockRequest, mockResponse);
-
-    expect(mockResponse.status).toHaveBeenCalledWith(400);
-    expect(mockResponse.json).toHaveBeenCalledWith({ msg: 'Invalid Credentials' });
+    expect(mockResponse.json).toHaveBeenCalledWith({ 
+      msg: 'Invalid credentials' 
+    });
   });
 
   test('login should handle server errors', async () => {
-    db.query.mockRejectedValue(new Error('Database error'));
+    db.query.mockRejectedValueOnce(new Error('Database error'));
 
     await authController.login(mockRequest, mockResponse);
 

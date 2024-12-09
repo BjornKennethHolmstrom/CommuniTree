@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, Link as RouterLink } from 'react-router-dom';
 import {
@@ -20,7 +21,12 @@ import {
 } from '@chakra-ui/react';
 import { Eye, EyeOff } from 'lucide-react';
 
-const ResetPassword = () => {
+const ResetPassword = ({ 
+  onResetSuccess, 
+  onResetError, 
+  redirectDelay = 3000,
+  minPasswordLength = 8 
+}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { token } = useParams();
@@ -33,7 +39,6 @@ const ResetPassword = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    // Verify token validity
     const verifyToken = async () => {
       try {
         const response = await fetch(`/api/auth/verify-reset-token/${token}`);
@@ -44,14 +49,17 @@ const ResetPassword = () => {
       } catch (err) {
         setError(err.message);
         setIsValidToken(false);
+        if (onResetError) {
+          onResetError(err);
+        }
       }
     };
 
     verifyToken();
-  }, [token]);
+  }, [token, onResetError]);
 
   const validatePassword = () => {
-    if (password.length < 8) {
+    if (password.length < minPasswordLength) {
       setError(t('resetPassword.passwordLength'));
       return false;
     }
@@ -88,11 +96,18 @@ const ResetPassword = () => {
       }
 
       setIsSuccess(true);
+      if (onResetSuccess) {
+        onResetSuccess();
+      }
+      
       setTimeout(() => {
         navigate('/login');
-      }, 3000);
+      }, redirectDelay);
     } catch (err) {
       setError(err.message);
+      if (onResetError) {
+        onResetError(err);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -186,6 +201,39 @@ const ResetPassword = () => {
       </VStack>
     </Box>
   );
+};
+
+ResetPassword.propTypes = {
+  // Optional callbacks
+  onResetSuccess: PropTypes.func,
+  onResetError: PropTypes.func,
+  
+  // Optional configuration
+  redirectDelay: PropTypes.number,
+  minPasswordLength: PropTypes.number,
+  
+  // Optional customization
+  customValidation: PropTypes.func,
+  passwordStrengthRules: PropTypes.shape({
+    requireSpecialChar: PropTypes.bool,
+    requireUppercase: PropTypes.bool,
+    requireNumber: PropTypes.bool,
+    requireLowercase: PropTypes.bool
+  })
+};
+
+ResetPassword.defaultProps = {
+  onResetSuccess: undefined,
+  onResetError: undefined,
+  redirectDelay: 3000,
+  minPasswordLength: 8,
+  customValidation: undefined,
+  passwordStrengthRules: {
+    requireSpecialChar: true,
+    requireUppercase: true,
+    requireNumber: true,
+    requireLowercase: true
+  }
 };
 
 export default ResetPassword;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,16 +20,18 @@ import {
 } from '@chakra-ui/react';
 import { Settings, Users, Layout, LogOut, ChevronDown } from 'lucide-react';
 
-const Navigation = () => {
+const Navigation = ({ 
+  maxWidth = "container.xl",
+  showAdminMenu = true,
+  additionalMenuItems = [],
+  onLogout
+}) => {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { activeCommunities } = useCommunity();
   const location = useLocation();
   const { checkPermission } = usePermissions();
 
-  const isActive = (path) => location.pathname === path;
-
-  // Navigation items with permission checks
   const navItems = [
     {
       label: 'menu.home',
@@ -53,7 +56,6 @@ const Navigation = () => {
     },
   ];
 
-  // Admin menu items with permission checks
   const adminMenuItems = [
     {
       label: 'communityManagement.management',
@@ -73,9 +75,17 @@ const Navigation = () => {
       icon: Settings,
       permission: 'canManageSystem',
     },
+    ...additionalMenuItems
   ].filter(item => checkPermission(item.permission));
 
   const hasAdminAccess = adminMenuItems.length > 0;
+
+  const handleLogout = () => {
+    logout();
+    if (onLogout) {
+      onLogout();
+    }
+  };
 
   return (
     <Box bg="gray.800" color="white" p={4}>
@@ -170,6 +180,53 @@ const Navigation = () => {
       </Flex>
     </Box>
   );
+};
+
+Navigation.propTypes = {
+  // Optional styling props
+  maxWidth: PropTypes.string,
+  
+  // Optional feature flags
+  showAdminMenu: PropTypes.bool,
+  
+  // Additional menu items
+  additionalMenuItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      path: PropTypes.string.isRequired,
+      icon: PropTypes.elementType,
+      permission: PropTypes.string.isRequired
+    })
+  ),
+  
+  // Optional callbacks
+  onLogout: PropTypes.func,
+
+  // Optional menu item customization
+  navItemsOverride: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      path: PropTypes.string.isRequired,
+      visible: PropTypes.bool,
+      badge: PropTypes.number
+    })
+  )
+};
+
+Navigation.defaultProps = {
+  maxWidth: 'container.xl',
+  showAdminMenu: true,
+  additionalMenuItems: [],
+  onLogout: undefined,
+  navItemsOverride: undefined
+};
+
+// MenuItem type definition for documentation
+Navigation.menuItemShape = {
+  label: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  icon: PropTypes.elementType,
+  permission: PropTypes.string.isRequired
 };
 
 export default Navigation;

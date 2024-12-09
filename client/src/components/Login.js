@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,7 @@ import {
   HStack
 } from '@chakra-ui/react';
 
-const Login = () => {
+const Login = ({ redirectPath }) => {  // Added redirectPath prop
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +35,7 @@ const Login = () => {
 
     try {
       await login(email, password);
-      navigate('/dashboard');
+      navigate(redirectPath || '/dashboard');
     } catch (err) {
       console.error('Login error:', err);
       setError(err.response?.data?.msg || t('login.error'));
@@ -107,6 +108,15 @@ const Login = () => {
       </VStack>
     </Box>
   );
+};
+
+Login.propTypes = {
+  // Optional prop
+  redirectPath: PropTypes.string
+};
+
+Login.defaultProps = {
+  redirectPath: '/dashboard'
 };
 
 export default Login;

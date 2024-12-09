@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,7 +12,15 @@ import { formatProjectStatus, calculateProjectProgress } from '../utils/projectU
 import Comments from './Comments';
 import FileUpload from './FileUpload';
 
-const ProjectDetails = () => {
+const ProjectDetails = ({
+  onStatusChange,
+  onVolunteerSignUp,
+  onDelete,
+  showComments = true,
+  showFileUpload = true,
+  allowEditing = true,
+  customStatusOptions
+}) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,6 +39,9 @@ const ProjectDetails = () => {
   const handleStatusChange = async (newStatus) => {
     try {
       await updateProject({ status: newStatus });
+      if (onStatusChange) {
+        onStatusChange(newStatus);
+      }
       toast({
         title: t('projectDetails.statusUpdated'),
         status: 'success',
@@ -48,6 +60,9 @@ const ProjectDetails = () => {
   const handleVolunteerSignUp = async () => {
     try {
       await signUpVolunteer();
+      if (onVolunteerSignUp) {
+        onVolunteerSignUp(id);
+      }
       toast({
         title: t('projectDetails.volunteerSuccess'),
         status: 'success',
@@ -67,6 +82,9 @@ const ProjectDetails = () => {
     if (window.confirm(t('projectDetails.deleteConfirmation'))) {
       try {
         await updateProject({ deleted: true });
+        if (onDelete) {
+          onDelete(id);
+        }
         navigate('/projects');
         toast({
           title: t('projectDetails.deleteSuccess'),
@@ -183,6 +201,64 @@ const ProjectDetails = () => {
       </VStack>
     </Container>
   );
+};
+
+ProjectDetails.propTypes = {
+  // Optional callbacks
+  onStatusChange: PropTypes.func,
+  onVolunteerSignUp: PropTypes.func,
+  onDelete: PropTypes.func,
+
+  // Feature flags
+  showComments: PropTypes.bool,
+  showFileUpload: PropTypes.bool,
+  allowEditing: PropTypes.bool,
+
+  // Custom status options
+  customStatusOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      color: PropTypes.string
+    })
+  ),
+
+  // Project shape (for documentation)
+  project: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
+    required_skills: PropTypes.arrayOf(PropTypes.string),
+    time_commitment: PropTypes.string,
+    location: PropTypes.string,
+    created_at: PropTypes.string,
+    creator_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    milestones: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        title: PropTypes.string,
+        completed: PropTypes.bool
+      })
+    )
+  })
+};
+
+ProjectDetails.defaultProps = {
+  onStatusChange: undefined,
+  onVolunteerSignUp: undefined,
+  onDelete: undefined,
+  showComments: true,
+  showFileUpload: true,
+  allowEditing: true,
+  customStatusOptions: undefined
+};
+
+// Status options type definition for documentation
+ProjectDetails.statusOptionShape = {
+  value: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  color: PropTypes.string
 };
 
 export default ProjectDetails;
