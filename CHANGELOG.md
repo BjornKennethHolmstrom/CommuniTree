@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.6] - 2024-12-16
+
+### Added
+- Added comprehensive PropTypes to UI components
+- Added PropTypes to Auth components (Login, Register, ForgotPassword, ResetPassword, PrivateRoute)
+- Added PropTypes to Project components (ProjectDetails, ProjectForm, ProjectList, CreateProject)
+- Added PropTypes to Feature components (Dashboard, Comments, EventCalendar, FileUpload, MessagingComponent, NotificationComponent)
+- Added PropTypes to Community components (CommunityDetails, CommunityForm, CommunityLanding, CommunityList, CommunitySwitcher, CommunityManagement)
+
+### Changed
+- Reorganized CommunityForm component structure
+- Moved CommunityForm from components/ to components/communities/
+- Enhanced CommunityForm with improved form state management and accessibility
+- Improved component documentation with proper PropTypes definitions
+- Standardized form handling across community-related components
+
+### Fixed
+- Resolved component duplication issue with CommunityForm
+- Improved type checking across all major components
+- Enhanced form validation and error handling
+
 ## [0.4.5] - 2024-11-14
 
 ### Added

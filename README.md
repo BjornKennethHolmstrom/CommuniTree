@@ -164,10 +164,10 @@ CommuniTree
 ├── babel.config.js
 ├── CHANGELOG.md
 ├── client
-│   ├── components
 │   ├── package.json
 │   ├── package-lock.json
 │   ├── public
+│   │   ├── communitree-logo.svg
 │   │   ├── favicon.ico
 │   │   ├── index.html
 │   │   ├── locales
@@ -179,24 +179,41 @@ CommuniTree
 │   │   ├── logo512.png
 │   │   ├── manifest.json
 │   │   └── robots.txt
-│   ├── README.md
 │   └── src
+│       ├── api.js
 │       ├── App.css
 │       ├── App.js
 │       ├── App.test.js
 │       ├── assets
 │       ├── components
 │       │   ├── AddUserForm.js
-│       │   ├── AuthContext.js
 │       │   ├── Comments.js
+│       │   ├── common
+│       │   │   ├── AccessibleButton.js
+│       │   │   ├── AccessibleCard.js
+│       │   │   ├── AccessibleForm.js
+│       │   │   └── index.js
+│       │   ├── communities
+│       │   │   ├── CommunityForm.js
+│       │   │   ├── CommunityForm.test.js
+│       │   │   └── CommunityManagement.js
 │       │   ├── CommunityDetails.js
-│       │   ├── CommunityForm.js
+│       │   ├── CommunityLanding.js
+│       │   ├── CommunityLanding.test.js
 │       │   ├── CommunityList.js
+│       │   ├── CommunityList.test.js
+│       │   ├── CommunitySwitcher.js
+│       │   ├── CommunitySwitcher.test.js
 │       │   ├── CreateProject.js
+│       │   ├── CreateProject.test.js
 │       │   ├── Dashboard.js
 │       │   ├── EditUserForm.js
+│       │   ├── ErrorBoundary.js
+│       │   ├── ErrorContext.js
 │       │   ├── EventCalendar.js
 │       │   ├── FileUpload.js
+│       │   ├── ForgotPassword.js
+│       │   ├── ForgotPassword.test.js
 │       │   ├── LanguageSwitcher.js
 │       │   ├── Login.js
 │       │   ├── Login.test.js
@@ -205,42 +222,83 @@ CommuniTree
 │       │   ├── NotificationComponent.js
 │       │   ├── PrivateRoute.js
 │       │   ├── ProjectDetails.js
+│       │   ├── ProjectDetails.test.js
 │       │   ├── ProjectForm.js
+│       │   ├── ProjectForm.test.js
 │       │   ├── ProjectList.js
+│       │   ├── ProjectList.test.js
+│       │   ├── RegisterFormField.js
+│       │   ├── Register.js
+│       │   ├── Register.test.js
+│       │   ├── ResetPassword.js
+│       │   ├── ResetPassword.test.js
+│       │   ├── ThemeSwitcher.js
 │       │   ├── ui
 │       │   │   └── alert.js
 │       │   ├── UserDetails.js
 │       │   ├── UserList.js
 │       │   └── UserProfile.js
-│       ├── contexts/           # Application contexts
-│       │   ├── AuthContext.js
-│       │   ├── CommunityContext.js
-│       │   ├── ErrorContext.js
-│       │   └── ThemeContext.js
+│       ├── config
+│       │   └── roles.js
+│       ├── contexts
+│       │   ├── AuthContext.js
+│       │   ├── CommunityContext.js
+│       │   ├── ErrorContext.js
+│       │   ├── PermissionContext.js
+│       │   └── ThemeContext.js
+│       ├── hooks
+│       │   ├── useLocationTheme.js
+│       │   └── useProject.js
 │       ├── i18n.js
 │       ├── index.css
 │       ├── index.js
 │       ├── logo.svg
 │       ├── reportWebVitals.js
-│       └── setupTests.js
+│       ├── setupTests.js
+│       ├── __tests__
+│       │   ├── hooks
+│       │   │   └── useProject.test.js
+│       │   └── utils
+│       │       └── projectUtils.test.js
+│       ├── theme
+│       │   ├── locationThemes.js
+│       │   ├── theme.js
+│       │   ├── userThemes.js
+│       │   └── weatherTheme.js
+│       └── utils
+│           ├── apiUtils.js
+│           ├── permissions.js
+│           └── projectUtils.js
 ├── config
 │   └── database.js
+├── cypress
 ├── cypress.config.js
 ├── docs
 │   ├── communitree-project-summary.md
 │   ├── communitree-roadmap.md
+│   ├── detailed-plan.md
+│   ├── error-safety-implementation-plan.md
 │   ├── features-ideas-and-considerations.md
-│   ├── message-for-next-session.md
-│   └── postgresql-management-guide.md
+│   ├── food-forests-and-permaculture.md
+│   ├── postgresql-management-guide.md
+│   └── proptypes-checklist.md
+├── generate_fresh_token.js
 ├── jest.config.js
 ├── LICENSE.md
 ├── package.json
 ├── package-lock.json
 ├── README.md
 ├── scripts
-│   └── createAdminUser.js
+│   ├── community-schema.sql
+│   ├── createAdminUser.js
+│   ├── initRolesAndPermissions.js
+│   ├── init.sql
+│   ├── roles-schema.sql
+│   └── sample-data.sql
 ├── server.js
 ├── src
+│   ├── config
+│   │   └── roles.js
 │   ├── controllers
 │   │   ├── authController.js
 │   │   ├── commentController.js
@@ -254,29 +312,30 @@ CommuniTree
 │   │   ├── auth.js
 │   │   └── checkPermission.js
 │   ├── __mocks__
-│   │   └── database.js
+│   │   ├── database.js
+│   │   └── multer.js
 │   ├── models
 │   │   ├── community.js
 │   │   ├── communityMembership.js
 │   │   ├── event.js
 │   │   ├── index.js
 │   │   ├── project.js
-│   │   └── user.js
-│   │   ├── weather.js
-│   └── routes
-│   │   ├── authRoutes.js
-│   │   ├── commentRoutes.js
-│   │   ├── communityRoutes.js
-│   │   ├── dashboardRoutes.js
-│   │   ├── eventRoutes.js
-│   │   ├── fileRoutes.js
-│   │   ├── messageRoutes.js
-│   │   ├── notificationRoutes.js
-│   │   ├── projectRoutes.js
-│   │   ├── users (copy).js
-│   │   └── users.js
-│   └── schedulers
-│       └── weatherScheduler.js
+│   │   ├── role.js
+│   │   ├── user.js
+│   │   └── weather.js
+│   ├── routes
+│   │   ├── authRoutes.js
+│   │   ├── commentRoutes.js
+│   │   ├── communityRoutes.js
+│   │   ├── dashboardRoutes.js
+│   │   ├── eventRoutes.js
+│   │   ├── fileRoutes.js
+│   │   ├── messageRoutes.js
+│   │   ├── notificationRoutes.js
+│   │   ├── projectRoutes.js
+│   │   └── users.js
+│   ├── schedulers
+│   │   └── weatherScheduler.js
 │   └── services
 │       └── weatherService.js
 ├── start.js
@@ -294,7 +353,8 @@ CommuniTree
 │   │   ├── projectController.test.js
 │   │   └── userController.test.js
 │   ├── integration
-│   │   └── projectFlow.test.js
+│   │   ├── projectFlow.test.js
+│   │   └── weatherAPI.test.js
 │   ├── routes
 │   │   ├── authRoutes.test.js
 │   │   ├── commentRoutes.test.js

@@ -1,21 +1,37 @@
 // src/components/CommunityDetails.js
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { Box, Heading, Text, VStack, HStack, Button } from '@chakra-ui/react';
+import { Box, Heading, Text, VStack, HStack, Button, Alert, AlertIcon } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
-const CommunityDetails = () => {
+const CommunityDetails = ({
+  communityId,
+  showMemberList = true,
+  showWeather = true,
+  showActions = true,
+  onJoin,
+  onLeave,
+  onEdit,
+  onDelete,
+  customActions = [],
+  additionalFields = []
+}) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuth();
   const [community, setCommunity] = useState(null);
   const [isMember, setIsMember] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchCommunityDetails();
-    checkMembership();
-  }, [id]);
+    if (communityId || id) {
+      fetchCommunityDetails();
+      checkMembership();
+    }
+  }, [communityId, id]);
 
   const fetchCommunityDetails = async () => {
     try {
@@ -75,6 +91,76 @@ const CommunityDetails = () => {
       </VStack>
     </Box>
   );
+};
+
+CommunityDetails.propTypes = {
+  // Optional community ID (if not provided in URL)
+  communityId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]),
+
+  // Feature flags
+  showMemberList: PropTypes.bool,
+  showWeather: PropTypes.bool,
+  showActions: PropTypes.bool,
+
+  // Callbacks
+  onJoin: PropTypes.func,
+  onLeave: PropTypes.func,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
+
+  // Custom actions
+  customActions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      onClick: PropTypes.func.isRequired,
+      icon: PropTypes.elementType,
+      condition: PropTypes.func
+    })
+  ),
+
+  // Additional fields configuration
+  additionalFields: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      render: PropTypes.func
+    })
+  ),
+
+  // Community shape (for documentation)
+  community: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    location: PropTypes.string,
+    timezone: PropTypes.string,
+    member_count: PropTypes.number,
+    created_at: PropTypes.string
+  }),
+
+  // Optional styling
+  containerStyle: PropTypes.object,
+  headerStyle: PropTypes.object,
+  contentStyle: PropTypes.object
+};
+
+CommunityDetails.defaultProps = {
+  communityId: undefined,
+  showMemberList: true,
+  showWeather: true,
+  showActions: true,
+  onJoin: undefined,
+  onLeave: undefined,
+  onEdit: undefined,
+  onDelete: undefined,
+  customActions: [],
+  additionalFields: [],
+  containerStyle: {},
+  headerStyle: {},
+  contentStyle: {}
 };
 
 export default CommunityDetails;

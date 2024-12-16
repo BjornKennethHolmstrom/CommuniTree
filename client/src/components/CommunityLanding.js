@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCommunity } from '../contexts/CommunityContext';
@@ -33,17 +34,31 @@ import {
   Divider
 } from '@chakra-ui/react';
 
-const CommunityLanding = () => {
+const CommunityLanding = ({
+  communityId,
+  showEvents = true,
+  showProjects = true,
+  showMembers = true,
+  showWeather = true,
+  maxProjects = 3,
+  maxEvents = 3,
+  maxMembers = 10,
+  onJoin,
+  onLeave,
+  customTabs = [],
+  customStats = []
+}) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuth();
   const { joinCommunity, leaveCommunity } = useCommunity();
   const { showError } = useError();
   const [community, setCommunity] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [recentProjects, setRecentProjects] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isMember, setIsMember] = useState(false);
 
   useEffect(() => {
@@ -273,6 +288,73 @@ const CommunityLanding = () => {
       </Tabs>
     </Container>
   );
+};
+
+CommunityLanding.propTypes = {
+  // Optional community ID (if not provided in URL)
+  communityId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]),
+
+  // Feature flags
+  showEvents: PropTypes.bool,
+  showProjects: PropTypes.bool,
+  showMembers: PropTypes.bool,
+  showWeather: PropTypes.bool,
+
+  // Limits
+  maxProjects: PropTypes.number,
+  maxEvents: PropTypes.number,
+  maxMembers: PropTypes.number,
+
+  // Callbacks
+  onJoin: PropTypes.func,
+  onLeave: PropTypes.func,
+
+  // Custom components
+  customTabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      content: PropTypes.elementType.isRequired,
+      icon: PropTypes.elementType
+    })
+  ),
+
+  // Custom statistics
+  customStats: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+      ]).isRequired,
+      icon: PropTypes.elementType
+    })
+  ),
+
+  // Optional styling
+  containerStyle: PropTypes.object,
+  headerStyle: PropTypes.object,
+  tabsStyle: PropTypes.object
+};
+
+CommunityLanding.defaultProps = {
+  communityId: undefined,
+  showEvents: true,
+  showProjects: true,
+  showMembers: true,
+  showWeather: true,
+  maxProjects: 3,
+  maxEvents: 3,
+  maxMembers: 10,
+  onJoin: undefined,
+  onLeave: undefined,
+  customTabs: [],
+  customStats: [],
+  containerStyle: {},
+  headerStyle: {},
+  tabsStyle: {}
 };
 
 export default CommunityLanding;

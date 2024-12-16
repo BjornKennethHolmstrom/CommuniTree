@@ -1,23 +1,44 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
-import { Box, VStack, Heading, Text, Button, Input, Textarea, Spinner, Alert, AlertIcon, FormControl, FormLabel } from '@chakra-ui/react';
+import {
+  Box,
+  VStack,
+  Heading,
+  Text,
+  Button,
+  Input,
+  Textarea,
+  Spinner,
+  Alert,
+  AlertIcon,
+  FormControl,
+  FormLabel
+} from '@chakra-ui/react';
 
-const UserProfile = () => {
+const UserProfile = ({
+  allowEditing = true,
+  showBio = true,
+  showSkills = true,
+  additionalFields = [],
+  onProfileUpdate,
+  customValidation
+}) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
-  const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    bio: '',
+    skills: []
+  });
 
   useEffect(() => {
-    if (user && user.id) {
-      fetchUserProfile();
-    }
+    fetchUserProfile();
   }, [user]);
 
   const fetchUserProfile = async () => {
@@ -31,11 +52,12 @@ const UserProfile = () => {
       }
       const data = await response.json();
       setProfile(data);
-      setName(data.name || data.username || '');
-      setBio(data.bio || '');
-      setSkills(data.skills || []);
+      setFormData({
+        name: data.name || '',
+        bio: data.bio || '',
+        skills: data.skills || []
+      });
     } catch (error) {
-      console.error('Error fetching user profile:', error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -45,22 +67,32 @@ const UserProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (customValidation) {
+        const validationError = customValidation(formData);
+        if (validationError) {
+          throw new Error(validationError);
+        }
+      }
+
       const response = await fetch(`/api/users/${user.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'x-auth-token': user.token
         },
-        body: JSON.stringify({ name, bio, skills })
+        body: JSON.stringify(formData)
       });
+      
       if (response.ok) {
         setEditing(false);
-        fetchUserProfile();
+        await fetchUserProfile();
+        if (onProfileUpdate) {
+          onProfileUpdate(formData);
+        }
       } else {
         throw new Error('Failed to update profile');
       }
     } catch (error) {
-      console.error('Error updating user profile:', error);
       setError(error.message);
     }
   };
@@ -105,6 +137,47 @@ const UserProfile = () => {
       )}
     </Box>
   );
+};
+
+UserProfile.propTypes = {
+  // Feature flags
+  allowEditing: PropTypes.bool,
+  showBio: PropTypes.bool,
+  showSkills: PropTypes.bool,
+
+  // Additional fields configuration
+  additionalFields: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['text', 'textarea', 'select']).isRequired,
+      options: PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+          label: PropTypes.string.isRequired
+        })
+      )
+    })
+  ),
+
+  // Optional callbacks
+  onProfileUpdate: PropTypes.func,
+  customValidation: PropTypes.func,
+
+  // Optional styling
+  containerStyle: PropTypes.object,
+  formStyle: PropTypes.object
+};
+
+UserProfile.defaultProps = {
+  allowEditing: true,
+  showBio: true,
+  showSkills: true,
+  additionalFields: [],
+  onProfileUpdate: undefined,
+  customValidation: undefined,
+  containerStyle: {},
+  formStyle: {}
 };
 
 export default UserProfile;

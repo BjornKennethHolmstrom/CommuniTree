@@ -1,31 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+import PropTypes from 'prop-types';
+import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import {
+  Box,
+  VStack,
+  Text,
+  Button,
+  Alert,
+  AlertIcon,
+  Badge,
+  Spinner
+} from '@chakra-ui/react';
 
-const NotificationComponent = () => {
+const NotificationComponent = ({
+  maxNotifications = 50,
+  showUnreadBadge = true,
+  autoRefresh = true,
+  refreshInterval = 30000,
+  onNotificationRead,
+  onNotificationClick,
+  customNotificationRenderer,
+  filterBy,
+  groupBy
+}) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+    if (autoRefresh && refreshInterval) {
+      const interval = setInterval(fetchNotifications, refreshInterval);
+      return () => clearInterval(interval);
+    }
+  }, [autoRefresh, refreshInterval]);
 
   const fetchNotifications = async () => {
     try {
       const response = await fetch('/api/notifications', {
         headers: { 'x-auth-token': user.token }
       });
-      const data = await response.json();
+      if (!response.ok) throw new Error('Failed to fetch notifications');
+      let data = await response.json();
+
+      if (filterBy) {
+        data = data.filter(filterBy);
+      }
+
+      if (groupBy) {
+        data = groupNotifications(data, groupBy);
+      }
+
+      if (maxNotifications) {
+        data = data.slice(0, maxNotifications);
+      }
+
       setNotifications(data);
+      setUnreadCount(data.filter(n => !n.read).length);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`/api/notifications/${id}`, {
+      const response = await fetch(`/api/notifications/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -33,9 +78,16 @@ const NotificationComponent = () => {
         },
         body: JSON.stringify({ read: true })
       });
+      
+      if (!response.ok) throw new Error('Failed to mark notification as read');
+      
+      if (onNotificationRead) {
+        onNotificationRead(id);
+      }
+      
       fetchNotifications();
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      setError(error.message);
     }
   };
 
@@ -61,6 +113,57 @@ const NotificationComponent = () => {
       )}
     </div>
   );
+};
+
+NotificationComponent.propTypes = {
+  // Configuration
+  maxNotifications: PropTypes.number,
+  showUnreadBadge: PropTypes.bool,
+  autoRefresh: PropTypes.bool,
+  refreshInterval: PropTypes.number,
+
+  // Filtering and grouping
+  filterBy: PropTypes.func,
+  groupBy: PropTypes.string,
+
+  // Callbacks
+  onNotificationRead: PropTypes.func,
+  onNotificationClick: PropTypes.func,
+  onError: PropTypes.func,
+
+  // Custom rendering
+  customNotificationRenderer: PropTypes.func,
+
+  // Notification shape (for documentation)
+  notification: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    content: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    read: PropTypes.bool.isRequired,
+    created_at: PropTypes.string.isRequired,
+    user_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
+  }),
+
+  // Styling
+  containerStyle: PropTypes.object,
+  notificationStyle: PropTypes.object,
+  badgeStyle: PropTypes.object
+};
+
+NotificationComponent.defaultProps = {
+  maxNotifications: 50,
+  showUnreadBadge: true,
+  autoRefresh: true,
+  refreshInterval: 30000,
+  onNotificationRead: undefined,
+  onNotificationClick: undefined,
+  onError: undefined,
+  customNotificationRenderer: undefined,
+  filterBy: undefined,
+  groupBy: undefined,
+  containerStyle: {},
+  notificationStyle: {},
+  badgeStyle: {}
 };
 
 export default NotificationComponent;

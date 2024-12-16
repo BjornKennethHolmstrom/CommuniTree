@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCommunity } from '../contexts/CommunityContext';
 import { useError } from '../contexts/ErrorContext';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  formatProjectStatus, 
-  filterProjects, 
-  sortProjects,
-  parseSkillsList
-} from '../utils/projectUtils';
+import { formatProjectStatus, filterProjects, sortProjects, parseSkillsList } from '../utils/projectUtils';
 import {
   Box,
   Button,
@@ -25,7 +21,15 @@ import {
   HStack,
 } from '@chakra-ui/react';
 
-const ProjectList = () => {
+const ProjectList = ({ 
+  initialFilter,
+  initialSort = 'date',
+  pageSize = 10,
+  showSearch = true,
+  showFilters = true,
+  showCreateButton = true,
+  onProjectSelect
+}) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { showError } = useError();
@@ -33,9 +37,9 @@ const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState(initialFilter);
   const [skillsFilter, setSkillsFilter] = useState('');
-  const [sortBy, setSortBy] = useState('date');
+  const [sortBy, setSortBy] = useState(initialSort);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -246,6 +250,37 @@ const ProjectList = () => {
       )}
     </Box>
   );
+};
+
+ProjectList.propTypes = {
+  // Optional initial values
+  initialFilter: PropTypes.string,
+  initialSort: PropTypes.oneOf(['date', 'status', 'title']),
+  pageSize: PropTypes.number,
+
+  // Feature flags
+  showSearch: PropTypes.bool,
+  showFilters: PropTypes.bool,
+  showCreateButton: PropTypes.bool,
+
+  // Optional callbacks
+  onProjectSelect: PropTypes.func,
+
+  // Optional styling
+  containerStyle: PropTypes.object,
+  listStyle: PropTypes.object
+};
+
+ProjectList.defaultProps = {
+  initialFilter: '',
+  initialSort: 'date',
+  pageSize: 10,
+  showSearch: true,
+  showFilters: true,
+  showCreateButton: true,
+  onProjectSelect: undefined,
+  containerStyle: {},
+  listStyle: {}
 };
 
 export default ProjectList;

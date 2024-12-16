@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../contexts/AuthContext';
 import { 
-  Box, VStack, HStack, Button, Table, Thead, Tbody, Tr, Th, Td,
+  Box, VStack, HStack, Heading, Tabs, TabList, Tab, TabPanels, TabPanel, 
+  Button, Table, Thead, Tbody, Tr, Th, Td,
   useDisclosure, Alert, AlertIcon, Badge, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, Text
 } from '@chakra-ui/react';
@@ -11,8 +14,19 @@ import { usePermissions } from '../../contexts/PermissionContext';
 import { AccessibleButton, AccessibleCard } from '../common';
 import CommunityForm from './CommunityForm';
 
-const CommunityManagement = () => {
+const CommunityManagement = ({
+  showMembers = true,
+  showSettings = true,
+  showModeration = true,
+  customTabs = [],
+  onMemberUpdate,
+  onSettingsUpdate,
+  onModerationAction,
+  defaultTab = 'members'
+}) => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const navigate = useNavigate();
   const { checkPermission } = usePermissions();
   const [communities, setCommunities] = useState([]);
@@ -208,6 +222,85 @@ const CommunityManagement = () => {
       </Modal>
     </Box>
   );
+};
+
+CommunityManagement.propTypes = {
+  // Feature flags
+  showMembers: PropTypes.bool,
+  showSettings: PropTypes.bool,
+  showModeration: PropTypes.bool,
+
+  // Default configuration
+  defaultTab: PropTypes.oneOf(['members', 'settings', 'moderation']),
+
+  // Custom tabs
+  customTabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      content: PropTypes.elementType.isRequired,
+      icon: PropTypes.elementType,
+      permissions: PropTypes.arrayOf(PropTypes.string)
+    })
+  ),
+
+  // Callbacks
+  onMemberUpdate: PropTypes.func,
+  onSettingsUpdate: PropTypes.func,
+  onModerationAction: PropTypes.func,
+  onError: PropTypes.func,
+
+  // Permissions
+  requiredPermissions: PropTypes.arrayOf(PropTypes.string),
+
+  // Member management
+  memberActions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      action: PropTypes.func.isRequired,
+      permission: PropTypes.string,
+      icon: PropTypes.elementType
+    })
+  ),
+
+  // Moderation options
+  moderationOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      action: PropTypes.func.isRequired,
+      permission: PropTypes.string
+    })
+  ),
+
+  // Optional styling
+  containerStyle: PropTypes.object,
+  tabsStyle: PropTypes.object,
+  contentStyle: PropTypes.object
+};
+
+CommunityManagement.defaultProps = {
+  showMembers: true,
+  showSettings: true,
+  showModeration: true,
+  defaultTab: 'members',
+  customTabs: [],
+  onMemberUpdate: undefined,
+  onSettingsUpdate: undefined,
+  onModerationAction: undefined,
+  onError: undefined,
+  requiredPermissions: [],
+  memberActions: [],
+  moderationOptions: [],
+  containerStyle: {},
+  tabsStyle: {},
+  contentStyle: {}
+};
+
+// Action types for documentation
+CommunityManagement.actionTypes = {
+  member: ['promote', 'demote', 'remove', 'ban'],
+  moderation: ['warn', 'mute', 'flag', 'delete']
 };
 
 export default CommunityManagement;

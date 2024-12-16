@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +15,15 @@ import { useAuth } from '../contexts/AuthContext';
 import { validateProject, parseSkillsList } from '../utils/projectUtils';
 import ProjectForm from './ProjectForm';
 
-const CreateProject = () => {
+const CreateProject = ({
+  onCreateSuccess,
+  onCreateError,
+  redirectOnSuccess = true,
+  redirectPath = '/projects',
+  showSuccessToast = true,
+  showErrorToast = true,
+  customValidation
+}) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -23,52 +32,63 @@ const CreateProject = () => {
   const [error, setError] = useState(null);
 
   const handleSubmit = async (projectData) => {
-    // Parse skills from comma-separated string to array
-    const formattedData = {
-      ...projectData,
-      required_skills: parseSkillsList(projectData.requiredSkills)
-    };
-
-    // Validate project data
-    const { isValid, errors } = validateProject(formattedData);
-    if (!isValid) {
-      setError(Object.values(errors)[0]); // Show first error
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
     try {
+      setLoading(true);
+      setError(null);
+
+      // Additional validation if provided
+      if (customValidation) {
+        const validationError = customValidation(projectData);
+        if (validationError) {
+          throw new Error(validationError);
+        }
+      }
+
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-auth-token': user.token
         },
-        body: JSON.stringify(formattedData),
+        body: JSON.stringify(projectData),
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || t('createProject.error'));
+        throw new Error('Failed to create project');
       }
 
-      toast({
-        title: t('createProject.success'),
-        status: 'success',
-        duration: 3000,
-      });
-      navigate('/projects');
+      const newProject = await response.json();
+
+      if (onCreateSuccess) {
+        onCreateSuccess(newProject);
+      }
+
+      if (showSuccessToast) {
+        toast({
+          title: t('createProject.success'),
+          status: 'success',
+          duration: 3000,
+        });
+      }
+
+      if (redirectOnSuccess) {
+        navigate(redirectPath);
+      }
     } catch (err) {
-      console.error('Error creating project:', err);
       setError(err.message);
-      toast({
-        title: t('createProject.error'),
-        description: err.message,
-        status: 'error',
-        duration: 5000,
-      });
+      
+      if (onCreateError) {
+        onCreateError(err);
+      }
+
+      if (showErrorToast) {
+        toast({
+          title: t('createProject.error'),
+          description: err.message,
+          status: 'error',
+          duration: 5000,
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -86,9 +106,39 @@ const CreateProject = () => {
         </Alert>
       )}
 
-      <ProjectForm onSubmit={handleSubmit} isLoading={loading} />
+      <ProjectForm
+        onSubmit={handleSubmit}
+        isLoading={loading}
+      />
     </Box>
   );
+};
+
+CreateProject.propTypes = {
+  // Optional callbacks
+  onCreateSuccess: PropTypes.func,
+  onCreateError: PropTypes.func,
+  
+  // Navigation options
+  redirectOnSuccess: PropTypes.bool,
+  redirectPath: PropTypes.string,
+  
+  // Toast notifications
+  showSuccessToast: PropTypes.bool,
+  showErrorToast: PropTypes.bool,
+  
+  // Custom validation
+  customValidation: PropTypes.func
+};
+
+CreateProject.defaultProps = {
+  onCreateSuccess: undefined,
+  onCreateError: undefined,
+  redirectOnSuccess: true,
+  redirectPath: '/projects',
+  showSuccessToast: true,
+  showErrorToast: true,
+  customValidation: undefined
 };
 
 export default CreateProject;

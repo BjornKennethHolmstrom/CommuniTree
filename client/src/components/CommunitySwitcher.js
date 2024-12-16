@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useCommunity } from '../contexts/CommunityContext';
 import {
   Box,
@@ -20,7 +21,17 @@ import {
 import { Search, ChevronDown, X, Check, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-function CommunitySwitcher() {
+const CommunitySwitcher = ({
+  maxSelected,
+  searchDebounceMs = 300,
+  showBadgeCount = true,
+  showAvatar = true,
+  showSearch = true,
+  onSelectionChange,
+  customFilter,
+  customSort,
+  buttonVariant = 'outline'
+}) => {
   const { t } = useTranslation();
   const {
     activeCommunities,
@@ -162,5 +173,52 @@ function CommunitySwitcher() {
     </Popover>
   );
 }
+
+CommunitySwitcher.propTypes = {
+  // Configuration
+  maxSelected: PropTypes.number,
+  searchDebounceMs: PropTypes.number,
+  showBadgeCount: PropTypes.bool,
+  showAvatar: PropTypes.bool,
+  showSearch: PropTypes.bool,
+  buttonVariant: PropTypes.string,
+
+  // Callbacks
+  onSelectionChange: PropTypes.func,
+
+  // Custom functions
+  customFilter: PropTypes.func,
+  customSort: PropTypes.func,
+
+  // Optional styling
+  containerStyle: PropTypes.object,
+  buttonStyle: PropTypes.object,
+  menuStyle: PropTypes.object,
+  itemStyle: PropTypes.object,
+
+  // Community shape (for documentation)
+  community: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    name: PropTypes.string.isRequired,
+    cover_image_url: PropTypes.string,
+    member_count: PropTypes.number
+  })
+};
+
+CommunitySwitcher.defaultProps = {
+  maxSelected: undefined,
+  searchDebounceMs: 300,
+  showBadgeCount: true,
+  showAvatar: true,
+  showSearch: true,
+  buttonVariant: 'outline',
+  onSelectionChange: undefined,
+  customFilter: undefined,
+  customSort: undefined,
+  containerStyle: {},
+  buttonStyle: {},
+  menuStyle: {},
+  itemStyle: {}
+};
 
 export default CommunitySwitcher;

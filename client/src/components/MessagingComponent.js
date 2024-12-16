@@ -1,21 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+import PropTypes from 'prop-types';
+import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import {
+  Box,
+  VStack,
+  HStack,
+  Input,
+  Button,
+  Select,
+  Text,
+  Alert,
+  AlertIcon,
+  Textarea,
+  Divider,
+  Spinner
+} from '@chakra-ui/react';
 
-const MessagingComponent = () => {
+const MessagingComponent = ({
+  showUserSelector = true,
+  showMessageHistory = true,
+  maxMessages = 50,
+  refreshInterval,
+  preSelectedUser,
+  onMessageSend,
+  onMessageRead,
+  customMessageRenderer,
+  placeholderText
+}) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [recipient, setRecipient] = useState('');
+  const [recipient, setRecipient] = useState(preSelectedUser || '');
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchMessages();
-    fetchUsers();
-  }, []);
+    if (showUserSelector) {
+      fetchUsers();
+    }
+    if (refreshInterval) {
+      const interval = setInterval(fetchMessages, refreshInterval);
+      return () => clearInterval(interval);
+    }
+  }, [refreshInterval]);
 
   const fetchMessages = async () => {
     try {
@@ -119,6 +150,63 @@ const MessagingComponent = () => {
       </form>
     </div>
   );
+};
+
+MessagingComponent.propTypes = {
+  // Display options
+  showUserSelector: PropTypes.bool,
+  showMessageHistory: PropTypes.bool,
+  maxMessages: PropTypes.number,
+  refreshInterval: PropTypes.number,
+  placeholderText: PropTypes.string,
+
+  // Pre-selected values
+  preSelectedUser: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]),
+
+  // Callbacks
+  onMessageSend: PropTypes.func,
+  onMessageRead: PropTypes.func,
+  onError: PropTypes.func,
+  onUsersLoad: PropTypes.func,
+
+  // Custom rendering
+  customMessageRenderer: PropTypes.func,
+
+  // Message shape (for documentation)
+  message: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    content: PropTypes.string.isRequired,
+    sender_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    sender_name: PropTypes.string.isRequired,
+    recipient_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    created_at: PropTypes.string.isRequired,
+    read: PropTypes.bool
+  }),
+
+  // Styling
+  containerStyle: PropTypes.object,
+  messageStyle: PropTypes.object,
+  inputStyle: PropTypes.object
+};
+
+MessagingComponent.defaultProps = {
+  showUserSelector: true,
+  showMessageHistory: true,
+  maxMessages: 50,
+  refreshInterval: undefined,
+  preSelectedUser: undefined,
+  onMessageSend: undefined,
+  onMessageRead: undefined,
+  onError: undefined,
+  onUsersLoad: undefined,
+  customMessageRenderer: undefined,
+  placeholderText: undefined,
+  containerStyle: {},
+  messageStyle: {},
+  inputStyle: {}
 };
 
 export default MessagingComponent;

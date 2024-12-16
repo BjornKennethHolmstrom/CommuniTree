@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -31,7 +32,20 @@ import {
 
 const localizer = momentLocalizer(moment);
 
-const EventCalendar = () => {
+const EventCalendar = ({
+  defaultView = 'month',
+  showToolbar = true,
+  showCreateButton = true,
+  showCommunitySelector = true,
+  minTime = new Date(2000, 1, 1, 8, 0, 0),
+  maxTime = new Date(2000, 1, 1, 20, 0, 0),
+  onEventSelect,
+  onEventCreate,
+  onEventUpdate,
+  customViews = [],
+  customComponents = {},
+  eventPropGetter
+}) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { showError } = useError();
@@ -255,6 +269,75 @@ const EventCalendar = () => {
       </Modal>
     </Box>
   );
+};
+
+EventCalendar.propTypes = {
+  // View configuration
+  defaultView: PropTypes.oneOf(['month', 'week', 'day', 'agenda']),
+  showToolbar: PropTypes.bool,
+  showCreateButton: PropTypes.bool,
+  showCommunitySelector: PropTypes.bool,
+
+  // Time constraints
+  minTime: PropTypes.instanceOf(Date),
+  maxTime: PropTypes.instanceOf(Date),
+
+  // Event callbacks
+  onEventSelect: PropTypes.func,
+  onEventCreate: PropTypes.func,
+  onEventUpdate: PropTypes.func,
+
+  // Custom components and views
+  customViews: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      component: PropTypes.elementType.isRequired
+    })
+  ),
+  customComponents: PropTypes.shape({
+    event: PropTypes.elementType,
+    toolbar: PropTypes.elementType,
+    agenda: PropTypes.shape({
+      event: PropTypes.elementType
+    })
+  }),
+
+  // Event styling
+  eventPropGetter: PropTypes.func,
+
+  // Optional styling
+  containerStyle: PropTypes.object,
+  calendarStyle: PropTypes.object,
+  modalStyle: PropTypes.object,
+
+  // Event shape for documentation
+  event: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    start: PropTypes.instanceOf(Date).isRequired,
+    end: PropTypes.instanceOf(Date).isRequired,
+    description: PropTypes.string,
+    location: PropTypes.string,
+    community_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  })
+};
+
+EventCalendar.defaultProps = {
+  defaultView: 'month',
+  showToolbar: true,
+  showCreateButton: true,
+  showCommunitySelector: true,
+  minTime: new Date(2000, 1, 1, 8, 0, 0),
+  maxTime: new Date(2000, 1, 1, 20, 0, 0),
+  onEventSelect: undefined,
+  onEventCreate: undefined,
+  onEventUpdate: undefined,
+  customViews: [],
+  customComponents: {},
+  eventPropGetter: undefined,
+  containerStyle: {},
+  calendarStyle: {},
+  modalStyle: {}
 };
 
 export default EventCalendar;
